@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<users>
+    <user>
+        <id>
+            <type>integer</type>
+            <value>1</value>
+        </id>
+        <name>
+            <type>string</type>
+            <value>John Doe</value>
+        </name>
+        <email>
+            <type>string</type>
+            <value>johndoe@email.com</value>
+        </email>
+    </user>
+    <user>
+        <id>
+            <type>integer</type>
+            <value>2</value>
+        </id>
+        <name>
+            <type>string</type>
+            <value>Jane Doe</value>
+        </name>
+        <email>
+            <type>string</type>
+            <value>janedoe@email.com</value>
+        </email>
+    </user>
+</users>

@@ -1,0 +1,16 @@
+{
+    "results": {
+        "bindings": [
+            {
+                "id": { "type": "integer" , "value": 1 },
+                "name": { "type": "string" , "value": "John Doe" },
+                "email": { "type": "string" , "value": "johndoe@email.com" }
+            },
+            {
+                "id": { "type": "integer" , "value": 2 },
+                "name": { "type": "string" , "value": "Jane Doe" },
+                "email": { "type": "string" , "value": "janedoe@email.com" }
+            }
+        ]
+    }
+}

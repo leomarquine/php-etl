@@ -2,7 +2,9 @@
 
 namespace Marquine\Metis\Providers\Laravel;
 
-class Facade extends \Illuminate\Support\Facades\Facade
+use Illuminate\Support\Facades\Facade;
+
+class MetisFacade extends Facade
 {
     /**
      * Get the registered name of the componsent.

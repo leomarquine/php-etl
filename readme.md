@@ -20,22 +20,22 @@ Metis::config($config);
 ```
 
 ### Database Setup
-Metis currently supports Postgres and SQLite. Add connections with the `addConnection` method.
+Metis uses [doctrine/dbal](https://github.com/doctrine/dbal). Add connections with the `addConnection` method.
 
 Adding the default connection:
 ```PHP
-Metis::addConnection(['driver' => 'sqlite', 'database' => 'db.sqlite']);
+Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => 'db.sqlite']);
 ```
 
 Adding a named connection:
 ```PHP
-Metis::addConnection(['driver' => 'sqlite', 'database' => 'db.sqlite'], 'connection_name');
+Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => 'db.sqlite'], 'connection_name');
 ```
 
 You can also use a fluent API:
 ```PHP
-Metis::addConnection(['driver' => 'sqlite', 'database' => 'db.sqlite'])
-     ->addConnection(['driver' => 'sqlite', 'database' => 'db2.sqlite'], 'connection_name');
+Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => 'db.sqlite'])
+     ->addConnection(['driver' => 'pdo_sqlite', 'database' => 'db2.sqlite'], 'connection_name');
 ```
 
 ### Laravel Integration
@@ -43,17 +43,17 @@ If you are using Laravel, you can skip 'Global Configuration' and 'Database Setu
 
 Add the ServiceProvider to the `providers` array in `config/app.php` file:
 ```PHP
-Marquine\Metis\Providers\Laravel\ServiceProvider::class,
+Marquine\Metis\Providers\Laravel\MetisServiceProvider::class,
 ```
 
 Add the Facade to the `aliases` array in `config/app.php` file:
 ```PHP
-'Metis' => Marquine\Metis\Providers\Laravel\Facade::class,
+'Metis' => Marquine\Metis\Providers\Laravel\MetisFacade::class,
 ```
 
 Publish the configuration file using the artisan command:
 ```
-php artisan vendor:publish --provider="Marquine\Metis\Providers\Laravel\ServiceProvider"
+php artisan vendor:publish --provider="Marquine\Metis\Providers\Laravel\MetisServiceProvider"
 ```
 
 

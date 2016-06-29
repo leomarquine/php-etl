@@ -2,21 +2,23 @@
 
 namespace Marquine\Metis;
 
+use Doctrine\DBAL\DriverManager;
+
 class Metis
 {
-    /**
-     * The current globally used instance.
-     *
-     * @var object
-     */
-    protected static $instance;
-
     /**
      * The items contained in the transformation.
      *
      * @var array
      */
     protected $items;
+
+    /**
+     * The current globally used instance.
+     *
+     * @var object
+     */
+    protected static $instance;
 
     /**
      * Global configuration array.
@@ -28,9 +30,9 @@ class Metis
     /**
      * Global database connections.
      *
-     * @var \Marquine\Metis\Database\Database
+     * @var array
     */
-    protected static $database;
+    protected static $connections = [];
 
     /**
      * Create a new Metis instance.
@@ -74,37 +76,30 @@ class Metis
     }
 
     /**
-     * Create a new database instance if needed and add a connection.
+     * Add a database connection.
      *
-     * @param  array  $connection
+     * @param  array  $params
      * @param  string $name
      * @return static
      */
-    public static function addConnection($config, $name = 'default')
+    public static function addConnection($params, $name = 'default')
     {
-        if (static::$database === null) {
-            static::$database = new \Marquine\Metis\Database\Database;
-        }
-
-        static::$database->addConnection($config, $name);
+        static::$connections[$name] = DriverManager::getConnection($params);
 
         return static::instance();
     }
 
     /**
-    * Get a database connection instance.
+    * Get a database connection.
     *
     * @param  string $connection
-    * @return \Marquine\Metis\Database\Connection\Connection
+    * @return \Doctrine\DBAL\Connection
     */
-    public static function db($connection = 'default')
+    public static function connection($name = 'default')
     {
-        if (static::$database === null) {
-            static::$database = new \Marquine\Metis\Database\Database;
-        }
-
-        return static::$database->getConnection($connection);
+        return static::$connections[$name];
     }
+
     /**
      * Get current transformation items.
      *
@@ -119,8 +114,8 @@ class Metis
      * Extract data from the given source.
      *
      * @param  string $type
-     * @param  string $source
-     * @param  mixed  $columns
+     * @param  mixed  $source
+     * @param  array  $columns
      * @param  array  $options
      * @return Metis
      */

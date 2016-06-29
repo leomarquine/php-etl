@@ -4,7 +4,6 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Metis\Metis;
-use Illuminate\Database\Capsule\Manager as DB;
 
 class QueryTest extends TestCase
 {
@@ -18,7 +17,9 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         $query = 'SELECT * FROM users';
 
@@ -30,7 +31,9 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         $query = 'SELECT * FROM users WHERE id = ?';
 
@@ -46,11 +49,13 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
-        $query = 'SELECT * FROM users WHERE id = :id';
+        $query = 'SELECT * FROM users WHERE id = :id AND name = :name';
 
-        $bindings = ['id' => 1];
+        $bindings = ['name' => 'John Doe', 'id' => 1];
 
         $results = Metis::extract('query', $query, $bindings)->get();
 
@@ -62,10 +67,13 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_connection()
     {
-        Metis::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'test');
+        Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => ':memory:'], 'test');
+
         $this->migrateTables('test');
 
-        Metis::db('test')->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection('test')->insert('users', $user);
+        }
 
         $query = 'SELECT * FROM users';
 

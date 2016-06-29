@@ -30,6 +30,10 @@ class Query implements Extractor
             $bindings = [];
         }
 
-        return Metis::db($this->connection)->query($query, $bindings);
+        $query = Metis::connection($this->connection)->prepare($query);
+
+        $query->execute($bindings);
+
+        return $query->fetchAll();
     }
 }

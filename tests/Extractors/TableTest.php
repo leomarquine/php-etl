@@ -4,7 +4,6 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Metis\Metis;
-use Illuminate\Database\Capsule\Manager as DB;
 
 class TableTest extends TestCase
 {
@@ -18,7 +17,9 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         $results = Metis::extract('table', 'users')->get();
 
@@ -28,7 +29,9 @@ class TableTest extends TestCase
     /** @test */
     function extract_specific_columns_from_a_database_table()
     {
-        Metis::db()->insert('users_ts', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users_ts', $user);
+        }
 
         $columns = ['id', 'name', 'email'];
 
@@ -40,7 +43,9 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_with_a_where_clause()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         $options = ['where' => ['id' => 1]];
 
@@ -54,9 +59,13 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_using_a_custom_connection()
     {
-        Metis::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'connection_name');
+        Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => ':memory:'], 'connection_name');
+
         $this->migrateTables('connection_name');
-        Metis::db('connection_name')->insert('users', $this->users);
+
+        foreach ($this->users as $user) {
+            Metis::connection('connection_name')->insert('users', $user);
+        }
 
         $options = ['connection' => 'connection_name'];
 

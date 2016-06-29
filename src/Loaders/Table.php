@@ -101,27 +101,34 @@ class Table implements Loader
 
         $this->time = date('Y-m-d G:i:s');
 
-        if (is_string($this->keys)) {
-            $this->keys = [$this->keys];
-        }
+        $this->normalizeKeys();
 
         $old = [];
 
         if (! $this->skipDataCheck) {
-            $old = $this->index(Metis::db($this->connection)->select($this->table), $this->keys);
+            $select = Metis::connection($this->connection)->fetchAll(
+                "select * from {$this->table}"
+            );
+
+            $old = $this->index($select, $this->keys);
+
             $items = $this->index($items, $this->keys);
         }
 
-        if ($this->insert) {
+        if ($this->insert === true) {
             $this->insert(array_diff_key($items, $old));
         }
 
-        if ($this->update) {
+        if ($this->update === true) {
             $this->update(array_intersect_key($items, $old), array_intersect_key($old, $items));
         }
 
-        if ($this->delete) {
+        if ($this->delete === true) {
             $this->delete(array_diff_key($old, $items));
+        }
+
+        if ($this->delete === 'soft') {
+            $this->softDelete(array_diff_key($old, $items));
         }
     }
 
@@ -133,14 +140,18 @@ class Table implements Loader
      */
     protected function insert($items)
     {
-        if ($this->timestamps) {
-            foreach ($items as &$item) {
-                $item['created_at'] = $this->time;
-                $item['updated_at'] = $this->time;
-            }
-        }
+        $callback = function($items) {
+            foreach ($items as $item) {
+                if ($this->timestamps) {
+                    $item['created_at'] = $this->time;
+                    $item['updated_at'] = $this->time;
+                }
 
-        Metis::db($this->connection)->insert($this->table, $items, $this->transaction);
+                Metis::connection($this->connection)->insert($this->table, $item);
+            }
+        };
+
+        $this->transaction($items, $callback);
     }
 
     /**
@@ -150,24 +161,95 @@ class Table implements Loader
      * @param  array $old
      * @return void
      */
-    protected function update($new, $old)
+    protected function update($items, $old)
     {
-        $items = [];
+        $callback = function($items) use ($old) {
+            foreach ($items as $key => $item) {
+                if ($this->forceUpdate || $this->needsUpdate($item, $old[$key])) {
+                    if ($this->timestamps) {
+                        $item['updated_at'] = $this->time;
+                    }
 
-        foreach ($new as $key => $item) {
-            if ($this->forceUpdate || $this->needUpdate($new[$key], $old[$key])) {
-                if ($this->timestamps) {
-                    $item['updated_at'] = $this->time;
-                }
-                if ($this->delete === 'soft') {
-                    $item['deleted_at'] = null;
-                }
+                    if ($this->delete === 'soft') {
+                        $item['deleted_at'] = null;
+                    }
 
-                $items[] = $item;
+                    Metis::connection($this->connection)->update(
+                        $this->table, $item, array_intersect_key($item, $this->keys)
+                    );
+                }
             }
+        };
+
+        $this->transaction($items, $callback);
+    }
+
+    /**
+     * Delete data.
+     *
+     * @param  array $items
+     * @return void
+     */
+    protected function delete($items)
+    {
+        $callback = function ($items) {
+            foreach ($items as $item) {
+                Metis::connection($this->connection)->delete(
+                    $this->table, array_intersect_key($item, $this->keys)
+                );
+            }
+        };
+
+        $this->transaction($items, $callback);
+    }
+
+    /**
+     * Soft delete data.
+     *
+     * @param  array $items
+     * @return void
+     */
+    protected function softDelete($items)
+    {
+        $callback = function ($items) {
+            foreach ($items as $item) {
+                Metis::connection($this->connection)->update(
+                    $this->table, ['deleted_at' => $this->time], array_intersect_key($item, $this->keys)
+                );
+            }
+        };
+
+        $this->transaction($items, $callback);
+    }
+
+    /**
+    * Perform a database transaction.
+    *
+    * @param  array    $items
+    * @param  callable $callback
+    * @return void
+    */
+    protected function transaction($items, $callback)
+    {
+        if (! $transaction) {
+            return call_user_func($callback, $items);
         }
 
-        Metis::db($this->connection)->update($this->table, $items, $this->keys, $this->transaction);
+        $chunks = array_chunk($items, $this->transaction);
+
+        foreach ($chunks as $chunk) {
+            $this->connection->beginTransaction();
+
+            try {
+                call_user_func($callback, $chunk);
+
+                $this->connection->commit();
+            } catch (Exception $e) {
+                $this->connection->rollBack();
+
+                throw $e;
+            }
+        }
     }
 
     /**
@@ -177,7 +259,7 @@ class Table implements Loader
      * @param  array $old
      * @return bool
      */
-    protected function needUpdate($new, $old)
+    protected function needsUpdate($new, $old)
     {
         if (isset($old['deleted_at']) && $old['deleted_at']) {
             return true;
@@ -189,17 +271,22 @@ class Table implements Loader
     }
 
     /**
-     * Delete data.
+     * Normalize keys.
      *
-     * @param  array $items
      * @return void
      */
-    protected function delete($items)
+    protected function normalizeKeys()
     {
-        if ($this->delete === 'soft') {
-            Metis::db($this->connection)->softDelete($this->table, $items, $this->keys, $this->time, $this->transaction);
-        } else {
-            Metis::db($this->connection)->delete($this->table, $items, $this->keys, $this->transaction);
+        if (is_string($this->keys)) {
+            $this->keys = [$this->keys];
         }
+
+        $keys = [];
+
+        foreach ($this->keys as $key) {
+            $keys[$key] = $key;
+        }
+
+        $this->keys = $keys;
     }
 }

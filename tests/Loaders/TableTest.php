@@ -5,7 +5,6 @@ namespace Tests\Loaders;
 use DateTime;
 use Tests\TestCase;
 use Marquine\Metis\Metis;
-use Illuminate\Database\Capsule\Manager as DB;
 
 class TableTest extends TestCase
 {
@@ -22,7 +21,7 @@ class TableTest extends TestCase
         Metis::extract('array', $this->users)
             ->load('table', 'users');
 
-        $results = Metis::db()->select('users');
+        $results = Metis::connection()->fetchAll('select * from users');
 
         $this->assertEquals($this->users, $results);
     }
@@ -35,12 +34,14 @@ class TableTest extends TestCase
             ['id' => '2', 'name' => 'Jane', 'email' => 'janedoe@email.com'],
         ];
 
-        Metis::db()->insert('users', $users);
+        foreach ($users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         Metis::extract('array', $this->users)
             ->load('table', 'users');
 
-        $results = Metis::db()->select('users');
+        $results = Metis::connection()->fetchAll('select * from users');
 
         $this->assertEquals($this->users, $results);
     }
@@ -48,7 +49,9 @@ class TableTest extends TestCase
     /** @test */
     function delete_records_that_are_not_in_the_source()
     {
-        Metis::db()->insert('users', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users', $user);
+        }
 
         $users = [
             ['id' => '1', 'name' => 'John', 'email' => 'johndoe@email.com'],
@@ -57,7 +60,7 @@ class TableTest extends TestCase
         Metis::extract('array', $users)
             ->load('table', 'users', ['delete' => true]);
 
-        $results = Metis::db()->select('users');
+        $results = Metis::connection()->fetchAll('select * from users');
 
         $this->assertEquals($users, $results);
     }
@@ -68,7 +71,7 @@ class TableTest extends TestCase
         Metis::extract('array', $this->users)
             ->load('table', 'users_ts', ['timestamps' => true]);
 
-        $results = Metis::db()->select('users_ts');
+        $results = Metis::connection()->fetchAll('select * from users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['created_at']));
@@ -85,12 +88,14 @@ class TableTest extends TestCase
             ['id' => '2', 'name' => 'Jane', 'email' => 'janedoe@email.com'],
         ];
 
-        Metis::db()->insert('users_ts', $users);
+        foreach ($users as $user) {
+            Metis::connection()->insert('users_ts', $user);
+        }
 
         Metis::extract('array', $this->users)
             ->load('table', 'users_ts', ['timestamps' => true]);
 
-        $results = Metis::db()->select('users_ts');
+        $results = Metis::connection()->fetchAll('select * from users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['updated_at']));
@@ -101,12 +106,14 @@ class TableTest extends TestCase
     /** @test */
     function soft_delete_records_that_are_not_in_the_source()
     {
-        Metis::db()->insert('users_ts', $this->users);
+        foreach ($this->users as $user) {
+            Metis::connection()->insert('users_ts', $user);
+        }
 
         Metis::extract('array', [])
             ->load('table', 'users_ts', ['delete' => 'soft']);
 
-        $results = Metis::db()->select('users_ts');
+        $results = Metis::connection()->fetchAll('select * from users_ts');
 
         $this->assertNotEmpty($results);
 

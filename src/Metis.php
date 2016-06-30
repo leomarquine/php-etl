@@ -35,11 +35,6 @@ class Metis
     protected static $connections = [];
 
     /**
-     * Create a new Metis instance.
-     */
-    private function __construct() {}
-
-    /**
      * Create or get a Metis instance.
      *
      * @return static
@@ -111,6 +106,24 @@ class Metis
     }
 
     /**
+     * Utilities.
+     *
+     * @param  string $type
+     * @param  array  $options
+     * @return Metis
+     */
+    public function utility($type, $options)
+    {
+        $instance = isset($this) ? $this : new Metis;
+
+        $utility = $instance->factory($type, 'utilities', $options);
+
+        $utility->handle();
+
+        return $instance;
+    }
+
+    /**
      * Extract data from the given source.
      *
      * @param  string $type
@@ -119,19 +132,13 @@ class Metis
      * @param  array  $options
      * @return Metis
      */
-    public static function extract($type, $source, $columns = null, $options = [])
+    public function extract($type, $source, $columns = null, $options = [])
     {
-        $instance = new Metis;
+        $instance = isset($this) ? $this : new Metis;
 
         $extractor = $instance->factory($type, 'extractors', $options);
 
-        $items = $extractor->extract($source, $columns);
-
-        if (is_object($items) && method_exists($items, 'toArray')) {
-            $items = $items->toArray();
-        }
-
-        $instance->items = $items;
+        $instance->items = $extractor->extract($source, $columns);
 
         return $instance;
     }

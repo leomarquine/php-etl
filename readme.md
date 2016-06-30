@@ -248,3 +248,36 @@ Options:
 | forceUpdate   | boolean             | false     | Do not check for differences between source and destination when updating. |
 | timestamps    | boolean             | false     | Use `created_at` and `updated_at` columns when inserting or updating. |
 | transaction   | boolean&#124;int    | 100       | Transaction size. Set to `false` to execute statements without transactions. |
+
+
+
+### Utilities
+```PHP
+Metis::utility($type, $options);
+```
+
+#### Command
+Execute a command:
+```PHP
+$options = [
+    'command' => 'cp /path/to/file.csv /new/path/file.csv'
+];
+
+Metis::utility('command', $options);
+```
+Execute multiple commands:
+```PHP
+$options = [
+    'command' => [
+        'cp /path/to/file.csv /new/path/file.csv',
+        'chmod 777 /new/path/file.csv'
+    ]
+];
+
+Metis::utility('command', $options);
+```
+Options:
+
+| Name    | Type              | Default | Description |
+| ------- | ----------------- |-------- | ----------- |
+| command | array&#124;string | null    | Command or array of commands to be executed. |

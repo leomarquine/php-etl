@@ -114,7 +114,7 @@ class Metis
      */
     public function utility($type, $options)
     {
-        $instance = isset($this) ? $this : new Metis;
+        $instance = (isset($this) && $this instanceof Metis) ? $this : new Metis;
 
         $utility = $instance->factory($type, 'utilities', $options);
 
@@ -134,7 +134,7 @@ class Metis
      */
     public function extract($type, $source, $columns = null, $options = [])
     {
-        $instance = isset($this) ? $this : new Metis;
+        $instance = (isset($this) && $this instanceof Metis) ? $this : new Metis;
 
         $extractor = $instance->factory($type, 'extractors', $options);
 

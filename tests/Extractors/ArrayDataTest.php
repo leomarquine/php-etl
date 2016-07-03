@@ -3,11 +3,11 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\ArrayData;
 
 class ArrayDataTest extends TestCase
 {
-    private $source = [
+    private $items = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
@@ -15,9 +15,11 @@ class ArrayDataTest extends TestCase
     /** @test */
     function extracts_data_from_an_array()
     {
-        $results = Metis::extract('array', $this->source)->get();
+        $extractor = new ArrayData;
 
-        $this->assertEquals($this->source, $results);
+        $results = $extractor->extract($this->items);
+
+        $this->assertEquals($this->items, $results);
     }
 
     /** @test */
@@ -30,7 +32,9 @@ class ArrayDataTest extends TestCase
 
         $columns = ['id', 'name'];
 
-        $results = Metis::extract('array', $this->source, $columns)->get();
+        $extractor = new ArrayData;
+
+        $results = $extractor->extract($this->items, $columns);
 
         $this->assertEquals($expected, $results);
     }

@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\FixedWidth;
 
 class FixedWidthTest extends TestCase
 {
@@ -21,7 +21,9 @@ class FixedWidthTest extends TestCase
             'email' => [9, 17],
         ];
 
-        $results = Metis::extract('fixedWidth', 'users.txt', $columns)->get();
+        $extractor = new FixedWidth;
+
+        $results = $extractor->extract('users.txt', $columns);
 
         $this->assertEquals($this->expected, $results);
     }

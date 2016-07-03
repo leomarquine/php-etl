@@ -3,11 +3,11 @@
 namespace Tests\Transformers;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Transformers\Trim;
 
 class TrimTest extends TestCase
 {
-    protected $source = [
+    protected $items = [
         ['id' => ' 1', 'name' => 'John Doe  ', 'email' => ' johndoe@email.com '],
         ['id' => '2 ', 'name' => '  Jane Doe', 'email' => '  janedoe@email.com  '],
     ];
@@ -15,11 +15,16 @@ class TrimTest extends TestCase
     /** @test */
     function trim_all_columns()
     {
-        $results = Metis::extract('array', $this->source)
-            ->transform('trim')
-            ->get();
+        $transformer = new Trim;
 
-        $this->assertEquals($this->users, $results);
+        $results = $transformer->transform($this->items);
+
+        $expected = [
+            ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
+        $this->assertEquals($expected, $results);
     }
 
     /** @test */
@@ -27,9 +32,9 @@ class TrimTest extends TestCase
     {
         $columns = ['id', 'name'];
 
-        $results = Metis::extract('array', $this->source)
-            ->transform('trim', $columns)
-            ->get();
+        $transformer = new Trim;
+
+        $results = $transformer->transform($this->items, $columns);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => ' johndoe@email.com '],
@@ -42,9 +47,11 @@ class TrimTest extends TestCase
     /** @test */
     function trim_right()
     {
-        $results = Metis::extract('array', $this->source)
-            ->transform('trim', null, ['type' => 'right'])
-            ->get();
+        $options = ['type' => 'right'];
+
+        $transformer = new Trim($options);
+
+        $results = $transformer->transform($this->items);
 
         $expected = [
             ['id' => ' 1', 'name' => 'John Doe', 'email' => ' johndoe@email.com'],
@@ -57,9 +64,11 @@ class TrimTest extends TestCase
     /** @test */
     function trim_left()
     {
-        $results = Metis::extract('array', $this->source)
-            ->transform('trim', null, ['type' => 'left'])
-            ->get();
+        $options = ['type' => 'left'];
+
+        $transformer = new Trim($options);
+
+        $results = $transformer->transform($this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe  ', 'email' => 'johndoe@email.com '],
@@ -72,9 +81,11 @@ class TrimTest extends TestCase
     /** @test */
     function trim_with_custom_character_mask()
     {
-        $results = Metis::extract('array', $this->source)
-            ->transform('trim', null, ['mask' => ' cmo.'])
-            ->get();
+        $options = ['mask' => ' cmo.'];
+
+        $transformer = new Trim($options);
+
+        $results = $transformer->transform($this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email'],

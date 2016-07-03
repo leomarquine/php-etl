@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\Json;
 
 class JsonTest extends TestCase
 {
@@ -15,7 +15,9 @@ class JsonTest extends TestCase
     /** @test */
     function extracts_data_from_a_json_file()
     {
-        $results = Metis::extract('json', 'users.json')->get();
+        $extractor = new Json;
+
+        $results = $extractor->extract('users.json');
 
         $this->assertEquals($this->expected, $results);
     }
@@ -29,7 +31,9 @@ class JsonTest extends TestCase
             'email' => '$..bindings[*].email.value'
         ];
 
-        $results = Metis::extract('json', 'users_path.json', $columns)->get();
+        $extractor = new Json;
+
+        $results = $extractor->extract('users_path.json', $columns);
 
         $this->assertEquals($this->expected, $results);
     }

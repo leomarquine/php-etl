@@ -31,7 +31,7 @@ class Table implements Extractor
      * @param  mixed  $columns
      * @return array
      */
-    public function extract($table, $columns)
+    public function extract($table, $columns = null)
     {
         $columns = $columns ? implode(', ', $columns) : '*';
 

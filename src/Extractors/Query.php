@@ -24,7 +24,7 @@ class Query implements Extractor
      * @param  mixed  $bindings
      * @return array
      */
-    public function extract($query, $bindings)
+    public function extract($query, $bindings = null)
     {
         if (! $bindings) {
             $bindings = [];

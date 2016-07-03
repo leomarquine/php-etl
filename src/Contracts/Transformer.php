@@ -11,5 +11,5 @@ interface Transformer
      * @param  mixed $columns
      * @return array
      */
-    public function transform($items, $columns);
+    public function transform($items, $columns = null);
 }

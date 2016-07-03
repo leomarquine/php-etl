@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\Xml;
 
 class XmlTest extends TestCase
 {
@@ -15,7 +15,11 @@ class XmlTest extends TestCase
     /** @test */
     function extracts_data_from_a_xml_file()
     {
-        $results = Metis::extract('xml', 'users.xml', null, ['loop' => '/users/user'])->get();
+        $options = ['loop' => '/users/user'];
+
+        $extractor = new Xml($options);
+
+        $results = $extractor->extract('users.xml');
 
         $this->assertEquals($this->expected, $results);
     }
@@ -29,7 +33,11 @@ class XmlTest extends TestCase
             'email' => 'email/value'
         ];
 
-        $results = Metis::extract('xml', 'users_path.xml', $columns, ['loop' => '/users/user'])->get();
+        $options = ['loop' => '/users/user'];
+
+        $extractor = new Xml($options);
+
+        $results = $extractor->extract('users_path.xml', $columns);
 
         $this->assertEquals($this->expected, $results);
     }

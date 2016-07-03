@@ -4,9 +4,15 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\Query;
 
 class QueryTest extends TestCase
 {
+    protected $items = [
+        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+    ];
+
     protected function setUp()
     {
         parent::setUp();
@@ -17,21 +23,23 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users', $user);
         }
 
         $query = 'SELECT * FROM users';
 
-        $results = Metis::extract('query', $query)->get();
+        $extractor = new Query;
 
-        $this->assertEquals($this->users, $results);
+        $results = $extractor->extract($query);
+
+        $this->assertEquals($this->items, $results);
     }
 
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users', $user);
         }
 
@@ -39,7 +47,9 @@ class QueryTest extends TestCase
 
         $bindings = [1];
 
-        $results = Metis::extract('query', $query, $bindings)->get();
+        $extractor = new Query;
+
+        $results = $extractor->extract($query, $bindings);
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
@@ -49,7 +59,7 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users', $user);
         }
 
@@ -57,7 +67,9 @@ class QueryTest extends TestCase
 
         $bindings = ['name' => 'John Doe', 'id' => 1];
 
-        $results = Metis::extract('query', $query, $bindings)->get();
+        $extractor = new Query;
+
+        $results = $extractor->extract($query, $bindings);
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
@@ -71,7 +83,7 @@ class QueryTest extends TestCase
 
         $this->migrateTables('test');
 
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection('test')->insert('users', $user);
         }
 
@@ -79,8 +91,10 @@ class QueryTest extends TestCase
 
         $options = ['connection' => 'test'];
 
-        $results = Metis::extract('query', $query, null, $options)->get();
+        $extractor = new Query($options);
 
-        $this->assertEquals($this->users, $results);
+        $results = $extractor->extract($query, null, $options);
+
+        $this->assertEquals($this->items, $results);
     }
 }

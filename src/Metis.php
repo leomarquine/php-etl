@@ -14,13 +14,6 @@ class Metis
     protected $items;
 
     /**
-     * The current globally used instance.
-     *
-     * @var object
-     */
-    protected static $instance;
-
-    /**
      * Global configuration array.
      *
      * @var array
@@ -33,20 +26,6 @@ class Metis
      * @var array
     */
     protected static $connections = [];
-
-    /**
-     * Create or get a Metis instance.
-     *
-     * @return static
-     */
-    private static function instance()
-    {
-        if (static::$instance == null) {
-            static::$instance = new Metis;
-        }
-
-        return static::$instance;
-    }
 
     /**
      * Set the global configuration or get a config item.
@@ -66,8 +45,6 @@ class Metis
         }
 
         static::$config = $config;
-
-        return static::instance();
     }
 
     /**
@@ -75,13 +52,11 @@ class Metis
      *
      * @param  array  $params
      * @param  string $name
-     * @return static
+     * @return void
      */
     public static function addConnection($params, $name = 'default')
     {
         static::$connections[$name] = DriverManager::getConnection($params);
-
-        return static::instance();
     }
 
     /**
@@ -93,6 +68,16 @@ class Metis
     public static function connection($name = 'default')
     {
         return static::$connections[$name];
+    }
+
+    /**
+    * Create a new Metis instance.
+    *
+    * @return Metis
+    */
+    public static function start()
+    {
+        return new Metis;
     }
 
     /**
@@ -110,17 +95,15 @@ class Metis
      *
      * @param  string $type
      * @param  array  $options
-     * @return Metis
+     * @return $this
      */
     public function utility($type, $options)
     {
-        $instance = (isset($this) && $this instanceof Metis) ? $this : new Metis;
-
-        $utility = $instance->factory($type, 'utilities', $options);
+        $utility = $this->factory($type, 'utilities', $options);
 
         $utility->handle();
 
-        return $instance;
+        return $this;
     }
 
     /**
@@ -130,17 +113,15 @@ class Metis
      * @param  mixed  $source
      * @param  array  $columns
      * @param  array  $options
-     * @return Metis
+     * @return $this
      */
     public function extract($type, $source, $columns = null, $options = [])
     {
-        $instance = (isset($this) && $this instanceof Metis) ? $this : new Metis;
+        $extractor = $this->factory($type, 'extractors', $options);
 
-        $extractor = $instance->factory($type, 'extractors', $options);
+        $this->items = $extractor->extract($source, $columns);
 
-        $instance->items = $extractor->extract($source, $columns);
-
-        return $instance;
+        return $this;
     }
 
     /**

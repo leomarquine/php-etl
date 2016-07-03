@@ -32,23 +32,12 @@ Adding a named connection:
 Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => 'db.sqlite'], 'connection_name');
 ```
 
-You can also use a fluent API:
-```PHP
-Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => 'db.sqlite'])
-     ->addConnection(['driver' => 'pdo_sqlite', 'database' => 'db2.sqlite'], 'connection_name');
-```
-
 ### Laravel Integration
 If you are using Laravel, you can skip 'Global Configuration' and 'Database Setup' steps. Metis provides a default configuration file and will register all connections of your application.
 
 Add the ServiceProvider to the `providers` array in `config/app.php` file:
 ```PHP
 Marquine\Metis\Providers\Laravel\MetisServiceProvider::class,
-```
-
-Add the Facade to the `aliases` array in `config/app.php` file:
-```PHP
-'Metis' => Marquine\Metis\Providers\Laravel\MetisFacade::class,
 ```
 
 Publish the configuration file using the artisan command:

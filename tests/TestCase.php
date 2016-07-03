@@ -6,11 +6,6 @@ use Marquine\Metis\Metis;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
-    protected $users = [
-        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-    ];
-
     protected function setUp()
     {
         parent::setUp();

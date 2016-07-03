@@ -3,7 +3,7 @@
 namespace Tests\Utilities;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Utilities\Command;
 
 class CommandTest extends TestCase
 {
@@ -18,7 +18,9 @@ class CommandTest extends TestCase
             'command' => $command
         ];
 
-        Metis::utility('command', $options);
+        $utility = new Command($options);
+
+        $utility->handle('command', $options);
 
         $this->assertFileExists('./tests/data/file.txt');
 
@@ -38,7 +40,9 @@ class CommandTest extends TestCase
             'command' => $commands
         ];
 
-        Metis::utility('command', $options);
+        $utility = new Command($options);
+
+        $utility->handle('command', $options);
 
         $this->assertFileExists('./tests/data/new.txt');
 

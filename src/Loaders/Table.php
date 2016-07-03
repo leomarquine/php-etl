@@ -231,21 +231,21 @@ class Table implements Loader
     */
     protected function transaction($items, $callback)
     {
-        if (! $transaction) {
+        if (! $this->transaction) {
             return call_user_func($callback, $items);
         }
 
-        $chunks = array_chunk($items, $this->transaction);
+        $chunks = array_chunk($items, $this->transaction, true);
 
         foreach ($chunks as $chunk) {
-            $this->connection->beginTransaction();
+            Metis::connection($this->connection)->beginTransaction();
 
             try {
                 call_user_func($callback, $chunk);
 
-                $this->connection->commit();
+                Metis::connection($this->connection)->commit();
             } catch (Exception $e) {
-                $this->connection->rollBack();
+                Metis::connection($this->connection)->rollBack();
 
                 throw $e;
             }

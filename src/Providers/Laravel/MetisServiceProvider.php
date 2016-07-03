@@ -37,9 +37,7 @@ class MetisServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('metis', function () {
-            return Metis::config(config('metis'));
-        });
+        //
     }
 
     /**

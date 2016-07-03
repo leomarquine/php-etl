@@ -11,5 +11,5 @@ interface Extractor
      * @param  mixed $columns
      * @return array
      */
-    public function extract($source, $columns);
+    public function extract($source, $columns = null);
 }

@@ -4,9 +4,15 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\Table;
 
 class TableTest extends TestCase
 {
+    protected $items = [
+        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+    ];
+
     protected function setUp()
     {
         parent::setUp();
@@ -17,39 +23,45 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users', $user);
         }
 
-        $results = Metis::extract('table', 'users')->get();
+        $extractor = new Table;
 
-        $this->assertEquals($this->users, $results);
+        $results = $extractor->extract('users');
+
+        $this->assertEquals($this->items, $results);
     }
 
     /** @test */
     function extract_specific_columns_from_a_database_table()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users_ts', $user);
         }
 
         $columns = ['id', 'name', 'email'];
 
-        $results = Metis::extract('table', 'users_ts', $columns)->get();
+        $extractor = new Table;
 
-        $this->assertEquals($this->users, $results);
+        $results = $extractor->extract('users_ts', $columns);
+
+        $this->assertEquals($this->items, $results);
     }
 
     /** @test */
     function extract_data_from_a_database_table_with_a_where_clause()
     {
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection()->insert('users', $user);
         }
 
         $options = ['where' => ['id' => 1]];
 
-        $results = Metis::extract('table', 'users', null, $options)->get();
+        $extractor = new Table($options);
+
+        $results = $extractor->extract('users', null, $options);
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
@@ -63,14 +75,16 @@ class TableTest extends TestCase
 
         $this->migrateTables('connection_name');
 
-        foreach ($this->users as $user) {
+        foreach ($this->items as $user) {
             Metis::connection('connection_name')->insert('users', $user);
         }
 
         $options = ['connection' => 'connection_name'];
 
-        $results = Metis::extract('table', 'users', null, $options)->get();
+        $extractor = new Table($options);
 
-        $this->assertEquals($this->users, $results);
+        $results = $extractor->extract('users', null, $options);
+
+        $this->assertEquals($this->items, $results);
     }
 }

@@ -16,7 +16,7 @@ class FixedWidth implements Extractor
      * @param  mixed  $columns
      * @return array
      */
-    public function extract($source, $columns)
+    public function extract($source, $columns = null)
     {
         $source = $this->validateSource($source);
 

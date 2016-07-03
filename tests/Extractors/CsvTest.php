@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
+use Marquine\Metis\Extractors\Csv;
 
 class CsvTest extends TestCase
 {
@@ -15,7 +15,9 @@ class CsvTest extends TestCase
     /** @test */
     function extracts_data_from_a_csv_file()
     {
-        $results = Metis::extract('csv', 'users.csv')->get();
+        $extractor = new Csv;
+
+        $results = $extractor->extract('users.csv');
 
         $this->assertEquals($this->expected, $results);
     }
@@ -25,7 +27,9 @@ class CsvTest extends TestCase
     {
         $options = ['delimiter' => ',', 'enclosure' => "'"];
 
-        $results = Metis::extract('csv', 'users_custom_options.csv', null, $options)->get();
+        $extractor = new Csv($options);
+
+        $results = $extractor->extract('users_custom_options.csv');
 
         $this->assertEquals($this->expected, $results);
     }
@@ -35,8 +39,10 @@ class CsvTest extends TestCase
     {
         $columns = ['id' => 1, 'name' => 2, 'email' => 3];
 
-        $data = Metis::extract('csv', 'users_noheader.csv', $columns)->get();
+        $extractor = new Csv;
 
-        $this->assertEquals($this->expected, $data);
+        $results = $extractor->extract('users_noheader.csv', $columns);
+
+        $this->assertEquals($this->expected, $results);
     }
 }

@@ -10,7 +10,7 @@ trait SetOptions
      * @param  array $options
      * @return void
      */
-    public function __construct($options)
+    public function __construct($options = [])
     {
         foreach ($options as $option => $value) {
             if (property_exists($this, $option)) {

@@ -25,7 +25,7 @@ class Xml implements Extractor
      * @param  mixed  $columns
      * @return array
      */
-    public function extract($source, $columns)
+    public function extract($source, $columns = null)
     {
         $source = $this->validateSource($source);
 
@@ -58,7 +58,8 @@ class Xml implements Extractor
         $data = [];
 
         foreach ($columns as $column => $path) {
-            $data[$column] = (string) array_shift($row->xpath($path));
+            $value = $row->xpath($path);
+            $data[$column] = (string) array_shift($value);
         }
 
         return $data;

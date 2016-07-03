@@ -14,7 +14,12 @@ class TraitsTest extends TestCase
     /** @test */
     function indexable()
     {
-        $users = $this->index($this->users, ['id', 'name']);
+        $items = [
+            ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
+        $users = $this->index($items, ['id', 'name']);
 
         $expected = [
             '1John Doe' => ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],

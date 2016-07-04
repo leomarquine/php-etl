@@ -47,21 +47,34 @@ php artisan vendor:publish --provider="Marquine\Metis\Providers\Laravel\MetisSer
 
 
 ## Usage
+
+Create a new Metis instance and start chaining methods:
+```PHP
+$metis = new Metis;
+
+$metis->extract(...)->transform(...)->load(...);
+```
+
+You can also call the `start` static method to create a new Metis instance:
+```PHP
+Metis::start()->extract(...)->transform(...)->load(...);
+```
+
 ### Extracting
 ```PHP
-Metis::extract($type, $source, $columns = null, $options = []);
+$metis->extract($type, $source, $columns = null, $options = []);
 ```
 
 #### Array
 Get all array columns:
 ```PHP
-Metis::extract('array', $array);
+$metis->extract('array', $array);
 ```
 Get specific columns:
 ```PHP
 $columns = ['id', 'name']; //columns names
 
-Metis::extract('array', $array, $columns);
+$metis->extract('array', $array, $columns);
 ```
 The Array extractor does not have any option.
 
@@ -69,7 +82,7 @@ The Array extractor does not have any option.
 #### CSV
 Extract from a CSV file with columns header:
 ```PHP
-Metis::extract('csv', '/path/to/file.csv');
+$metis->extract('csv', '/path/to/file.csv');
 ```
 Extract from a CSV file without columns header:
 ```PHP
@@ -78,7 +91,7 @@ $columns = [
     'name' => 2,
 ];
 
-Metis::extract('csv', '/path/to/file.csv', $columns);
+$metis->extract('csv', '/path/to/file.csv', $columns);
 ```
 Options:
 
@@ -96,7 +109,7 @@ $columns = [
     'name' => [5, 40],
 ];
 
-Metis::extract('fixed_width', '/path/to/file.txt', $columns);
+$metis->extract('fixedWidth', '/path/to/file.txt', $columns);
 ```
 The FixedWidth extractor does not have any option.
 
@@ -104,7 +117,7 @@ The FixedWidth extractor does not have any option.
 #### Json
 Extract from a Json file:
 ```PHP
-Metis::extract('json', '/path/to/file.json');
+$metis->extract('json', '/path/to/file.json');
 ```
 Extract from a Json file with custom attributes path:
 ```PHP
@@ -113,7 +126,7 @@ $columns = [
     'name' => '$..bindings[*].name.value',
 ];
 
-Metis::extract('json', '/path/to/file.json', $columns);
+$metis->extract('json', '/path/to/file.json', $columns);
 ```
 The Json extractor does not have any option.
 
@@ -122,14 +135,14 @@ Extract from a database table using a custom query:
 ```PHP
 $query = 'SELECT * FROM users';
 
-Metis::extract('query', $query);
+$metis->extract('query', $query);
 ```
 Extract from a database table using a custom query and bindings:
 ```PHP
 $query = 'SELECT * FROM users WHERE status = ?';
 $bindings = ['active']
 
-Metis::extract('query', $query, $bindings);
+$metis->extract('query', $query, $bindings);
 ```
 Options:
 
@@ -141,13 +154,13 @@ Options:
 #### Table
 Extract from a database table:
 ```PHP
-Metis::extract('table', 'table_name');
+$metis->extract('table', 'table_name');
 ```
 Extract specific columns from a database table:
 ```PHP
 $columns = ['id', 'nome'];
 
-Metis::extract('table', 'table_name', $columns);
+$metis->extract('table', 'table_name', $columns);
 ```
 Options:
 
@@ -160,7 +173,7 @@ Options:
 #### XML
 Extract from a XML file:
 ```PHP
-Metis::extract('xml', '/path/to/file.xml');
+$metis->extract('xml', '/path/to/file.xml');
 ```
 Extract from a XML file with custom attributes and loop path:
 ```PHP
@@ -170,7 +183,7 @@ $columns = [
 ];
 $options = ['loop' => '/users/user'];
 
-Metis::extract('xml', '/path/to/file.xml', $columns, $options);
+$metis->extract('xml', '/path/to/file.xml', $columns, $options);
 ```
 Options:
 
@@ -182,19 +195,19 @@ Options:
 
 ### Transforming
 ```PHP
-Metis::extract(...)->transform($type, $columns = null, $options = []);
+$metis->extract(...)->transform($type, $columns = null, $options = []);
 ```
 #### Trim
 Strip whitespace from the beginning and end of a string in all transformation columns:
 ```PHP
-Metis::extract(...)->transform('trim');
+$metis->extract(...)->transform('trim');
 ```
 Strip pipes from the beginning of a string in specific transformation columns:
 ```PHP
 $columns = ['id', 'name'];
 $options = ['type' => 'left', 'mask' => '|'];
 
-Metis::extract(...)->transform('trim', $columns, $options);
+$metis->extract(...)->transform('trim', $columns, $options);
 ```
 Options:
 
@@ -207,13 +220,13 @@ Options:
 
 ### Loading
 ```PHP
-Metis::extract(...)->transform(...)->load($type, $destination, $options = []);
+$metis->extract(...)->transform(...)->load($type, $destination, $options = []);
 ```
 
 #### Table
 Load data to a database table:
 ```PHP
-Metis::extract(...)->transform(...)->load('table', 'table_name');
+$metis->extract(...)->transform(...)->load('table', 'table_name');
 ```
 Load data to a database table using timestamps and custom primary key:
 ```PHP
@@ -222,7 +235,7 @@ $options = [
     'keys' => ['id', 'company_id']
 ];
 
-Metis::extract(...)->transform(...)->load('table', 'table_name', $options);
+$metis->extract(...)->transform(...)->load('table', 'table_name', $options);
 ```
 Options:
 
@@ -242,7 +255,7 @@ Options:
 
 ### Utilities
 ```PHP
-Metis::utility($type, $options);
+$metis->utility($type, $options);
 ```
 
 #### Command
@@ -252,7 +265,7 @@ $options = [
     'command' => 'cp /path/to/file.csv /new/path/file.csv'
 ];
 
-Metis::utility('command', $options);
+$metis->utility('command', $options);
 ```
 Execute multiple commands:
 ```PHP
@@ -263,7 +276,7 @@ $options = [
     ]
 ];
 
-Metis::utility('command', $options);
+$metis->utility('command', $options);
 ```
 Options:
 

@@ -28,6 +28,10 @@ class MetisServiceProvider extends ServiceProvider
 
             Metis::addConnection($connection, $name);
         }
+
+        if (config('metis')) {
+            Metis::config(config('metis'));
+        }
     }
 
     /**

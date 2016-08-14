@@ -28,7 +28,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users');
+        $results = Metis::connection()->table('users')->select();
 
         $this->assertEquals($items, $results);
     }
@@ -36,8 +36,8 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data()
     {
-        Metis::connection()->insert('users', ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']);
-        Metis::connection()->insert('users', ['id' => '2', 'name' => 'Jane', 'email' => 'janedoe@email.com']);
+        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -48,7 +48,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users');
+        $results = Metis::connection()->table('users')->select();
 
         $this->assertEquals($items, $results);
     }
@@ -56,8 +56,8 @@ class TableTest extends TestCase
     /** @test */
     function delete_records_that_are_not_in_the_source()
     {
-        Metis::connection()->insert('users', ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']);
-        Metis::connection()->insert('users', ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']);
+        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John', 'email' => 'johndoe@email.com'],
@@ -69,7 +69,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users');
+        $results = Metis::connection()->table('users')->select();
 
         $this->assertEquals($items, $results);
     }
@@ -88,7 +88,7 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users_ts');
+        $results = Metis::connection()->table('users_ts')->select();
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['created_at']));
@@ -100,8 +100,8 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data_with_timestamps()
     {
-        Metis::connection()->insert('users_ts', ['id' => '1', 'name' => 'John', 'email' => 'johndoe@email.com']);
-        Metis::connection()->insert('users_ts', ['id' => '2', 'name' => 'Jane', 'email' => 'janedoe@email.com']);
+        Metis::connection()->exec("insert into users_ts (id, name, email) values (1, 'John', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -114,7 +114,7 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users_ts');
+        $results = Metis::connection()->table('users_ts')->select();
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['updated_at']));
@@ -125,8 +125,8 @@ class TableTest extends TestCase
     /** @test */
     function soft_delete_records_that_are_not_in_the_source()
     {
-        Metis::connection()->insert('users_ts', ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']);
-        Metis::connection()->insert('users_ts', ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']);
+        Metis::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [];
 
@@ -136,7 +136,7 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->fetchAll('select * from users_ts');
+        $results = Metis::connection()->table('users_ts')->select();
 
         $this->assertNotEmpty($results);
 

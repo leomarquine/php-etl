@@ -23,9 +23,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query()
     {
-        foreach ($this->items as $user) {
-            Metis::connection()->insert('users', $user);
-        }
+        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users';
 
@@ -39,9 +38,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
-        foreach ($this->items as $user) {
-            Metis::connection()->insert('users', $user);
-        }
+        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users WHERE id = ?';
 
@@ -59,9 +57,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
-        foreach ($this->items as $user) {
-            Metis::connection()->insert('users', $user);
-        }
+        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users WHERE id = :id AND name = :name';
 
@@ -79,13 +76,12 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_connection()
     {
-        Metis::addConnection(['driver' => 'pdo_sqlite', 'database' => ':memory:'], 'test');
+        Metis::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'test');
 
         $this->migrateTables('test');
 
-        foreach ($this->items as $user) {
-            Metis::connection('test')->insert('users', $user);
-        }
+        Metis::connection('test')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Metis::connection('test')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users';
 

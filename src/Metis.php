@@ -3,6 +3,7 @@
 namespace Marquine\Metis;
 
 use Doctrine\DBAL\DriverManager;
+use Marquine\Metis\Database\Connectors\ConnectionFactory;
 
 class Metis
 {
@@ -50,13 +51,14 @@ class Metis
     /**
      * Add a database connection.
      *
-     * @param  array  $params
+     * @param  array  $config
      * @param  string $name
      * @return void
      */
-    public static function addConnection($params, $name = 'default')
+    public static function addConnection($config, $name = 'default')
     {
-        static::$connections[$name] = DriverManager::getConnection($params);
+        static::$connections[$name] = ConnectionFactory::make($config);
+        //static::$connections[$name] = DriverManager::getConnection($params);
     }
 
     /**

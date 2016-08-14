@@ -33,20 +33,10 @@ class Table implements Extractor
      */
     public function extract($table, $columns = null)
     {
-        $columns = $columns ? implode(', ', $columns) : '*';
-
-        $statement = "select $columns from $table";
-
-        if (! empty($this->where)) {
-            $conditions = array_map(function($column) {
-                return "$column = :$column";
-            }, array_flip($this->where));
-
-            $conditions = implode(' and ', $conditions);
-
-            $statement .= " where $conditions";
+        if (is_string($columns)) {
+            $columns = [$columns];
         }
 
-        return Metis::connection($this->connection)->fetchAll($statement, $this->where);
+        return Metis::connection($this->connection)->table($table)->select($columns, $this->where);
     }
 }

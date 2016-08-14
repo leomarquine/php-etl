@@ -88,6 +88,10 @@ class Table implements Loader
      */
     protected $transaction = 100;
 
+    protected $columns;
+
+    protected $database;
+
     /**
      * Load data to the given destination.
      *
@@ -97,7 +101,11 @@ class Table implements Loader
      */
     public function load($table, $items)
     {
+        $this->database = Metis::connection($this->connection);
+
         $this->table = $table;
+
+        $this->columns = $this->columns($items);
 
         $this->time = date('Y-m-d G:i:s');
 
@@ -106,9 +114,7 @@ class Table implements Loader
         $old = [];
 
         if (! $this->skipDataCheck) {
-            $select = Metis::connection($this->connection)->fetchAll(
-                "select * from {$this->table}"
-            );
+            $select = $this->database->table($this->table)->select();
 
             $old = $this->index($select, $this->keys);
 
@@ -140,18 +146,20 @@ class Table implements Loader
      */
     protected function insert($items)
     {
-        $callback = function($items) {
+        $insert = $this->database->table($this->table)->prepareInsert($this->columns);
+
+        $callback = function ($items) use ($insert) {
             foreach ($items as $item) {
                 if ($this->timestamps) {
                     $item['created_at'] = $this->time;
                     $item['updated_at'] = $this->time;
                 }
 
-                Metis::connection($this->connection)->insert($this->table, $item);
+                $insert->execute(array_values($item));
             }
         };
 
-        $this->transaction($items, $callback);
+        $this->database->transaction($items, $callback, $this->transaction);
     }
 
     /**
@@ -163,10 +171,13 @@ class Table implements Loader
      */
     protected function update($items, $old)
     {
-        $callback = function($items) use ($old) {
+        $update = $this->database->table($this->table)->prepareUpdate($this->columns, $this->keys);
+
+        $callback = function($items) use ($update, $old) {
             foreach ($items as $key => $item) {
                 if ($this->forceUpdate || $this->needsUpdate($item, $old[$key])) {
                     if ($this->timestamps) {
+                        $item['created_at'] = $old[$key]['created_at'];
                         $item['updated_at'] = $this->time;
                     }
 
@@ -174,14 +185,12 @@ class Table implements Loader
                         $item['deleted_at'] = null;
                     }
 
-                    Metis::connection($this->connection)->update(
-                        $this->table, $item, array_intersect_key($item, $this->keys)
-                    );
+                    $update->execute($item);
                 }
             }
         };
 
-        $this->transaction($items, $callback);
+        $this->database->transaction($items, $callback, $this->transaction);
     }
 
     /**
@@ -192,15 +201,15 @@ class Table implements Loader
      */
     protected function delete($items)
     {
-        $callback = function ($items) {
+        $delete = $this->database->table($this->table)->prepareDelete($this->keys);
+
+        $callback = function ($items) use ($delete) {
             foreach ($items as $item) {
-                Metis::connection($this->connection)->delete(
-                    $this->table, array_intersect_key($item, $this->keys)
-                );
+                $delete->execute(array_intersect_key($item, $this->keys));
             }
         };
 
-        $this->transaction($items, $callback);
+        $this->database->transaction($items, $callback, $this->transaction);
     }
 
     /**
@@ -211,45 +220,17 @@ class Table implements Loader
      */
     protected function softDelete($items)
     {
-        $callback = function ($items) {
+        $update = $this->database->table($this->table)->prepareUpdate($this->columns, $this->keys);
+
+        $callback = function ($items) use ($update) {
             foreach ($items as $item) {
-                Metis::connection($this->connection)->update(
-                    $this->table, ['deleted_at' => $this->time], array_intersect_key($item, $this->keys)
-                );
+                $params = array_merge(['deleted_at' => $this->time], array_intersect_key($item, $this->keys));
+
+                $update->execute($params);
             }
         };
 
-        $this->transaction($items, $callback);
-    }
-
-    /**
-    * Perform a database transaction.
-    *
-    * @param  array    $items
-    * @param  callable $callback
-    * @return void
-    */
-    protected function transaction($items, $callback)
-    {
-        if (! $this->transaction) {
-            return call_user_func($callback, $items);
-        }
-
-        $chunks = array_chunk($items, $this->transaction, true);
-
-        foreach ($chunks as $chunk) {
-            Metis::connection($this->connection)->beginTransaction();
-
-            try {
-                call_user_func($callback, $chunk);
-
-                Metis::connection($this->connection)->commit();
-            } catch (Exception $e) {
-                Metis::connection($this->connection)->rollBack();
-
-                throw $e;
-            }
-        }
+        $this->database->transaction($items, $callback, $this->transaction);
     }
 
     /**
@@ -288,5 +269,23 @@ class Table implements Loader
         }
 
         $this->keys = $keys;
+    }
+
+    protected function columns($items)
+    {
+        $item = reset($items);
+
+        $columns = $item ? array_keys($item) : [];
+
+        if ($this->timestamps) {
+            $columns[] = 'created_at';
+            $columns[] = 'updated_at';
+        }
+
+        if ($this->delete === 'soft') {
+            $columns[] = 'deleted_at';
+        }
+
+        return $columns;
     }
 }

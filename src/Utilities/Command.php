@@ -1,20 +1,22 @@
 <?php
 
-namespace Marquine\Metis\Utilities;
+namespace Marquine\Etl\Utilities;
 
-use Marquine\Metis\Contracts\Utility;
-use Marquine\Metis\Traits\SetOptions;
-
-class Command implements Utility
+class Command implements UtilityInterface
 {
-    use SetOptions;
+    /**
+    * Command to run.
+    *
+    * @var array
+    */
+    public $command;
 
     /**
     * List of commands to run.
     *
     * @var array
     */
-    protected $command;
+    public $commands = [];
 
     /**
     * Handle the utility.
@@ -23,11 +25,11 @@ class Command implements Utility
     */
     public function handle()
     {
-        if (is_string($this->command)) {
-            $this->command = [$this->command];
+        if ($this->command) {
+            shell_exec($this->command);
         }
 
-        foreach ($this->command as $command) {
+        foreach ($this->commands as $command) {
             shell_exec($command);
         }
     }

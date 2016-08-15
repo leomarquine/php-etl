@@ -3,24 +3,20 @@
 namespace Tests\Utilities;
 
 use Tests\TestCase;
-use Marquine\Metis\Utilities\Command;
+use Marquine\Etl\Utilities\Command;
 
 class CommandTest extends TestCase
 {
     /** @test */
     function execute_a_shell_command()
     {
-        $command = (strncasecmp(PHP_OS, 'win', 3) == 0)
+        $utility = new Command;
+
+        $utility->command = (strncasecmp(PHP_OS, 'win', 3) == 0)
             ? 'copy nul tests\data\file.txt'
             : 'touch ./tests/data/file.txt';
 
-        $options = [
-            'command' => $command
-        ];
-
-        $utility = new Command($options);
-
-        $utility->handle('command', $options);
+        $utility->handle();
 
         $this->assertFileExists('./tests/data/file.txt');
 
@@ -32,17 +28,13 @@ class CommandTest extends TestCase
     /** @test */
     function execute_multiple_shell_commands()
     {
-        $commands = (strncasecmp(PHP_OS, 'win', 3) == 0)
+        $utility = new Command;
+
+        $utility->commands = (strncasecmp(PHP_OS, 'win', 3) == 0)
             ? ['copy nul tests\data\file.txt', 'rename tests\data\file.txt new.txt']
             : ['touch ./tests/data/file.txt', 'mv ./tests/data/file.txt ./tests/data/new.txt'];
 
-        $options = [
-            'command' => $commands
-        ];
-
-        $utility = new Command($options);
-
-        $utility->handle('command', $options);
+        $utility->handle();
 
         $this->assertFileExists('./tests/data/new.txt');
 

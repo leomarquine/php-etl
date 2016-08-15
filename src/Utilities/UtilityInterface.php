@@ -1,8 +1,8 @@
 <?php
 
-namespace Marquine\Metis\Contracts;
+namespace Marquine\Etl\Utilities;
 
-interface Utility
+interface UtilityInterface
 {
     /**
      * Handle the utility.

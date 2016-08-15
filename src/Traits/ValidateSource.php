@@ -1,15 +1,15 @@
 <?php
 
-namespace Marquine\Metis\Traits;
+namespace Marquine\Etl\Traits;
 
-use Marquine\Metis\Metis;
+use Marquine\Etl\Etl;
 
 trait ValidateSource
 {
     /**
      * Validate the given source.
      *
-     * @param  string $source
+     * @param string $source
      * @return string
      */
     protected function validateSource($source)
@@ -18,6 +18,6 @@ trait ValidateSource
             return $source;
         }
 
-        return Metis::config('default_path') . DIRECTORY_SEPARATOR . $source;
+        return Etl::config('default_path') . DIRECTORY_SEPARATOR . $source;
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace Marquine\Metis\Contracts;
+namespace Marquine\Etl\Loaders;
 
-interface Loader
+interface LoaderInterface
 {
     /**
      * Load data to the given destination.
      *
-     * @param  string $destination
-     * @param  array  $items
+     * @param string $destination
+     * @param array $items
      * @return void
      */
     public function load($destination, $items);

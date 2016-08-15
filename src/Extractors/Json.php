@@ -1,36 +1,41 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
 use Flow\JSONPath\JSONPath;
-use Marquine\Metis\Contracts\Extractor;
-use Marquine\Metis\Traits\ValidateSource;
+use Marquine\Etl\Traits\ValidateSource;
 
-class Json implements Extractor
+class Json implements ExtractorInterface
 {
     use ValidateSource;
 
     /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    public $columns;
+
+    /**
      * Extract data from the given source.
      *
-     * @param  string $source
-     * @param  mixed  $columns
+     * @param string $source
      * @return array
      */
-    public function extract($source, $columns = null)
+    public function extract($source)
     {
         $source = $this->validateSource($source);
 
         $items = json_decode(file_get_contents($source), true);
 
-        if ($columns) {
+        if ($this->columns) {
             $jsonPath = new JSONPath($items);
 
-            foreach ($columns as $key => $path) {
-                $columns[$key] = $jsonPath->find($path)->data();
+            foreach ($this->columns as $key => $path) {
+                $this->columns[$key] = $jsonPath->find($path)->data();
             }
 
-            $items = $this->transpose($columns);
+            $items = $this->transpose($this->columns);
         }
 
         return $items;
@@ -39,7 +44,7 @@ class Json implements Extractor
     /**
      * Switch columns and rows.
      *
-     * @param  array $columns
+     * @param array $columns
      * @return array
      */
     protected function transpose($columns)

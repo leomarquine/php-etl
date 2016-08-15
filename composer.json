@@ -1,6 +1,6 @@
 {
-    "name": "marquine/metis",
-    "description": "ETL tools for PHP",
+    "name": "marquine/php-etl",
+    "description": "Extract, Transform and Load data using PHP.",
     "keywords": ["etl", "extract", "transform", "load", "extraction", "transformation", "seed", "data", "laravel"],
     "license": "MIT",
     "authors": [
@@ -11,12 +11,11 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "flow/jsonpath": "^0.3.1",
-        "doctrine/dbal": "^2.5"
+        "flow/jsonpath": "^0.3.1"
     },
     "autoload": {
         "psr-4": {
-            "Marquine\\Metis\\": "src/"
+            "Marquine\\Etl\\": "src/"
         }
     },
     "require-dev": {

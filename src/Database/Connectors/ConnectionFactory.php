@@ -1,46 +1,43 @@
 <?php
 
-namespace Marquine\Metis\Database\Connectors;
+namespace Marquine\Etl\Database\Connectors;
 
 use InvalidArgumentException;
-use Marquine\Metis\Database\SqliteConnection;
+use Marquine\Etl\Database\Connection;
 
 class ConnectionFactory
 {
+    /**
+    * Make a new database connection.
+    *
+    * @param array $config
+    * @return \Marquine\Etl\Database\Connection
+    */
     public static function make($config)
     {
         if (! isset($config['driver'])) {
             throw new InvalidArgumentException('A driver must be specified.');
         }
 
-        $driver = $config['driver'];
+        $pdo = static::selectConnector($config['driver'])
+                     ->connect($config);
 
-        $pdo = static::selectConnector($driver)->connect($config);
-
-        return static::selectConnection($driver, $pdo);
+        return new Connection($pdo);
     }
 
+    /**
+    * Select the database connector.
+    *
+    * @param string driver
+    * @return \Marquine\Etl\Database\Connectors\Connector
+    */
     public static function selectConnector($driver)
     {
         switch ($driver) {
             case 'sqlite':
                 return new SqliteConnector;
-
-            default:
-                # code...
-                break;
         }
-    }
 
-    public static function selectConnection($driver, $pdo)
-    {
-        switch ($driver) {
-            case 'sqlite':
-                return new SqliteConnection($pdo);
-
-            default:
-                # code...
-                break;
-        }
+        throw new InvalidArgumentException('The specified driver is not valid.');
     }
 }

@@ -1,22 +1,27 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
-use Marquine\Metis\Contracts\Extractor;
-use Marquine\Metis\Traits\ValidateSource;
+use Marquine\Etl\Traits\ValidateSource;
 
-class FixedWidth implements Extractor
+class FixedWidth implements ExtractorInterface
 {
     use ValidateSource;
 
     /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    public $columns;
+
+    /**
      * Extract data from the given source.
      *
-     * @param  string $source
-     * @param  mixed  $columns
+     * @param string $source
      * @return array
      */
-    public function extract($source, $columns = null)
+    public function extract($source)
     {
         $source = $this->validateSource($source);
 
@@ -25,7 +30,7 @@ class FixedWidth implements Extractor
         $handle = fopen($source, 'r');
         if ($handle) {
             while ($row = fgets($handle)) {
-                $items[] = $this->processRow($row, $columns);
+                $items[] = $this->processRow($row, $this->columns);
             }
             fclose($handle);
         }
@@ -36,8 +41,8 @@ class FixedWidth implements Extractor
     /**
      * Converts a row string into array.
      *
-     * @param  string $row
-     * @param  array  $columns
+     * @param string $row
+     * @param array $columns
      * @return array
      */
     public function processRow($row, $columns)

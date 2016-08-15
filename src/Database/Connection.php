@@ -1,42 +1,64 @@
 <?php
 
-namespace Marquine\Metis\Database;
+namespace Marquine\Etl\Database;
 
-abstract class Connection
+class Connection
 {
+    /**
+    * PDO connection.
+    *
+    * @var \PDO
+    */
     protected $pdo;
 
-    protected $table;
-
+    /**
+    * Create a new Connection instance.
+    *
+    * @param \PDO $pdo
+    * @return void
+    */
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
     }
 
+    /**
+    * Execute an SQL statement.
+    *
+    * @param string $statement
+    * @return int
+    */
     public function exec($statement)
     {
         return $this->pdo->exec($statement);
     }
 
+    /**
+    * Prepare a statement.
+    *
+    * @param string $statement
+    * @return \PDOStatement
+    */
     public function prepare($statement)
     {
         return $this->pdo->prepare($statement);
     }
 
-    public function table($table)
-    {
-        $this->table = $table;
-
-        return $this;
-    }
-
-    public function select($columns = null, $where = [])
+    /**
+    * Execute a select query.
+    *
+    * @param string $table
+    * @param array|null $columns
+    * @param array|null $where
+    * @return array
+    */
+    public function select($table, $columns = null, $where = null)
     {
         $columns = $columns ? implode(', ', $columns) : '*';
 
-        $sql = "select {$columns} from {$this->table}";
+        $sql = "select {$columns} from {$table}";
 
-        if (! empty($where)) {
+        if ($where) {
             $conditions = $this->bindings(array_keys($where), '{column} = :{column}', ' and ');
 
             $sql .= " where {$conditions}";
@@ -49,33 +71,55 @@ abstract class Connection
         return $statement->fetchAll();
     }
 
-    public function prepareInsert($columns)
+    /**
+    * Prepare a select statement.
+    *
+    * @param string $table
+    * @param array $columns
+    * @return \PDOStatement
+    */
+    public function prepareInsert($table, $columns)
     {
         $values = $this->bindings($columns, ':{column}', ', ');
 
         $columns = implode(', ', $columns);
 
-        $sql = "insert into {$this->table} ({$columns}) values ({$values})";
+        $sql = "insert into {$table} ({$columns}) values ({$values})";
 
         return $this->pdo->prepare($sql);
     }
 
-    public function prepareUpdate($columns, $keys)
+    /**
+    * Prepare an update statement.
+    *
+    * @param string $table
+    * @param array $columns
+    * @param array $keys
+    * @return \PDOStatement
+    */
+    public function prepareUpdate($table, $columns, $keys)
     {
         $columns = $this->bindings($columns, '{column} = :{column}', ', ');
 
         $where = $this->bindings($keys, '{column} = :{column}', ' and ');
 
-        $sql = "update {$this->table} set {$columns} where {$where}";
+        $sql = "update {$table} set {$columns} where {$where}";
 
         return $this->pdo->prepare($sql);
     }
 
-    public function prepareDelete($keys)
+    /**
+    * Prepare a delete statement.
+    *
+    * @param string $table
+    * @param array $keys
+    * @return \PDOStatement
+    */
+    public function prepareDelete($table, $keys)
     {
         $where = $this->bindings($keys, '{column} = :{column}', ' and ');
 
-        $sql = "delete from {$this->table} where {$where}";
+        $sql = "delete from {$table} where {$where}";
 
         return $this->pdo->prepare($sql);
     }
@@ -83,8 +127,9 @@ abstract class Connection
     /**
     * Perform a database transaction.
     *
-    * @param  array    $items
-    * @param  callable $callback
+    * @param array $items
+    * @param callable $callback
+    * @param int $size
     * @return void
     */
     public function transaction($items, $callback, $size)
@@ -110,6 +155,14 @@ abstract class Connection
         }
     }
 
+    /**
+    * Make columns bindings.
+    *
+    * @param array $columns
+    * @param string $mask
+    * @param string $separator
+    * @return string
+    */
     protected function bindings($columns, $mask, $separator)
     {
         $columns = array_map(function ($column) use ($mask) {

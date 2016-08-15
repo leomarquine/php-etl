@@ -1,16 +1,21 @@
 <?php
 
-namespace Marquine\Metis\Database\Connectors;
+namespace Marquine\Etl\Database\Connectors;
 
 use PDO;
 
 class SqliteConnector extends Connector
 {
+    /**
+    * Connect to a database.
+    *
+    * @param array $config
+    * @return \PDO
+    */
     public function connect($config)
     {
         $database = $config['database'];
 
         return new PDO("sqlite:{$database}", null, null, $this->options);
-        //return new PDO("mysql:host=192.168.20.20;dbname=teste", 'root', '1234', $this->options);
     }
 }

@@ -1,42 +1,43 @@
 <?php
 
-namespace Marquine\Metis\Transformers;
+namespace Marquine\Etl\Transformers;
 
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Contracts\Transformer;
-
-class Trim implements Transformer
+class Trim implements TransformerInterface
 {
-    use SetOptions;
+    /**
+     * Transformer columns.
+     *
+     * @var array
+     */
+    public $columns;
 
     /**
      * The trim type.
      *
      * @var string
      */
-    protected $type = 'both';
+    public $type = 'both';
 
     /**
      * The trim mask.
      *
      * @var string
      */
-    protected $mask = " \t\n\r\0\x0B";
+    public $mask = " \t\n\r\0\x0B";
 
     /**
      * Execute a transformation.
      *
-     * @param  array $items
-     * @param  mixed $columns
+     * @param array $items
      * @return array
      */
-    public function transform($items, $columns = null)
+    public function transform($items)
     {
         $this->normalizeType();
 
-        return array_map(function($row) use ($columns) {
-            if ($columns) {
-                foreach ($columns as $column) {
+        return array_map(function($row) {
+            if ($this->columns) {
+                foreach ($this->columns as $column) {
                     $row[$column] = call_user_func($this->type, $row[$column], $this->mask);
                 }
             } else {
@@ -60,17 +61,20 @@ class Trim implements Transformer
             case 'ltrim':
             case 'start':
             case 'left':
-                $this->type = 'ltrim'; break;
+                $this->type = 'ltrim';
+                break;
 
             case 'rtrim':
             case 'end':
             case 'right':
-                $this->type = 'rtrim'; break;
+                $this->type = 'rtrim';
+                break;
 
             case 'trim':
             case 'all':
             case 'both':
-                $this->type = 'trim'; break;
+                $this->type = 'trim';
+                break;
 
             default:
                 $this->type = 'trim';

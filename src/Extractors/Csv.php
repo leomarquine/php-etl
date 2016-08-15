@@ -1,37 +1,41 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Contracts\Extractor;
-use Marquine\Metis\Traits\ValidateSource;
+use Marquine\Etl\Traits\ValidateSource;
 
-class Csv implements Extractor
+class Csv implements ExtractorInterface
 {
-    use SetOptions, ValidateSource;
+    use ValidateSource;
+
+    /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    public $columns;
 
     /**
      * The delimiter string.
      *
      * @var string
      */
-    protected $delimiter = ';';
+    public $delimiter = ';';
 
     /**
      * The enclosure string.
      *
      * @var string
      */
-    protected $enclosure = '"';
+    public $enclosure = '"';
 
     /**
      * Extract data from the given source.
      *
-     * @param  string $source
-     * @param  mixed  $columns
+     * @param string $source
      * @return array
      */
-    public function extract($source, $columns = null)
+    public function extract($source)
     {
         $source = $this->validateSource($source);
 
@@ -40,10 +44,10 @@ class Csv implements Extractor
         $handle = fopen($source, 'r');
         if ($handle) {
             while ($row = fgets($handle)) {
-                if (! $columns) {
-                    $columns = $this->makeColumns($row);
+                if (! $this->columns) {
+                    $this->columns = $this->makeColumns($row);
                 } else {
-                    $items[] = $this->processRow($row, $columns);
+                    $items[] = $this->processRow($row, $this->columns);
                 }
             }
             fclose($handle);
@@ -56,8 +60,8 @@ class Csv implements Extractor
     /**
      * Converts the row string into array.
      *
-     * @param  string $row
-     * @param  array  $columns
+     * @param string $row
+     * @param array $columns
      * @return array
      */
     protected function processRow($row, $columns)
@@ -76,7 +80,7 @@ class Csv implements Extractor
     /**
      * Make columns based on csv header.
      *
-     * @param  string $header
+     * @param string $header
      * @return array
      */
     protected function makeColumns($header)

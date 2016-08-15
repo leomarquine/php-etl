@@ -4,8 +4,8 @@ namespace Tests\Loaders;
 
 use DateTime;
 use Tests\TestCase;
-use Marquine\Metis\Metis;
-use Marquine\Metis\Loaders\Table;
+use Marquine\Etl\Etl;
+use Marquine\Etl\Loaders\Table;
 
 class TableTest extends TestCase
 {
@@ -28,7 +28,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->table('users')->select();
+        $results = Etl::connection()->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -36,8 +36,8 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data()
     {
-        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users values (2, 'Jane', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -48,7 +48,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->table('users')->select();
+        $results = Etl::connection()->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -56,20 +56,20 @@ class TableTest extends TestCase
     /** @test */
     function delete_records_that_are_not_in_the_source()
     {
-        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John', 'email' => 'johndoe@email.com'],
         ];
 
-        $options = ['delete' => true];
+        $loader = new Table;
 
-        $loader = new Table($options);
+        $loader->delete = true;
 
         $loader->load('users', $items);
 
-        $results = Metis::connection()->table('users')->select();
+        $results = Etl::connection()->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -82,13 +82,13 @@ class TableTest extends TestCase
             ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $options = ['timestamps' => true];
+        $loader = new Table;
 
-        $loader = new Table($options);
+        $loader->timestamps = true;
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->table('users_ts')->select();
+        $results = Etl::connection()->select('users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['created_at']));
@@ -100,21 +100,21 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data_with_timestamps()
     {
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (1, 'John', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
             ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $options = ['timestamps' => true];
+        $loader = new Table;
 
-        $loader = new Table($options);
+        $loader->timestamps = true;
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->table('users_ts')->select();
+        $results = Etl::connection()->select('users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['updated_at']));
@@ -125,18 +125,18 @@ class TableTest extends TestCase
     /** @test */
     function soft_delete_records_that_are_not_in_the_source()
     {
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [];
 
-        $options = ['delete' => 'soft'];
+        $loader = new Table;
 
-        $loader = new Table($options);
+        $loader->delete = 'soft';
 
         $loader->load('users_ts', $items);
 
-        $results = Metis::connection()->table('users_ts')->select();
+        $results = Etl::connection()->select('users_ts');
 
         $this->assertNotEmpty($results);
 

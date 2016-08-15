@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Extractors\ArrayData;
+use Marquine\Etl\Extractors\ArrayData;
 
 class ArrayDataTest extends TestCase
 {
@@ -30,11 +30,11 @@ class ArrayDataTest extends TestCase
             ['id' => 2, 'name' => 'Jane Doe'],
         ];
 
-        $columns = ['id', 'name'];
-
         $extractor = new ArrayData;
 
-        $results = $extractor->extract($this->items, $columns);
+        $extractor->columns = ['id', 'name'];
+
+        $results = $extractor->extract($this->items);
 
         $this->assertEquals($expected, $results);
     }

@@ -3,7 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Extractors\Json;
+use Marquine\Etl\Extractors\Json;
 
 class JsonTest extends TestCase
 {
@@ -25,15 +25,15 @@ class JsonTest extends TestCase
     /** @test */
     function extracts_data_from_a_json_file_with_custom_attributes_path()
     {
-        $columns =  [
+        $extractor = new Json;
+
+        $extractor->columns = [
             'id' => '$..bindings[*].id.value',
             'name' => '$..bindings[*].name.value',
             'email' => '$..bindings[*].email.value'
         ];
 
-        $extractor = new Json;
-
-        $results = $extractor->extract('users_path.json', $columns);
+        $results = $extractor->extract('users_path.json');
 
         $this->assertEquals($this->expected, $results);
     }

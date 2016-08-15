@@ -3,9 +3,8 @@
 namespace Tests;
 
 use Tests\TestCase;
-use Marquine\Metis\Traits\Indexable;
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Traits\ValidateSource;
+use Marquine\Etl\Traits\Indexable;
+use Marquine\Etl\Traits\ValidateSource;
 
 class TraitsTest extends TestCase
 {
@@ -30,14 +29,6 @@ class TraitsTest extends TestCase
     }
 
     /** @test */
-    function set_options()
-    {
-        $class = new Options(['property' => true]);
-
-        $this->assertTrue($class->property);
-    }
-
-    /** @test */
     function validate_source()
     {
         $this->assertTrue(is_file($this->validateSource('users.csv')));
@@ -48,11 +39,4 @@ class TraitsTest extends TestCase
 
         $this->assertEquals('http://www.leomarquine.com', $this->validateSource('http://www.leomarquine.com'));
     }
-}
-
-class Options
-{
-    use SetOptions;
-
-    public $property = false;
 }

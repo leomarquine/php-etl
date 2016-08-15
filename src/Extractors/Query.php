@@ -1,38 +1,36 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
-use Marquine\Metis\Metis;
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Contracts\Extractor;
+use Marquine\Etl\Etl;
 
-class Query implements Extractor
+class Query implements ExtractorInterface
 {
-    use SetOptions;
-
     /**
      * The connection name.
      *
      * @var string
      */
-    protected $connection = 'default';
+    public $connection = 'default';
+
+    /**
+     * Query bindings.
+     *
+     * @var array
+     */
+    public $bindings = [];
 
     /**
      * Extract data from the given source.
      *
-     * @param  string $query
-     * @param  mixed  $bindings
+     * @param string $query
      * @return array
      */
-    public function extract($query, $bindings = null)
+    public function extract($query)
     {
-        if (! $bindings) {
-            $bindings = [];
-        }
+        $query = Etl::connection($this->connection)->prepare($query);
 
-        $query = Metis::connection($this->connection)->prepare($query);
-
-        $query->execute($bindings);
+        $query->execute($this->bindings);
 
         return $query->fetchAll();
     }

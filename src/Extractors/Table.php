@@ -1,42 +1,44 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
-use Marquine\Metis\Metis;
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Contracts\Extractor;
+use Marquine\Etl\Etl;
 
-class Table implements Extractor
+class Table implements ExtractorInterface
 {
-    use SetOptions;
-
     /**
      * The connection name.
      *
      * @var string
      */
-    protected $connection = 'default';
+    public $connection = 'default';
+
+    /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    public $columns;
 
     /**
      * The array of where clause.
      *
      * @var array
      */
-    protected $where = [];
+    public $where = [];
 
     /**
      * Extract data from the given source.
      *
-     * @param  string $table
-     * @param  mixed  $columns
+     * @param string $table
      * @return array
      */
-    public function extract($table, $columns = null)
+    public function extract($table)
     {
-        if (is_string($columns)) {
-            $columns = [$columns];
+        if (is_string($this->columns)) {
+            $this->columns = [$this->columns];
         }
 
-        return Metis::connection($this->connection)->table($table)->select($columns, $this->where);
+        return Etl::connection($this->connection)->select($table, $this->columns, $this->where);
     }
 }

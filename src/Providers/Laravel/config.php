@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'default_path' => env('METIS_PATH', base_path('metis'))
+    'default_path' => env('ETL_PATH', base_path('etl'))
 ];

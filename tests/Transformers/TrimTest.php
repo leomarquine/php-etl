@@ -3,7 +3,7 @@
 namespace Tests\Transformers;
 
 use Tests\TestCase;
-use Marquine\Metis\Transformers\Trim;
+use Marquine\Etl\Transformers\Trim;
 
 class TrimTest extends TestCase
 {
@@ -30,11 +30,11 @@ class TrimTest extends TestCase
     /** @test */
     function trim_specific_columns()
     {
-        $columns = ['id', 'name'];
-
         $transformer = new Trim;
 
-        $results = $transformer->transform($this->items, $columns);
+        $transformer->columns = ['id', 'name'];
+
+        $results = $transformer->transform($this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => ' johndoe@email.com '],
@@ -47,9 +47,9 @@ class TrimTest extends TestCase
     /** @test */
     function trim_right()
     {
-        $options = ['type' => 'right'];
+        $transformer = new Trim;
 
-        $transformer = new Trim($options);
+        $transformer->type = 'right';
 
         $results = $transformer->transform($this->items);
 
@@ -64,9 +64,9 @@ class TrimTest extends TestCase
     /** @test */
     function trim_left()
     {
-        $options = ['type' => 'left'];
+        $transformer = new Trim;
 
-        $transformer = new Trim($options);
+        $transformer->type = 'left';
 
         $results = $transformer->transform($this->items);
 
@@ -81,9 +81,9 @@ class TrimTest extends TestCase
     /** @test */
     function trim_with_custom_character_mask()
     {
-        $options = ['mask' => ' cmo.'];
+        $transformer = new Trim;
 
-        $transformer = new Trim($options);
+        $transformer->mask = ' cmo.';
 
         $results = $transformer->transform($this->items);
 

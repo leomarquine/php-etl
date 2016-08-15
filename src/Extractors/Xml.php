@@ -1,31 +1,35 @@
 <?php
 
-namespace Marquine\Metis\Extractors;
+namespace Marquine\Etl\Extractors;
 
 use SimpleXMLElement;
-use Marquine\Metis\Traits\SetOptions;
-use Marquine\Metis\Contracts\Extractor;
-use Marquine\Metis\Traits\ValidateSource;
+use Marquine\Etl\Traits\ValidateSource;
 
-class Xml implements Extractor
+class Xml implements ExtractorInterface
 {
-    use SetOptions, ValidateSource;
+    use ValidateSource;
+
+    /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    public $columns;
 
     /**
      * The loop path.
      *
      * @var string
      */
-    protected $loop = '/';
+    public $loop = '/';
 
     /**
      * Extract data from the given source.
      *
-     * @param  string $source
-     * @param  mixed  $columns
+     * @param string $source
      * @return array
      */
-    public function extract($source, $columns = null)
+    public function extract($source)
     {
         $source = $this->validateSource($source);
 
@@ -36,7 +40,7 @@ class Xml implements Extractor
         $items = [];
 
         foreach ($elements as $key => $row) {
-            $items[] = $this->makeRow($columns, $row);
+            $items[] = $this->makeRow($this->columns, $row);
         }
 
         return $items;
@@ -45,8 +49,8 @@ class Xml implements Extractor
     /**
      * Make a row using custom column paths.
      *
-     * @param  array $columns
-     * @param  SimpleXMLElement $row
+     * @param array $columns
+     * @param SimpleXMLElement $row
      * @return array
      */
     protected function makeRow($columns, $row)
@@ -68,7 +72,7 @@ class Xml implements Extractor
     /**
      * Convert a SimpleXMLElement to array.
      *
-     * @param  SimpleXMLElement $row
+     * @param SimpleXMLElement $row
      * @return array
      */
     protected function parse($row)

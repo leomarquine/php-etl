@@ -1,6 +1,6 @@
 <?php
 
-namespace Marquine\Metis\Database\Connectors;
+namespace Marquine\Etl\Database\Connectors;
 
 use PDO;
 
@@ -20,9 +20,13 @@ abstract class Connector
        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
    ];
 
-   // TODO: method to merge custom user options
-
+   /**
+   * Connect to a database.
+   *
+   * @param array $config
+   * @return \PDO
+   */
    abstract public function connect($config);
 
-
+   // TODO: method to merge custom options
 }

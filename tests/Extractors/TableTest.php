@@ -3,8 +3,8 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Metis\Metis;
-use Marquine\Metis\Extractors\Table;
+use Marquine\Etl\Etl;
+use Marquine\Etl\Extractors\Table;
 
 class TableTest extends TestCase
 {
@@ -23,8 +23,8 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table()
     {
-        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
@@ -36,14 +36,14 @@ class TableTest extends TestCase
     /** @test */
     function extract_specific_columns_from_a_database_table()
     {
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
-
-        $columns = ['id', 'name', 'email'];
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
-        $results = $extractor->extract('users_ts', $columns);
+        $extractor->columns = ['id', 'name', 'email'];
+
+        $results = $extractor->extract('users_ts');
 
         $this->assertEquals($this->items, $results);
     }
@@ -51,14 +51,14 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_with_a_where_clause()
     {
-        Metis::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
-        $options = ['where' => ['id' => 1]];
+        $extractor = new Table;
 
-        $extractor = new Table($options);
+        $extractor->where = ['id' => 1];
 
-        $results = $extractor->extract('users', null, $options);
+        $results = $extractor->extract('users');
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
@@ -68,18 +68,18 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_using_a_custom_connection()
     {
-        Metis::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'connection_name');
+        Etl::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'test');
 
-        $this->migrateTables('connection_name');
+        $this->migrateTables('test');
 
-        Metis::connection('connection_name')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Metis::connection('connection_name')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::connection('test')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::connection('test')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
-        $options = ['connection' => 'connection_name'];
+        $extractor = new Table;
 
-        $extractor = new Table($options);
+        $extractor->connection = 'test';
 
-        $results = $extractor->extract('users', null, $options);
+        $results = $extractor->extract('users');
 
         $this->assertEquals($this->items, $results);
     }

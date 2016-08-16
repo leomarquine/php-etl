@@ -21,11 +21,24 @@ Etl::config($config);
 ```
 
 ### Database
-SQLite conneciton:
+SQLite connection:
 ```php
 $connection = [
     'driver' => 'sqlite',
     'database' => '/path/to/database.sqlite'
+];
+```
+
+MySQL connection
+```php
+$connection = [
+    'host' => localhost,
+    'port' => 3306,
+    'database' => dbname,
+    'username' => user,
+    'password' => pass,
+    'charset' => 'utf8',
+    'collation' => 'utf8_unicode_ci'
 ];
 ```
 

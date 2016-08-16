@@ -1,0 +1,8 @@
+site_name: PHP ETL
+pages:
+  - Getting Started: index.md
+  - Extractors: extractors.md
+  - Transformers: transformers.md
+  - Loaders: loaders.md
+  - Utilities: utilities.md
+theme: readthedocs

@@ -28,5 +28,23 @@ abstract class Connector
    */
    abstract public function connect($config);
 
+   /**
+     * Create a new PDO connection.
+     *
+     * @param string $dsn
+     * @param array $config
+     * @param array $options
+     * @return \PDO
+     */
+    public function createConnection($dsn, array $config)
+    {
+        $username = isset($config['username']) ? $config['username'] : null;
+
+        $password = isset($config['password']) ? $config['password'] : null;
+
+        return new PDO($dsn, $username, $password, $this->options);
+    }
+
+
    // TODO: method to merge custom options
 }

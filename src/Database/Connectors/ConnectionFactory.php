@@ -36,6 +36,8 @@ class ConnectionFactory
         switch ($driver) {
             case 'sqlite':
                 return new SqliteConnector;
+            case 'mysql':
+                return new MySqlConnector;
         }
 
         throw new InvalidArgumentException('The specified driver is not valid.');

@@ -19,7 +19,7 @@ class EtlServiceProvider extends ServiceProvider
         ]);
 
         foreach (config('database.connections') as $name => $connection) {
-            if ($connection['driver'] == 'sqlite') {
+            if (in_array($connection['driver'], ['sqlite', 'mysql'])) {
                 if ($name == config('database.default')) {
                     Etl::addConnection($connection, 'default');
                 }

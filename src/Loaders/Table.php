@@ -158,7 +158,7 @@ class Table implements LoaderInterface
                     $item['updated_at'] = $this->time;
                 }
 
-                $statement->execute(array_values($item));
+                $statement->execute($item);
             }
         };
 

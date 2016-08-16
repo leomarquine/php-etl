@@ -28,8 +28,8 @@ class EtlServiceProvider extends ServiceProvider
             }
         }
 
-        if (config('metis')) {
-            Etl::config(config('metis'));
+        if (config('etl')) {
+            Etl::config(config('etl'));
         }
     }
 

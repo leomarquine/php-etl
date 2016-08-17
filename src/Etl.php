@@ -30,42 +30,15 @@ class Etl
     public static function config($config, $default = null)
     {
         if (is_string($config)) {
+            $value = static::$config;
+
             foreach (explode('.', $config) as $segment) {
-                $value = static::$config[$segment];
+                $value = isset($value[$segment]) ? $value[$segment] : null;
             }
 
             return $value ?: $default;
         }
 
         static::$config = $config;
-
-        if (isset($config['connections'])) {
-            foreach ($config['connections'] as $name => $connection) {
-                static::addConnection($connection, $name);
-            }
-        }
-    }
-
-    /**
-     * Add a database connection.
-     *
-     * @param array $connection
-     * @param string $name
-     * @return void
-     */
-    public static function addConnection($connection, $name = 'default')
-    {
-        static::$connections[$name] = ConnectionFactory::make($connection);
-    }
-
-    /**
-    * Get a database connection.
-    *
-    * @param string $name
-    * @return \Marquine\Etl\Database\Connection
-    */
-    public static function connection($name = 'default')
-    {
-        return static::$connections[$name];
     }
 }

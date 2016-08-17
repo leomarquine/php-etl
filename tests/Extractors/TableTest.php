@@ -4,27 +4,31 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Etl\Etl;
+use Marquine\Etl\Traits\Database;
 use Marquine\Etl\Extractors\Table;
 
 class TableTest extends TestCase
 {
-    protected $items = [
-        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-    ];
+    use Database;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->setUpDatabase();
+        $this->connect('primary');
+        $this->db->exec('delete from users; delete from users_ts');
     }
+
+    protected $items = [
+        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+    ];
 
     /** @test */
     function extract_data_from_a_database_table()
     {
-        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
@@ -36,8 +40,8 @@ class TableTest extends TestCase
     /** @test */
     function extract_specific_columns_from_a_database_table()
     {
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
@@ -51,8 +55,8 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_with_a_where_clause()
     {
-        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
@@ -68,16 +72,14 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_using_a_custom_connection()
     {
-        Etl::addConnection(['driver' => 'sqlite', 'database' => ':memory:'], 'test');
-
-        $this->migrateTables('test');
-
-        Etl::connection('test')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection('test')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->connect('secondary');
+        $this->db->exec('delete from users; delete from users_ts');
+        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
-        $extractor->connection = 'test';
+        $extractor->connection = 'secondary';
 
         $results = $extractor->extract('users');
 

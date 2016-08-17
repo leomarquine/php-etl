@@ -10,62 +10,58 @@ composer require marquine\php-etl
 
 
 ## Setup
-### Global configuration
-Global configuration can be set using the `config` method. You can skip this configuration and use the full path when working with files.
+Global configuration can be set using the `config` method.
 ```php
+use Marquine\Etl\Etl;
+
 $config = [
-    'default_path' => '/path/to/etl/files',
+
+    // If not provided, you can use the full path when working with files.
+    'path' => '/path/to/etl/files',
+
+    // Currently supported databases: SQLite, MySQL, PostgreSQL
+    'database' => [
+
+        'default' => 'sqlite',
+
+        'connections' => [
+
+            'sqlite' => [
+                'driver' => 'sqlite',
+                'database' => '/path/to/database.sqlite',
+            ],
+
+            'mysql' => [
+                'driver' => 'mysql',
+                'host' => 'localhost',
+                'port' => '3306',
+                'database' => 'dbname',
+                'username' => 'user',
+                'password' => 'pass',
+                'charset' => 'utf8',
+                'collation' => 'utf8_unicode_ci',
+            ],
+
+            'pgsql' => [
+                'driver' => 'pgsql',
+                'host' => 'localhost',
+                'port' => '5432',
+                'database' => 'dbname',
+                'username' => 'user',
+                'password' => 'pass',
+                'charset' => 'utf8',
+                'schema' => 'public',
+            ],
+
+        ],
+
+    ],
+
 ];
 
 Etl::config($config);
 ```
 
-### Database
-SQLite connection:
-```php
-$connection = [
-    'driver' => 'sqlite',
-    'database' => '/path/to/database.sqlite'
-];
-```
-
-MySQL connection
-```php
-$connection = [
-    'host' => localhost,
-    'port' => '3306',
-    'database' => dbname,
-    'username' => user,
-    'password' => pass,
-    'charset' => 'utf8',
-    'collation' => 'utf8_unicode_ci'
-];
-```
-
-PostgreSQL connection
-```php
-$connection = [
-    'driver' => 'pgsql',
-    'host' => 'localhost',
-    'port' => '5432',
-    'database' => 'dbname',
-    'username' => 'user',
-    'password' => 'pass',
-    'charset' => 'utf8',
-    'schema' => 'public'
-];
-```
-
-Adding connections:
-```php
-use Marquine\Etl\Job;
-
-// default connection
-Etl::addConnection($connection);
-
-// named connection
-Etl::addConnection($connection, 'connection_name');
-```
 
 ## Laravel Setup
 If you are using Laravel, PHP ETL provides a default configuration file and will register all supported connections of your application.
@@ -77,7 +73,7 @@ Marquine\Etl\Providers\Laravel\EtlServiceProvider::class,
 
 Publish the configuration file (`config/etl.php`) using the artisan command:
 ```
-php artisan vendor:publish --provider="Marquine\Etl\Providers\Laravel\EtlServiceProvider"
+php artisan vendor:publish
 ```
 
 ## Example

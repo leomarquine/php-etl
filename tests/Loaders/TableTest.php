@@ -6,14 +6,18 @@ use DateTime;
 use Tests\TestCase;
 use Marquine\Etl\Etl;
 use Marquine\Etl\Loaders\Table;
+use Marquine\Etl\Traits\Database;
 
 class TableTest extends TestCase
 {
+    use Database;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->setUpDatabase();
+        $this->connect('primary');
+        $this->db->exec('delete from users; delete from users_ts');
     }
 
     /** @test */
@@ -28,7 +32,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Etl::connection()->select('users');
+        $results = $this->db->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -36,8 +40,8 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data()
     {
-        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users values (2, 'Jane', 'janedoe@email.com')");
+        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -48,7 +52,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Etl::connection()->select('users');
+        $results = $this->db->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -56,8 +60,8 @@ class TableTest extends TestCase
     /** @test */
     function delete_records_that_are_not_in_the_source()
     {
-        Etl::connection()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John', 'email' => 'johndoe@email.com'],
@@ -69,7 +73,7 @@ class TableTest extends TestCase
 
         $loader->load('users', $items);
 
-        $results = Etl::connection()->select('users');
+        $results = $this->db->select('users');
 
         $this->assertEquals($items, $results);
     }
@@ -88,7 +92,7 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Etl::connection()->select('users_ts');
+        $results = $this->db->select('users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['created_at']));
@@ -100,8 +104,8 @@ class TableTest extends TestCase
     /** @test */
     function update_table_data_with_timestamps()
     {
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane', 'janedoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (1, 'John', 'johndoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (2, 'Jane', 'janedoe@email.com')");
 
         $items = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -114,7 +118,7 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Etl::connection()->select('users_ts');
+        $results = $this->db->select('users_ts');
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['updated_at']));
@@ -125,8 +129,8 @@ class TableTest extends TestCase
     /** @test */
     function soft_delete_records_that_are_not_in_the_source()
     {
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        Etl::connection()->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        $this->db->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $items = [];
 
@@ -136,12 +140,34 @@ class TableTest extends TestCase
 
         $loader->load('users_ts', $items);
 
-        $results = Etl::connection()->select('users_ts');
+        $results = $this->db->select('users_ts');
 
         $this->assertNotEmpty($results);
 
         foreach ($results as $row) {
             $this->assertTrue((bool) DateTime::createFromFormat('Y-m-d G:i:s', $row['deleted_at']));
         }
+    }
+
+    /** @test */
+    function load_data_into_table_using_a_custom_connection()
+    {
+        $this->connect('secondary');
+        $this->db->exec('delete from users; delete from users_ts');
+
+        $items = [
+            ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
+        $loader = new Table;
+
+        $loader->connection = 'secondary';
+
+        $loader->load('users', $items);
+
+        $results = $this->db->select('users');
+
+        $this->assertEquals($items, $results);
     }
 }

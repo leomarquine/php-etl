@@ -3,9 +3,11 @@
 namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Etl;
+use Marquine\Etl\Traits\Database;
 
 class Query implements ExtractorInterface
 {
+    use Database;
     /**
      * The connection name.
      *
@@ -28,7 +30,9 @@ class Query implements ExtractorInterface
      */
     public function extract($query)
     {
-        $query = Etl::connection($this->connection)->prepare($query);
+        $this->connect($this->connection);
+
+        $query = $this->db->prepare($query);
 
         $query->execute($this->bindings);
 

@@ -18,6 +18,6 @@ trait ValidateSource
             return $source;
         }
 
-        return Etl::config('default_path') . DIRECTORY_SEPARATOR . $source;
+        return Etl::config('path') . DIRECTORY_SEPARATOR . $source;
     }
 }

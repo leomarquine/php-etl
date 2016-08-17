@@ -18,7 +18,7 @@ class MySqlConnector extends Connector
 
         $connection = $this->createConnection($dsn, $config);
 
-        $this->postConnection($connection, $config);
+        $this->afterConnection($connection, $config);
 
         return $connection;
     }
@@ -47,7 +47,7 @@ class MySqlConnector extends Connector
             $dsn['port'] = $port;
         }
 
-        if (isset($database) && ! isset($unix_socket)) {
+        if (isset($database)) {
             $dsn['dbname'] = $database;
         }
 
@@ -55,13 +55,13 @@ class MySqlConnector extends Connector
     }
 
     /**
-     * Handle post connection setup.
+     * Handle tasks after connection.
      *
      * @param \PDO $connection
      * @param array $config
      * @return void
      */
-    public function postConnection($connection, $config)
+    public function afterConnection($connection, $config)
     {
         extract($config, EXTR_SKIP);
 

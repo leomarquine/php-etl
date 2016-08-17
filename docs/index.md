@@ -5,7 +5,7 @@ Extract, Transform and Load data using PHP.
 ## Installation
 In your application's folder, run:
 ```
-composer require marquine\php-etl
+composer require marquine/php-etl
 ```
 
 

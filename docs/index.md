@@ -33,12 +33,26 @@ MySQL connection
 ```php
 $connection = [
     'host' => localhost,
-    'port' => 3306,
+    'port' => '3306',
     'database' => dbname,
     'username' => user,
     'password' => pass,
     'charset' => 'utf8',
     'collation' => 'utf8_unicode_ci'
+];
+```
+
+PostgreSQL connection
+```php
+$connection = [
+    'driver' => 'pgsql',
+    'host' => 'localhost',
+    'port' => '5432',
+    'database' => 'dbname',
+    'username' => 'user',
+    'password' => 'pass',
+    'charset' => 'utf8',
+    'schema' => 'public'
 ];
 ```
 

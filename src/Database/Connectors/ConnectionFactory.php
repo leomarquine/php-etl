@@ -28,7 +28,7 @@ class ConnectionFactory
     /**
     * Select the database connector.
     *
-    * @param string driver
+    * @param string $driver
     * @return \Marquine\Etl\Database\Connectors\Connector
     */
     public static function selectConnector($driver)
@@ -38,6 +38,8 @@ class ConnectionFactory
                 return new SqliteConnector;
             case 'mysql':
                 return new MySqlConnector;
+            case 'pgsql':
+                return new PostgresConnector;
         }
 
         throw new InvalidArgumentException('The specified driver is not valid.');

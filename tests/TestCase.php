@@ -18,16 +18,24 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
                 'connections' => [
                     'primary' => [
                         'driver' => 'sqlite',
-                        'database' => __DIR__ . '/data/primary.sqlite',
+                        'database' => ':memory:',
                     ],
                     'secondary' => [
                         'driver' => 'sqlite',
-                        'database' => __DIR__ . '/data/secondary.sqlite',
+                        'database' => ':memory:',
                     ],
                 ],
             ],
         ];
 
         Etl::config($config);
+    }
+
+    protected function createTables($connection = 'default')
+    {
+        Etl::database($connection)->exec('DROP TABLE IF EXISTS users');
+        Etl::database($connection)->exec('CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255))');
+        Etl::database($connection)->exec('DROP TABLE IF EXISTS users_ts');
+        Etl::database($connection)->exec('CREATE TABLE users_ts (id INTEGER, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP, updated_at TIMESTAMP, deleted_at TIMESTAMP)');
     }
 }

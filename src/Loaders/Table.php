@@ -3,12 +3,11 @@
 namespace Marquine\Etl\Loaders;
 
 use Marquine\Etl\Etl;
-use Marquine\Etl\Traits\Database;
 use Marquine\Etl\Traits\Indexable;
 
 class Table implements LoaderInterface
 {
-    use Indexable, Database;
+    use Indexable;
 
     /**
      * The connection name.
@@ -103,8 +102,6 @@ class Table implements LoaderInterface
      */
     public function load($table, $items)
     {
-        $this->connect($this->connection);
-
         $this->table = $table;
 
         $this->time = date('Y-m-d G:i:s');
@@ -116,7 +113,7 @@ class Table implements LoaderInterface
         $old = [];
 
         if (! $this->skipDataCheck) {
-            $select = $this->db->select($this->table);
+            $select = Etl::database($this->connection)->select($this->table);
 
             $old = $this->index($select, $this->keys);
 
@@ -152,7 +149,9 @@ class Table implements LoaderInterface
             return;
         }
 
-        $statement = $this->db->prepareInsert($this->table, $this->columns);
+        $statement = Etl::database($this->connection)->prepareInsert(
+            $this->table, $this->columns
+        );
 
         $callback = function ($items) use ($statement) {
             foreach ($items as $item) {
@@ -165,7 +164,9 @@ class Table implements LoaderInterface
             }
         };
 
-        $this->db->transaction($items, $callback, $this->transaction);
+        Etl::database($this->connection)->transaction(
+            $items, $callback, $this->transaction
+        );
     }
 
     /**
@@ -181,7 +182,9 @@ class Table implements LoaderInterface
             return;
         }
 
-        $statement = $this->db->prepareUpdate($this->table, $this->columns, $this->keys);
+        $statement = Etl::database($this->connection)->prepareUpdate(
+            $this->table, $this->columns, $this->keys
+        );
 
         $callback = function($items) use ($statement, $old) {
             foreach ($items as $key => $item) {
@@ -200,7 +203,9 @@ class Table implements LoaderInterface
             }
         };
 
-        $this->db->transaction($items, $callback, $this->transaction);
+        Etl::database($this->connection)->transaction(
+            $items, $callback, $this->transaction
+        );
     }
 
     /**
@@ -215,7 +220,9 @@ class Table implements LoaderInterface
             return;
         }
 
-        $statement = $this->db->prepareDelete($this->table, $this->keys);
+        $statement = Etl::database($this->connection)->prepareDelete(
+            $this->table, $this->keys
+        );
 
         $callback = function ($items) use ($statement) {
             foreach ($items as $item) {
@@ -223,7 +230,9 @@ class Table implements LoaderInterface
             }
         };
 
-        $this->db->transaction($items, $callback, $this->transaction);
+        Etl::database($this->connection)->transaction(
+            $items, $callback, $this->transaction
+        );
     }
 
     /**
@@ -238,17 +247,24 @@ class Table implements LoaderInterface
             return;
         }
 
-        $statement = $this->db->prepareUpdate($this->table, $this->columns, $this->keys);
+        $statement = Etl::database($this->connection)->prepareUpdate(
+            $this->table, $this->columns, $this->keys
+        );
 
         $callback = function ($items) use ($statement) {
             foreach ($items as $item) {
-                $params = array_merge(['deleted_at' => $this->time], array_intersect_key($item, $this->keys));
+                $params = array_merge(
+                    ['deleted_at' => $this->time],
+                    array_intersect_key($item, $this->keys)
+                );
 
                 $statement->execute($params);
             }
         };
 
-        $this->db->transaction($items, $callback, $this->transaction);
+        Etl::database($this->connection)->transaction(
+            $items, $callback, $this->transaction
+        );
     }
 
     /**

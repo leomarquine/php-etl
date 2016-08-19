@@ -4,13 +4,10 @@ namespace Tests\Extractors;
 
 use Tests\TestCase;
 use Marquine\Etl\Etl;
-use Marquine\Etl\Traits\Database;
 use Marquine\Etl\Extractors\Query;
 
 class QueryTest extends TestCase
 {
-    use Database;
-
     protected $items = [
         ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
@@ -20,15 +17,14 @@ class QueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->connect('primary');
-        $this->db->exec('delete from users; delete from users_ts');
+        $this->createTables();
     }
 
     /** @test */
     function extract_data_from_a_database_using_a_custom_query()
     {
-        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::database()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::database()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users';
 
@@ -42,8 +38,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
-        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::database()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::database()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users WHERE id = ?';
 
@@ -61,8 +57,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
-        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        Etl::database()->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::database()->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users WHERE id = :id AND name = :name';
 
@@ -80,10 +76,9 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_connection()
     {
-        $this->connect('secondary');
-        $this->db->exec('delete from users; delete from users_ts');
-        $this->db->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        $this->db->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->createTables('secondary');
+        Etl::database('secondary')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
+        Etl::database('secondary')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $query = 'SELECT * FROM users';
 

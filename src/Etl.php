@@ -41,4 +41,25 @@ class Etl
 
         static::$config = $config;
     }
+
+    /**
+    * Get a database connection.
+    *
+    * @param string $connection
+    * @return \Marquine\Etl\Database\Connection
+    */
+    public static function database($connection = 'default')
+    {
+        if ($connection == 'default') {
+            $connection = static::config('database.default');
+        }
+
+        if (! isset(static::$connections[$connection])) {
+            static::$connections[$connection] = ConnectionFactory::make(
+                static::config("database.connections.$connection")
+            );
+        }
+
+        return static::$connections[$connection];
+    }
 }

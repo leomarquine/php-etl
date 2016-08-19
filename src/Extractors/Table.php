@@ -3,12 +3,9 @@
 namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Etl;
-use Marquine\Etl\Traits\Database;
 
 class Table implements ExtractorInterface
 {
-    use Database;
-
     /**
      * The connection name.
      *
@@ -38,12 +35,12 @@ class Table implements ExtractorInterface
      */
     public function extract($table)
     {
-        $this->connect($this->connection);
-
         if (is_string($this->columns)) {
             $this->columns = [$this->columns];
         }
 
-        return $this->db->select($table, $this->columns, $this->where);
+        return Etl::database($this->connection)->select(
+            $table, $this->columns, $this->where
+        );
     }
 }

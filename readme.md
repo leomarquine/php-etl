@@ -1,4 +1,10 @@
 # PHP ETL
+
+[![Build Status](https://travis-ci.org/leomarquine/php-etl.svg)](https://travis-ci.org/leomarquine/php-etl)
+[![Latest Stable Version](https://poser.pugx.org/marquine/php-etl/v/stable)](https://packagist.org/packages/marquine/php-etl)
+[![Latest Unstable Version](https://poser.pugx.org/marquine/php-etl/v/unstable)](https://packagist.org/packages/marquine/php-etl)
+[![License](https://poser.pugx.org/marquine/php-etl/license)](https://packagist.org/packages/marquine/php-etl)
+
 Extract, Transform and Load data using PHP.
 
 ## Installation

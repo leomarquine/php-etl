@@ -14,11 +14,13 @@ class EtlServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/etl.php' => config_path('etl.php'),
-        ]);
-
         Etl::config(config('etl'));
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/etl.php' => config_path('etl.php'),
+            ], 'etl');
+        }
     }
 
     /**

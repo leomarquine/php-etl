@@ -73,7 +73,7 @@ Marquine\Etl\Providers\Laravel\EtlServiceProvider::class,
 
 Publish the configuration file (`config/etl.php`) using the artisan command:
 ```
-php artisan vendor:publish
+php artisan vendor:publish --tag etl
 ```
 
 ## Example

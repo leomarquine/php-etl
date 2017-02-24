@@ -254,6 +254,7 @@ class Table implements LoaderInterface
         $callback = function ($items) use ($statement) {
             foreach ($items as $item) {
                 $params = array_merge(
+                    $item,
                     ['deleted_at' => $this->time],
                     array_intersect_key($item, $this->keys)
                 );

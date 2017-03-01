@@ -2,6 +2,10 @@
 
 namespace Marquine\Etl\Loaders;
 
+use Marquine\Etl\Etl;
+use Marquine\Etl\Loaders\LoaderInterface;
+use Marquine\Etl\Traits\Indexable;
+
 class Table implements LoaderInterface
 {
     use Indexable;

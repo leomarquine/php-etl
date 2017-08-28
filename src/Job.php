@@ -32,22 +32,6 @@ class Job
     }
 
     /**
-     * Utilities.
-     *
-     * @param string $type
-     * @param array $options
-     * @return $this
-     */
-    public function utility($type, $options = [])
-    {
-        $utility = $this->factory($type, 'utilities', $options);
-
-        $utility->handle();
-
-        return $this;
-    }
-
-    /**
      * Extract data from the given source.
      *
      * @param string $type

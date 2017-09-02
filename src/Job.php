@@ -34,14 +34,14 @@ class Job
     /**
      * Extract data from the given source.
      *
-     * @param string $type
-     * @param mixed $source
-     * @param array $options
+     * @param  string  $extractor
+     * @param  mixed  $source
+     * @param  array  $options
      * @return $this
      */
-    public function extract($type, $source, $options = [])
+    public function extract($extractor, $source, $options = null)
     {
-        $extractor = $this->factory($type, 'extractors', $options);
+        $extractor = Factory::extractor($extractor, $options);
 
         $this->items = $extractor->extract($source);
 
@@ -51,13 +51,13 @@ class Job
     /**
      * Execute a transformation.
      *
-     * @param string $type
-     * @param array $options
+     * @param  string  $transformer
+     * @param  array  $options
      * @return $this
      */
-    public function transform($type, $options = [])
+    public function transform($transformer, $options = null)
     {
-        $transformer = $this->factory($type, 'transformers', $options);
+        $transformer = Factory::transformer($transformer, $options);
 
         $this->items = $transformer->transform($this->items);
 
@@ -67,73 +67,17 @@ class Job
     /**
      * Load data to the given destination.
      *
-     * @param string $type
-     * @param string $destination
-     * @param array $options
+     * @param  string  $loader
+     * @param  string  $destination
+     * @param  array  $options
      * @return $this
      */
-    public function load($type, $destination, $options = [])
+    public function load($loader, $destination, $options = null)
     {
-        $loader = $this->factory($type, 'loaders', $options);
+        $loader = Factory::loader($loader, $options);
 
         $loader->load($destination, $this->items);
 
         return $this;
-    }
-
-    /**
-     * Create an instance of the given class.
-     *
-     * @param string $class
-     * @param string $category
-     * @param array $options
-     * @return mixed
-     */
-    protected function factory($class, $category, $options)
-    {
-        $aliases = [
-            'extractors' => [
-                'array' => 'ArrayData',
-            ]
-        ];
-
-        if (! class_exists($class)) {
-
-            if (isset($aliases[$category][$class])) {
-                $class = $aliases[$category][$class];
-            }
-
-            $class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;
-        }
-
-        $instance = new $class;
-
-        $instance = $this->setOptions($instance, $options);
-
-        return $instance;
-    }
-
-    /**
-     * Set options.
-     *
-     * @param mixed $instance
-     * @param array $options
-     * @return mixed
-     */
-    protected function setOptions($instance, $options)
-    {
-        $reflector = new \ReflectionClass($instance);
-
-        foreach ($options as $option => $value) {
-            if ($reflector->hasProperty($option)) {
-                $property = $reflector->getProperty($option);
-            }
-
-            if ($property && $property->isPublic()) {
-                $instance->$option = $value;
-            }
-        }
-
-        return $instance;
     }
 }

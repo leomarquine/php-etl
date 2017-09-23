@@ -5,11 +5,11 @@ namespace Marquine\Etl;
 class Job
 {
     /**
-     * The items contained in the transformation.
+     * The Job pipeline.
      *
-     * @var array
+     * @var \Marquine\Etl\Pipeline
      */
-    protected $items;
+    protected $pipeline;
 
     /**
     * Create a new Job instance.
@@ -22,13 +22,13 @@ class Job
     }
 
     /**
-     * Get current job items.
+     * Get job data generator.
      *
      * @return array
      */
     public function get()
     {
-        return $this->items;
+        return $this->pipeline->get();
     }
 
     /**
@@ -43,7 +43,7 @@ class Job
     {
         $extractor = Factory::extractor($extractor, $options);
 
-        $this->items = $extractor->extract($source);
+        $this->pipeline = new Pipeline($extractor->extract($source));
 
         return $this;
     }
@@ -59,7 +59,7 @@ class Job
     {
         $transformer = Factory::transformer($transformer, $options);
 
-        $this->items = $transformer->transform($this->items);
+        $this->pipeline->pipe($transformer->handle());
 
         return $this;
     }
@@ -76,7 +76,7 @@ class Job
     {
         $loader = Factory::loader($loader, $options);
 
-        $loader->load($destination, $this->items);
+        $loader->load($destination, $this->pipeline);
 
         return $this;
     }

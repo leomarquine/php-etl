@@ -1,9 +1,9 @@
 <?php
 
-namespace Marquine\Etl\Database\Connectors;
+namespace Marquine\Etl\Support\Database\Connectors;
 
 use InvalidArgumentException;
-use Marquine\Etl\Database\Connection;
+use Marquine\Etl\Support\Database\Connection;
 
 class ConnectionFactory
 {

@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl;
 
-use Marquine\Etl\Database\Connectors\ConnectionFactory;
+use Marquine\Etl\Support\Database\Connectors\ConnectionFactory;
 
 class Etl
 {

@@ -3,18 +3,18 @@
 namespace Tests;
 
 use Tests\TestCase;
-use Marquine\Etl\Traits\ValidateSource;
+use Marquine\Etl\Support\ValidateSource;
 
-class TraitsTest extends TestCase
+class ValidateSourceTeste extends TestCase
 {
     use ValidateSource;
 
     /** @test */
     function validate_source()
     {
-        $this->assertTrue(is_file($this->validateSource('users.csv')));
+        $this->assertTrue(is_file($this->validateSource('csv1.csv')));
 
-        $this->assertTrue(is_file($this->validateSource(__DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'users.csv')));
+        $this->assertTrue(is_file($this->validateSource(__DIR__ . '/../data/csv1.csv')));
 
         $this->assertFalse(is_file($this->validateSource('notfound.csv')));
 

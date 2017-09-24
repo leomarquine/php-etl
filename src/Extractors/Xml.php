@@ -3,7 +3,7 @@
 namespace Marquine\Etl\Extractors;
 
 use SimpleXMLElement;
-use Marquine\Etl\Traits\ValidateSource;
+use Marquine\Etl\Support\ValidateSource;
 
 class Xml implements ExtractorInterface
 {

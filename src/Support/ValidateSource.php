@@ -1,6 +1,6 @@
 <?php
 
-namespace Marquine\Etl\Traits;
+namespace Marquine\Etl\Support;
 
 use Marquine\Etl\Etl;
 

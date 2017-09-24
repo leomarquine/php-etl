@@ -3,7 +3,7 @@
 namespace Marquine\Etl\Extractors;
 
 use Flow\JSONPath\JSONPath;
-use Marquine\Etl\Traits\ValidateSource;
+use Marquine\Etl\Support\ValidateSource;
 
 class Json implements ExtractorInterface
 {

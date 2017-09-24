@@ -1,6 +1,6 @@
 <?php
 
-namespace Marquine\Etl\Database\Connectors;
+namespace Marquine\Etl\Support\Database\Connectors;
 
 use PDO;
 

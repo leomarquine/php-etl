@@ -1,6 +1,6 @@
 <?php
 
-namespace Marquine\Etl\Providers\Laravel;
+namespace Marquine\Etl\Support\Providers\Laravel;
 
 use Marquine\Etl\Etl;
 use Illuminate\Support\ServiceProvider;

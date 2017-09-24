@@ -1,6 +1,6 @@
 <?php
 
-namespace Marquine\Etl\Database;
+namespace Marquine\Etl\Support\Database;
 
 class Connection
 {

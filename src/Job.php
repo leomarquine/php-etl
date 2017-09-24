@@ -77,7 +77,7 @@ class Job
     {
         $transformer = Factory::transformer($transformer, $options);
 
-        $this->pipeline->pipe($transformer->handle());
+        $this->pipeline->pipe($transformer->handler());
 
         return $this;
     }

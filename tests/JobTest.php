@@ -37,7 +37,7 @@ class JobTest extends TestCase
         $this->assertInstanceOf(Pipeline::class, $this->readAttribute($job, 'pipeline'));
 
         $transformer = Mockery::mock(TransformerInterface::class);
-        $transformer->shouldReceive('handle')->once()->andReturn(function ($row) { return trim($row); });
+        $transformer->shouldReceive('handler')->once()->andReturn(function ($row) { return trim($row); });
 
         $this->assertInstanceOf(Job::class, $job->transform($transformer));
 

@@ -17,7 +17,7 @@ class JsonEncodeTest extends TestCase
 
         $transformer = new JsonEncode;
 
-        $results = $transformer->transform($items);
+        $results = array_map($transformer->handler(), $items);
 
         $expected = [
             ['id' => '"1"', 'data' => '{"name":"John Doe","email":"johndoe@email.com"}'],
@@ -39,7 +39,7 @@ class JsonEncodeTest extends TestCase
 
         $transformer->columns = ['data'];
 
-        $results = $transformer->transform($items);
+        $results = array_map($transformer->handler(), $items);
 
         $expected = [
             ['id' => '1', 'data' => '{"name":"John Doe","email":"johndoe@email.com"}'],

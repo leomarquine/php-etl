@@ -26,16 +26,15 @@ class Trim implements TransformerInterface
     public $mask = " \t\n\r\0\x0B";
 
     /**
-     * Execute a transformation.
+     * Get the transformer handler.
      *
-     * @param array $items
-     * @return array
+     * @return callable
      */
-    public function transform($items)
+    public function handler()
     {
         $this->normalizeType();
 
-        return array_map(function($row) {
+        return function ($row) {
             if ($this->columns) {
                 foreach ($this->columns as $column) {
                     $row[$column] = call_user_func($this->type, $row[$column], $this->mask);
@@ -47,7 +46,7 @@ class Trim implements TransformerInterface
             }
 
             return $row;
-        }, $items);
+        };
     }
 
     /**

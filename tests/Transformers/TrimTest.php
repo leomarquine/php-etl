@@ -17,7 +17,7 @@ class TrimTest extends TestCase
     {
         $transformer = new Trim;
 
-        $results = $transformer->transform($this->items);
+        $results = array_map($transformer->handler(), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -34,7 +34,7 @@ class TrimTest extends TestCase
 
         $transformer->columns = ['id', 'name'];
 
-        $results = $transformer->transform($this->items);
+        $results = array_map($transformer->handler(), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => ' johndoe@email.com '],
@@ -51,7 +51,7 @@ class TrimTest extends TestCase
 
         $transformer->type = 'right';
 
-        $results = $transformer->transform($this->items);
+        $results = array_map($transformer->handler(), $this->items);
 
         $expected = [
             ['id' => ' 1', 'name' => 'John Doe', 'email' => ' johndoe@email.com'],
@@ -68,7 +68,7 @@ class TrimTest extends TestCase
 
         $transformer->type = 'left';
 
-        $results = $transformer->transform($this->items);
+        $results = array_map($transformer->handler(), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe  ', 'email' => 'johndoe@email.com '],
@@ -85,7 +85,7 @@ class TrimTest extends TestCase
 
         $transformer->mask = ' cmo.';
 
-        $results = $transformer->transform($this->items);
+        $results = array_map($transformer->handler(), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email'],

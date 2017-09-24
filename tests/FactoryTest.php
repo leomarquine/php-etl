@@ -62,7 +62,7 @@ class FactoryFakeExtractor implements ExtractorInterface {
 
 class FactoryFakeTransformer implements TransformerInterface {
     public $property;
-    public function transform($items) {}
+    public function handler() {}
 }
 
 class FactoryFakeLoader implements LoaderInterface {

@@ -26,14 +26,13 @@ class JsonEncode implements TransformerInterface
     public $depth = 512;
 
     /**
-     * Execute a transformation.
+     * Get the transformer handler.
      *
-     * @param array $items
-     * @return array
+     * @return callable
      */
-    public function transform($items)
+    public function handler()
     {
-        return array_map(function($row) {
+        return function ($row) {
             if ($this->columns) {
                 foreach ($this->columns as $column) {
                     $row[$column] = json_encode($row[$column], $this->options, $this->depth);
@@ -45,6 +44,6 @@ class JsonEncode implements TransformerInterface
             }
 
             return $row;
-        }, $items);
+        };
     }
 }

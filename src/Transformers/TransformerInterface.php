@@ -5,10 +5,9 @@ namespace Marquine\Etl\Transformers;
 interface TransformerInterface
 {
     /**
-     * Execute a transformation.
+     * Get the transformer handler.
      *
-     * @param array $items
-     * @return array
+     * @return callable
      */
-    public function transform($items);
+    public function handler();
 }

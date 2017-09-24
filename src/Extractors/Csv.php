@@ -32,45 +32,39 @@ class Csv implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $source
-     * @return array
+     * @param  string  $source
+     * @return \Generator
      */
     public function extract($source)
     {
         $source = $this->validateSource($source);
 
-        $items = [];
-
         $handle = fopen($source, 'r');
-        if ($handle) {
-            while ($row = fgets($handle)) {
-                if (! $this->columns) {
-                    $this->columns = $this->makeColumns($row);
-                } else {
-                    $items[] = $this->processRow($row, $this->columns);
-                }
+
+        while ($row = fgets($handle)) {
+            if (! $this->columns) {
+                $this->columns = $this->makeColumns($row);
+            } else {
+                yield $this->makeRow($row);
             }
-            fclose($handle);
         }
 
-        return $items;
+        fclose($handle);
     }
 
-
     /**
-     * Converts the row string into array.
+     * Converts the row string to array.
      *
-     * @param string $row
-     * @param array $columns
+     * @param  string  $row
      * @return array
      */
-    protected function processRow($row, $columns)
+    protected function makeRow($row)
     {
         $row = str_getcsv($row, $this->delimiter, $this->enclosure);
 
         $data = [];
 
-        foreach ($columns as $column => $index) {
+        foreach ($this->columns as $column => $index) {
             $data[$column] = $row[$index - 1];
         }
 
@@ -80,7 +74,7 @@ class Csv implements ExtractorInterface
     /**
      * Make columns based on csv header.
      *
-     * @param string $header
+     * @param  string  $header
      * @return array
      */
     protected function makeColumns($header)

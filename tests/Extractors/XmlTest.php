@@ -19,9 +19,9 @@ class XmlTest extends TestCase
 
         $extractor->loop = '/users/user';
 
-        $results = $extractor->extract('users.xml');
+        $results = $extractor->extract('xml1.xml');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -37,8 +37,8 @@ class XmlTest extends TestCase
             'email' => 'email/value'
         ];
 
-        $results = $extractor->extract('users_path.xml');
+        $results = $extractor->extract('xml2.xml');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 }

@@ -30,8 +30,8 @@ class Table implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $table
-     * @return array
+     * @param  string  $table
+     * @return \Generator
      */
     public function extract($table)
     {
@@ -39,8 +39,11 @@ class Table implements ExtractorInterface
             $this->columns = [$this->columns];
         }
 
-        return Etl::database($this->connection)->select(
-            $table, $this->columns, $this->where
-        );
+        $statement = Etl::database($this->connection)
+            ->select($table, $this->columns, $this->where);
+
+        while ($row = $statement->fetch()) {
+            yield $row;
+        }
     }
 }

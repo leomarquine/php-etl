@@ -23,8 +23,8 @@ class Query implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $query
-     * @return array
+     * @param  string  $query
+     * @return \Generator
      */
     public function extract($query)
     {
@@ -32,6 +32,8 @@ class Query implements ExtractorInterface
 
         $query->execute($this->bindings);
 
-        return $query->fetchAll();
+        while ($row = $query->fetch()) {
+            yield $row;
+        }
     }
 }

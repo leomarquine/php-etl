@@ -18,38 +18,33 @@ class FixedWidth implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $source
-     * @return array
+     * @param  string  $source
+     * @return \Generator
      */
     public function extract($source)
     {
         $source = $this->validateSource($source);
 
-        $items = [];
-
         $handle = fopen($source, 'r');
-        if ($handle) {
-            while ($row = fgets($handle)) {
-                $items[] = $this->processRow($row, $this->columns);
-            }
-            fclose($handle);
+
+        while ($row = fgets($handle)) {
+            yield $this->makeRow($row);
         }
 
-        return $items;
+        fclose($handle);
     }
 
     /**
      * Converts a row string into array.
      *
-     * @param string $row
-     * @param array $columns
+     * @param  string  $row
      * @return array
      */
-    public function processRow($row, $columns)
+    public function makeRow($row)
     {
         $result = [];
 
-        foreach ($columns as $column => $range) {
+        foreach ($this->columns as $column => $range) {
             $result[$column] = substr($row, $range[0], $range[1]);
         }
 

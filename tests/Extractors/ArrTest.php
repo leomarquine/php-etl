@@ -3,9 +3,9 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Extractors\ArrayData;
+use Marquine\Etl\Extractors\Arr;
 
-class ArrayDataTest extends TestCase
+class ArrTest extends TestCase
 {
     private $items = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -15,11 +15,11 @@ class ArrayDataTest extends TestCase
     /** @test */
     function extracts_data_from_an_array()
     {
-        $extractor = new ArrayData;
+        $extractor = new Arr;
 
         $results = $extractor->extract($this->items);
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 
     /** @test */
@@ -30,12 +30,12 @@ class ArrayDataTest extends TestCase
             ['id' => 2, 'name' => 'Jane Doe'],
         ];
 
-        $extractor = new ArrayData;
+        $extractor = new Arr;
 
         $extractor->columns = ['id', 'name'];
 
         $results = $extractor->extract($this->items);
 
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($expected, iterator_to_array($results));
     }
 }

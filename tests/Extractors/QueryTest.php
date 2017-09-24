@@ -32,7 +32,7 @@ class QueryTest extends TestCase
 
         $results = $extractor->extract($query);
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 
     /** @test */
@@ -51,7 +51,7 @@ class QueryTest extends TestCase
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -70,7 +70,7 @@ class QueryTest extends TestCase
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -88,6 +88,6 @@ class QueryTest extends TestCase
 
         $results = $extractor->extract($query);
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 }

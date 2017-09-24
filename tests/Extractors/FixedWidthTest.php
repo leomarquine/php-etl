@@ -23,8 +23,8 @@ class FixedWidthTest extends TestCase
             'email' => [9, 17],
         ];
 
-        $results = $extractor->extract('users.txt');
+        $results = $extractor->extract('fixed-width.txt');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 }

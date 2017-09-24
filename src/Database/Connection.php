@@ -47,10 +47,10 @@ class Connection
     /**
     * Execute a select query.
     *
-    * @param string $table
-    * @param array|null $columns
-    * @param array|null $where
-    * @return array
+    * @param  string  $table
+    * @param  array|null  $columns
+    * @param  array|null  $where
+    * @return \PDOStatement
     */
     public function select($table, $columns = null, $where = null)
     {
@@ -68,7 +68,7 @@ class Connection
 
         $statement->execute($where);
 
-        return $statement->fetchAll();
+        return $statement;
     }
 
     /**

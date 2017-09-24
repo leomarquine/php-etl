@@ -17,9 +17,9 @@ class JsonTest extends TestCase
     {
         $extractor = new Json;
 
-        $results = $extractor->extract('users.json');
+        $results = $extractor->extract('json1.json');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -33,8 +33,8 @@ class JsonTest extends TestCase
             'email' => '$..bindings[*].email.value'
         ];
 
-        $results = $extractor->extract('users_path.json');
+        $results = $extractor->extract('json2.json');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 }

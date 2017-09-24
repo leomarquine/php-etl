@@ -30,7 +30,7 @@ class TableTest extends TestCase
 
         $results = $extractor->extract('users');
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 
     /** @test */
@@ -45,7 +45,7 @@ class TableTest extends TestCase
 
         $results = $extractor->extract('users_ts');
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 
     /** @test */
@@ -62,7 +62,7 @@ class TableTest extends TestCase
 
         $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
 
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -78,6 +78,6 @@ class TableTest extends TestCase
 
         $results = $extractor->extract('users');
 
-        $this->assertEquals($this->items, $results);
+        $this->assertEquals($this->items, iterator_to_array($results));
     }
 }

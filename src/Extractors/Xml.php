@@ -26,8 +26,8 @@ class Xml implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $source
-     * @return array
+     * @param  string  $source
+     * @return \Generator
      */
     public function extract($source)
     {
@@ -37,31 +37,26 @@ class Xml implements ExtractorInterface
 
         $elements = $xml->xpath($this->loop);
 
-        $items = [];
-
         foreach ($elements as $key => $row) {
-            $items[] = $this->makeRow($this->columns, $row);
+            yield $this->makeRow($row);
         }
-
-        return $items;
     }
 
     /**
      * Make a row using custom column paths.
      *
-     * @param array $columns
-     * @param SimpleXMLElement $row
+     * @param  SimpleXMLElement  $row
      * @return array
      */
-    protected function makeRow($columns, $row)
+    protected function makeRow($row)
     {
-        if (! $columns) {
+        if (! $this->columns) {
             return $this->parse($row);
         }
 
         $data = [];
 
-        foreach ($columns as $column => $path) {
+        foreach ($this->columns as $column => $path) {
             $value = $row->xpath($path);
             $data[$column] = (string) array_shift($value);
         }
@@ -72,7 +67,7 @@ class Xml implements ExtractorInterface
     /**
      * Convert a SimpleXMLElement to array.
      *
-     * @param SimpleXMLElement $row
+     * @param  SimpleXMLElement  $row
      * @return array
      */
     protected function parse($row)

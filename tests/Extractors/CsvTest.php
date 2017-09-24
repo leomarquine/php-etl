@@ -17,9 +17,9 @@ class CsvTest extends TestCase
     {
         $extractor = new Csv;
 
-        $results = $extractor->extract('users.csv');
+        $results = $extractor->extract('csv1.csv');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -31,9 +31,9 @@ class CsvTest extends TestCase
 
         $extractor->enclosure = "''";
 
-        $results = $extractor->extract('users_custom_options.csv');
+        $results = $extractor->extract('csv2.csv');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 
     /** @test */
@@ -43,8 +43,8 @@ class CsvTest extends TestCase
 
         $extractor->columns = ['id' => 1, 'name' => 2, 'email' => 3];
 
-        $results = $extractor->extract('users_noheader.csv');
+        $results = $extractor->extract('csv3.csv');
 
-        $this->assertEquals($this->expected, $results);
+        $this->assertEquals($this->expected, iterator_to_array($results));
     }
 }

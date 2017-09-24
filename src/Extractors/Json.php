@@ -19,8 +19,8 @@ class Json implements ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $source
-     * @return array
+     * @param  string  $source
+     * @return \Generator
      */
     public function extract($source)
     {
@@ -38,13 +38,13 @@ class Json implements ExtractorInterface
             $items = $this->transpose($this->columns);
         }
 
-        return $items;
+        return (new Arr)->extract($items);
     }
 
     /**
-     * Switch columns and rows.
+     * Swap columns and rows.
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return array
      */
     protected function transpose($columns)

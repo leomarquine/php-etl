@@ -7,8 +7,8 @@ interface ExtractorInterface
     /**
      * Extract data from the given source.
      *
-     * @param string $source
-     * @return array
+     * @param  string  $source
+     * @return \Generator
      */
     public function extract($source);
 }

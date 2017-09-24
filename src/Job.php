@@ -2,6 +2,8 @@
 
 namespace Marquine\Etl;
 
+use BadMethodCallException;
+
 class Job
 {
     /**
@@ -12,23 +14,39 @@ class Job
     protected $pipeline;
 
     /**
-    * Create a new Job instance.
-    *
-    * @return Job
-    */
-    public static function start()
+     * Handle method calls to allow static 'extract' job constructor.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return void
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
     {
-        return new Job;
+        if ($method != 'extract') {
+            throw new BadMethodCallException("Method {$method} does not exist.");
+        }
+
+        return $this->extract(...$parameters);
     }
 
     /**
-     * Get job data generator.
+     * Handle method calls to allow static 'extract' job constructor.
      *
-     * @return array
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return void
+     *
+     * @throws \BadMethodCallException
      */
-    public function get()
+    public static function __callStatic($method, $parameters)
     {
-        return $this->pipeline->get();
+        if ($method != 'extract') {
+            throw new BadMethodCallException("Method {$method} does not exist.");
+        }
+
+        return (new static)->extract(...$parameters);
     }
 
     /**
@@ -39,7 +57,7 @@ class Job
      * @param  array  $options
      * @return $this
      */
-    public function extract($extractor, $source, $options = null)
+    protected function extract($extractor, $source, $options = null)
     {
         $extractor = Factory::extractor($extractor, $options);
 
@@ -79,5 +97,25 @@ class Job
         $loader->load($destination, $this->pipeline);
 
         return $this;
+    }
+
+    /**
+     * Get the Job data generator.
+     *
+     * @return array
+     */
+    public function data()
+    {
+        return $this->pipeline->get();
+    }
+
+    /**
+     * Get the Job data array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return iterator_to_array($this->data());
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Marquine\Etl\Support\Database\Connectors;
+namespace Marquine\Etl\Database\Connectors;
 
 use PDO;
 
-class MySqlConnector extends Connector
+class PostgresConnector extends Connector
 {
     /**
     * Connect to a database.
@@ -35,15 +35,11 @@ class MySqlConnector extends Connector
 
         $dsn = [];
 
-        if (isset($unix_socket)) {
-            $dsn['unix_socket'] = $unix_socket;
-        }
-
-        if (isset($host) && ! isset($unix_socket)) {
+        if (isset($host)) {
             $dsn['host'] = $host;
         }
 
-        if (isset($port) && ! isset($unix_socket)) {
+        if (isset($port)) {
             $dsn['port'] = $port;
         }
 
@@ -51,7 +47,7 @@ class MySqlConnector extends Connector
             $dsn['dbname'] = $database;
         }
 
-        return 'mysql:' . http_build_query($dsn, '', ';');
+        return 'pgsql:' . http_build_query($dsn, '', ';');
     }
 
     /**
@@ -65,23 +61,37 @@ class MySqlConnector extends Connector
     {
         extract($config, EXTR_SKIP);
 
-        if (isset($database)) {
-            $connection->exec("use `$database`");
-        }
-
         if (isset($charset)) {
-            $statement = "set names '$charset'";
-
-            if (isset($collation)) {
-                $statement .= " collate '$collation'";
-            }
-
-            $connection->prepare($statement)->execute();
+            $connection->prepare("set names '$charset'")->execute();
         }
 
         if (isset($timezone)) {
-            $connection->prepare("set time_zone = '$timezone'")->execute();
+            $connection->prepare("set time zone '$timezone'")->execute();
         }
 
+        if (isset($schema)) {
+            $schema = $this->formatSchema($schema);
+
+            $connection->prepare("set search_path to $schema")->execute();
+        }
+
+        if (isset($application_name)) {
+            $connection->prepare("set application_name to '$application_name'")->execute();
+        }
+    }
+
+    /**
+     * Format the schema.
+     *
+     * @param array|string $schema
+     * @return string
+     */
+    public function formatSchema($schema)
+    {
+        if (is_string($schema)) {
+            $schema = [$schema];
+        }
+
+        return implode(', ', $schema);
     }
 }

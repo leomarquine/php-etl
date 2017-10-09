@@ -1,9 +1,8 @@
 <?php
 
-namespace Marquine\Etl\Support\Database\Connectors;
+namespace Marquine\Etl\Database;
 
 use InvalidArgumentException;
-use Marquine\Etl\Support\Database\Connection;
 
 class ConnectionFactory
 {
@@ -35,11 +34,11 @@ class ConnectionFactory
     {
         switch ($driver) {
             case 'sqlite':
-                return new SqliteConnector;
+                return new Connectors\SqliteConnector;
             case 'mysql':
-                return new MySqlConnector;
+                return new Connectors\MySqlConnector;
             case 'pgsql':
-                return new PostgresConnector;
+                return new Connectors\PostgresConnector;
         }
 
         throw new InvalidArgumentException('The specified driver is not valid.');

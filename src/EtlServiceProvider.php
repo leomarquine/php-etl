@@ -1,8 +1,7 @@
 <?php
 
-namespace Marquine\Etl\Support\Providers\Laravel;
+namespace Marquine\Etl;
 
-use Marquine\Etl\Etl;
 use Illuminate\Support\ServiceProvider;
 
 class EtlServiceProvider extends ServiceProvider
@@ -18,7 +17,7 @@ class EtlServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/etl.php' => config_path('etl.php'),
+                __DIR__ . '/../config/laravel.php' => config_path('etl.php'),
             ], 'etl');
         }
     }

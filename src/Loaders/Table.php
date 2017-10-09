@@ -3,6 +3,7 @@
 namespace Marquine\Etl\Loaders;
 
 use Marquine\Etl\Etl;
+use Marquine\Etl\Loaders\LoaderInterface;
 use Marquine\Etl\Traits\Indexable;
 
 class Table implements LoaderInterface
@@ -112,7 +113,7 @@ class Table implements LoaderInterface
 
         $old = [];
 
-        if (! $this->skipDataCheck) {
+        if (!$this->skipDataCheck) {
             $select = Etl::database($this->connection)->select($this->table);
 
             $old = $this->index($select, $this->keys);
@@ -160,6 +161,10 @@ class Table implements LoaderInterface
                     $item['updated_at'] = $this->time;
                 }
 
+                if( $this->delete === 'soft' ) {
+                    $item['deleted_at'] = null;
+                }
+
                 $statement->execute($item);
             }
         };
@@ -172,9 +177,10 @@ class Table implements LoaderInterface
     /**
      * Update data.
      *
-     * @param array $new
+     * @param $items
      * @param array $old
      * @return void
+     * @internal param array $new
      */
     protected function update($items, $old)
     {
@@ -186,7 +192,7 @@ class Table implements LoaderInterface
             $this->table, $this->columns, $this->keys
         );
 
-        $callback = function($items) use ($statement, $old) {
+        $callback = function ($items) use ($statement, $old) {
             foreach ($items as $key => $item) {
                 if ($this->forceUpdate || $this->needsUpdate($item, $old[$key])) {
                     if ($this->timestamps) {
@@ -248,7 +254,7 @@ class Table implements LoaderInterface
         }
 
         $statement = Etl::database($this->connection)->prepareUpdate(
-            $this->table, $this->columns, $this->keys
+            $this->table, ['deleted_at'], $this->keys
         );
 
         $callback = function ($items) use ($statement) {
@@ -282,7 +288,7 @@ class Table implements LoaderInterface
 
         unset($old['created_at'], $old['updated_at']);
 
-        return ! empty(array_diff($new, $old));
+        return !empty(array_diff($new, $old));
     }
 
     /**

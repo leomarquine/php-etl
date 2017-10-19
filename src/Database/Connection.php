@@ -103,34 +103,15 @@ class Connection
     }
 
     /**
-    * Perform a database transaction.
-    *
-    * @param array $items
-    * @param callable $callback
-    * @param int $size
-    * @return void
-    */
-    public function transaction($items, $callback, $size)
+     * Get a new transaction instance.
+     *
+     * @return \Marquine\Etl\Database\Transaction
+     */
+    public function transaction($mode)
     {
-        if (! $size) {
-            return call_user_func($callback, $items);
-        }
+        $transaction = new Transaction($this);
 
-        $chunks = array_chunk($items, $size, true);
-
-        foreach ($chunks as $chunk) {
-            $this->pdo->beginTransaction();
-
-            try {
-                call_user_func($callback, $chunk);
-
-                $this->pdo->commit();
-            } catch (Exception $e) {
-                $this->pdo->rollBack();
-
-                throw $e;
-            }
-        }
+        return $transaction->mode($mode);
     }
 
     /**

@@ -94,7 +94,7 @@ class Job
     {
         $loader = Factory::loader($loader, $options);
 
-        $loader->load($destination, $this->pipeline);
+        $loader->load($destination, $this->pipeline->get());
 
         return $this;
     }

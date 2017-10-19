@@ -39,8 +39,14 @@ class Table implements ExtractorInterface
             $this->columns = [$this->columns];
         }
 
-        $statement = Etl::database($this->connection)
-            ->select($table, $this->columns, $this->where);
+        if (empty($this->columns)) {
+            $this->columns = ['*'];
+        }
+
+        $statement = Etl::database($this->connection)->query()
+                        ->select($table, $this->columns)
+                        ->where($this->where)
+                        ->execute();
 
         while ($row = $statement->fetch()) {
             yield $row;

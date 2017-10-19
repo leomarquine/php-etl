@@ -23,28 +23,6 @@ class Connection
     }
 
     /**
-    * Execute an SQL statement.
-    *
-    * @param string $statement
-    * @return int
-    */
-    public function exec($statement)
-    {
-        return $this->pdo->exec($statement);
-    }
-
-    /**
-    * Prepare a statement.
-    *
-    * @param string $statement
-    * @return \PDOStatement
-    */
-    public function prepare($statement)
-    {
-        return $this->pdo->prepare($statement);
-    }
-
-    /**
     * Execute a select query.
     *
     * @param  string  $table
@@ -170,5 +148,17 @@ class Connection
         }, $columns);
 
         return implode($separator, $columns);
+    }
+
+    /**
+     * Dynamically pass method calls to the PDO instance.
+     *
+     * @param  string  $method
+     * @param  array  $arguments
+     * @return \PDO
+     */
+    public function __call($method, $arguments)
+    {
+        return $this->pdo->{$method}(...$arguments);
     }
 }

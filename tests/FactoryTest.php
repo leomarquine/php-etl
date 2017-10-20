@@ -67,5 +67,5 @@ class FactoryFakeTransformer implements TransformerInterface {
 
 class FactoryFakeLoader implements LoaderInterface {
     public $property;
-    public function load($destination, $items) {}
+    public function load(\Generator $data, $destination) {}
 }

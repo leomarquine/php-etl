@@ -42,7 +42,7 @@ class JobTest extends TestCase
         $this->assertInstanceOf(Job::class, $job->transform($transformer));
 
         $loader = Mockery::mock(LoaderInterface::class);
-        $loader->shouldReceive('load')->with('destination', $this->readAttribute($job, 'pipeline'))->once();
+        $loader->shouldReceive('load')->with(Mockery::type('Generator'), 'destination')->once();
 
         $this->assertInstanceOf(Job::class, $job->load($loader, 'destination'));
 

@@ -3,8 +3,8 @@
 namespace Tests\Loaders;
 
 use Tests\TestCase;
-use Marquine\Etl\Etl;
 use Marquine\Etl\Loaders\Insert;
+use Marquine\Etl\Database\Manager as DB;
 
 class InsertTest extends TestCase
 {
@@ -12,7 +12,7 @@ class InsertTest extends TestCase
     {
         parent::setUp();
 
-        $this->createTables();
+        $this->createTables('default');
     }
 
     /** @test */
@@ -32,7 +32,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'],
         ];
 
-        $query = Etl::database()->query()->select('users')->execute();
+        $query = DB::connection('default')->query()->select('users')->execute();
 
         $this->assertEquals($expected, $query->fetchAll());
     }
@@ -57,7 +57,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => ''],
         ];
 
-        $query = Etl::database()->query()->select('users')->execute();
+        $query = DB::connection('default')->query()->select('users')->execute();
 
         $this->assertEquals($expected, $query->fetchAll());
     }
@@ -81,7 +81,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
         ];
 
-        $query = Etl::database()->query()->select('users_ts')->execute();
+        $query = DB::connection('default')->query()->select('users_ts')->execute();
 
         $this->assertEquals($expected, $query->fetchAll());
     }

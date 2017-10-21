@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Etl;
+use Marquine\Etl\Database\Manager as DB;
 
 class Table implements ExtractorInterface
 {
@@ -43,7 +43,8 @@ class Table implements ExtractorInterface
             $this->columns = ['*'];
         }
 
-        $statement = Etl::database($this->connection)->query()
+        $statement = DB::connection($this->connection)
+                        ->query()
                         ->select($table, $this->columns)
                         ->where($this->where)
                         ->execute();

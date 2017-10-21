@@ -3,7 +3,7 @@
 namespace Marquine\Etl\Loaders;
 
 use Generator;
-use Marquine\Etl\Etl;
+use Marquine\Etl\Database\Manager as DB;
 
 class Insert implements LoaderInterface
 {
@@ -71,7 +71,7 @@ class Insert implements LoaderInterface
 
         $this->time = date('Y-m-d G:i:s');
 
-        Etl::database($this->connection)->transaction($this->transaction)->data($data)->run(function ($row) {
+        DB::connection($this->connection)->transaction($this->transaction)->data($data)->run(function ($row) {
             $this->insert(array_intersect_key($row, $this->columns));
         });
     }
@@ -85,7 +85,7 @@ class Insert implements LoaderInterface
     protected function insert($row)
     {
         if (! $this->insert) {
-            $this->insert = Etl::database($this->connection)->statement()->insert($this->table, $this->columns)->prepare();
+            $this->insert = DB::connection($this->connection)->statement()->insert($this->table, $this->columns)->prepare();
         }
 
         if ($this->timestamps) {

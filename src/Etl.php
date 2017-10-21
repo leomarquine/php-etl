@@ -2,8 +2,6 @@
 
 namespace Marquine\Etl;
 
-use Marquine\Etl\Database\ConnectionFactory;
-
 class Etl
 {
     /**
@@ -11,55 +9,60 @@ class Etl
      *
      * @var array
      */
-    protected static $config;
+    protected static $config = [];
 
     /**
-     * Global database connections.
+     * Get the specified configuration value.
      *
-     * @var array
-    */
-    protected static $connections = [];
-
-    /**
-     * Set the global configuration or get a config item.
-     *
-     * @param mixed $config
-     * @param mixed $default
+     * @param  string  $key
      * @return mixed
      */
-    public static function config($config, $default = null)
+    public static function get($key)
     {
-        if (is_string($config)) {
-            $value = static::$config;
+        $value = static::$config;
 
-            foreach (explode('.', $config) as $segment) {
-                $value = isset($value[$segment]) ? $value[$segment] : null;
-            }
-
-            return $value ?: $default;
+        foreach (explode('.', $key) as $segment) {
+            $value = isset($value[$segment]) ? $value[$segment] : null;
         }
 
-        static::$config = $config;
+        return $value;
     }
 
     /**
-    * Get a database connection.
-    *
-    * @param string $connection
-    * @return \Marquine\Etl\Database\Connection
-    */
-    public static function database($connection = 'default')
+     * Set a given configuration value.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public static function set($key, $value)
     {
-        if ($connection == 'default') {
-            $connection = static::config('database.default');
+        $keys = explode('.', $key);
+
+        $array = &static::$config;
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            if (! isset($array[$key]) || ! is_array($array[$key])) {
+                $array[$key] = [];
+            }
+
+            $array = &$array[$key];
         }
 
-        if (! isset(static::$connections[$connection])) {
-            static::$connections[$connection] = ConnectionFactory::make(
-                static::config("database.connections.$connection")
-            );
-        }
+        $array[array_shift($keys)] = $value;
+    }
 
-        return static::$connections[$connection];
+    /**
+     * Add a database connection.
+     *
+     * @param  array  $config
+     * @param  string  $name
+     * @return void
+     */
+    public static function addConnection($config, $name = 'default')
+    {
+        static::set("connections.$name", $config);
     }
 }

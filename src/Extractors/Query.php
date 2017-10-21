@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Etl;
+use Marquine\Etl\Database\Manager as DB;
 
 class Query implements ExtractorInterface
 {
@@ -28,7 +28,7 @@ class Query implements ExtractorInterface
      */
     public function extract($query)
     {
-        $query = Etl::database($this->connection)->prepare($query);
+        $query = DB::connection($this->connection)->prepare($query);
 
         $query->execute($this->bindings);
 

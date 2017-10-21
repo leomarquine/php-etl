@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Marquine\Etl\Etl;
+use Marquine\Etl\Database\Manager as DB;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -11,31 +12,24 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $config = [
-            'path' => __DIR__ . '/data',
-            'database' => [
-                'default' => 'primary',
-                'connections' => [
-                    'primary' => [
-                        'driver' => 'sqlite',
-                        'database' => ':memory:',
-                    ],
-                    'secondary' => [
-                        'driver' => 'sqlite',
-                        'database' => ':memory:',
-                    ],
-                ],
-            ],
-        ];
+        Etl::set('path', __DIR__ . '/data');
 
-        Etl::config($config);
+        Etl::addConnection([
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+        ]);
+
+        Etl::addConnection([
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+        ], 'secondary');
     }
 
-    protected function createTables($connection = 'default')
+    protected function createTables($connection)
     {
-        Etl::database($connection)->exec('DROP TABLE IF EXISTS users');
-        Etl::database($connection)->exec('CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255))');
-        Etl::database($connection)->exec('DROP TABLE IF EXISTS users_ts');
-        Etl::database($connection)->exec('CREATE TABLE users_ts (id INTEGER, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP, updated_at TIMESTAMP, deleted_at TIMESTAMP)');
+        DB::connection($connection)->exec('DROP TABLE IF EXISTS users');
+        DB::connection($connection)->exec('CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255))');
+        DB::connection($connection)->exec('DROP TABLE IF EXISTS users_ts');
+        DB::connection($connection)->exec('CREATE TABLE users_ts (id INTEGER, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP, updated_at TIMESTAMP, deleted_at TIMESTAMP)');
     }
 }

@@ -13,16 +13,11 @@ class QueryTest extends TestCase
         ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->createTables('default');
-    }
-
     /** @test */
     function extract_data_from_a_database_using_a_custom_query()
     {
+        $this->createUsersTable('default');
+
         DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
@@ -38,6 +33,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
+        $this->createUsersTable('default');
+
         DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
@@ -57,6 +54,8 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
+        $this->createUsersTable('default');
+
         DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
@@ -76,7 +75,7 @@ class QueryTest extends TestCase
     /** @test */
     function extract_data_from_a_database_using_a_custom_query_and_connection()
     {
-        $this->createTables('secondary');
+        $this->createUsersTable('secondary');
 
         DB::connection('secondary')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('secondary')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");

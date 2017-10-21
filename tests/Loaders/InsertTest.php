@@ -8,16 +8,11 @@ use Marquine\Etl\Database\Manager as DB;
 
 class InsertTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->createTables('default');
-    }
-
     /** @test */
     function insert_data_into_the_database()
     {
+        $this->createUsersTable('default');
+
         $data = function () {
             yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
             yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
@@ -40,6 +35,8 @@ class InsertTest extends TestCase
     /** @test */
     function insert_specified_into_the_database()
     {
+        $this->createUsersTable('default');
+
         $data = function () {
             yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
             yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
@@ -65,6 +62,8 @@ class InsertTest extends TestCase
     /** @test */
     function insert_data_into_the_database_with_timestamps()
     {
+        $this->createUsersTable('default', true);
+
         $data = function () {
             yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
             yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
@@ -74,14 +73,14 @@ class InsertTest extends TestCase
 
         $loader->timestamps = true;
 
-        $loader->load($data(), 'users_ts');
+        $loader->load($data(), 'users');
 
         $expected = [
             ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
             ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
         ];
 
-        $query = DB::connection('default')->query()->select('users_ts')->execute();
+        $query = DB::connection('default')->query()->select('users')->execute();
 
         $this->assertEquals($expected, $query->fetchAll());
     }

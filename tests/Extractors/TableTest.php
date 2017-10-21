@@ -8,13 +8,6 @@ use Marquine\Etl\Database\Manager as DB;
 
 class TableTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->createTables('default');
-    }
-
     protected $items = [
         ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
@@ -23,6 +16,8 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table()
     {
+        $this->createUsersTable('default');
+
         $extractor = new Table;
 
         DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
@@ -36,14 +31,16 @@ class TableTest extends TestCase
     /** @test */
     function extract_specific_columns_from_a_database_table()
     {
-        DB::connection('default')->exec("insert into users_ts (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        DB::connection('default')->exec("insert into users_ts (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
+        $this->createUsersTable('default', true);
+
+        DB::connection('default')->exec("insert into users (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
+        DB::connection('default')->exec("insert into users (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
 
         $extractor = new Table;
 
         $extractor->columns = ['id', 'name', 'email'];
 
-        $results = $extractor->extract('users_ts');
+        $results = $extractor->extract('users');
 
         $this->assertEquals($this->items, iterator_to_array($results));
     }
@@ -51,6 +48,8 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_with_a_where_clause()
     {
+        $this->createUsersTable('default');
+
         DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
 
@@ -68,7 +67,7 @@ class TableTest extends TestCase
     /** @test */
     function extract_data_from_a_database_table_using_a_custom_connection()
     {
-        $this->createTables('secondary');
+        $this->createUsersTable('secondary');
 
         DB::connection('secondary')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
         DB::connection('secondary')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");

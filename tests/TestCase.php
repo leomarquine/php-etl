@@ -25,11 +25,14 @@ abstract class TestCase extends BaseTestCase
         ], 'secondary');
     }
 
-    protected function createTables($connection)
+    protected function createUsersTable($connection, $timestamps = false)
     {
         DB::connection($connection)->exec('DROP TABLE IF EXISTS users');
-        DB::connection($connection)->exec('CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255))');
-        DB::connection($connection)->exec('DROP TABLE IF EXISTS users_ts');
-        DB::connection($connection)->exec('CREATE TABLE users_ts (id INTEGER, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP, updated_at TIMESTAMP, deleted_at TIMESTAMP)');
+
+        $statement = $timestamps
+            ? 'CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255), created_at TIMESTAMP, updated_at TIMESTAMP, deleted_at TIMESTAMP)'
+            : 'CREATE TABLE users (id INTEGER, name VARCHAR(255), email VARCHAR(255))';
+
+        DB::connection($connection)->exec($statement);
     }
 }

@@ -7,28 +7,48 @@ use Illuminate\Support\ServiceProvider;
 class EtlServiceProvider extends ServiceProvider
 {
     /**
+     * List of the supported database connections.
+     *
+     * @var array
+     */
+    protected $supportedConnections = [
+        'mysql', 'pgsql', 'sqlite',
+    ];
+
+    /**
      * Perform post-registration booting of services.
      *
      * @return void
      */
     public function boot()
     {
-        Etl::config(config('etl'));
+        Etl::set('path', storage_path('app'));
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/laravel.php' => config_path('etl.php'),
-            ], 'etl');
+        $this->addConnections();
+    }
+
+    /**
+     * Add the connections to the ETL configuration.
+     *
+     * @return void
+     */
+    protected function addConnections()
+    {
+        foreach ($this->getSupportedConnections() as $name => $config) {
+            Etl::addConnection($config, $name == config('database.default') ? 'default' : $name);
         }
     }
 
     /**
-     * Register the application services.
+     * Get the supported connections configuration.
      *
-     * @return void
+     * @return array
      */
-    public function register()
+    protected function getSupportedConnections()
     {
-        //
+        return array_intersect_key(
+            config('database.connections'),
+            array_flip($this->supportedConnections)
+        );
     }
 }

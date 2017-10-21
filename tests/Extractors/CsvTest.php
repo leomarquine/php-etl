@@ -27,9 +27,9 @@ class CsvTest extends TestCase
     {
         $extractor = new Csv;
 
-        $extractor->delimiter = ',';
+        $extractor->delimiter = ';';
 
-        $extractor->enclosure = "''";
+        $extractor->enclosure = '"';
 
         $results = $extractor->extract('csv2.csv');
 

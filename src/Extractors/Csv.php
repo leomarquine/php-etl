@@ -20,14 +20,14 @@ class Csv implements ExtractorInterface
      *
      * @var string
      */
-    public $delimiter = ';';
+    public $delimiter = ',';
 
     /**
      * The enclosure string.
      *
      * @var string
      */
-    public $enclosure = '"';
+    public $enclosure = '';
 
     /**
      * Extract data from the given source.

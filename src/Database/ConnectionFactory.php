@@ -40,6 +40,6 @@ class ConnectionFactory
                 return new Connectors\PostgresConnector;
         }
 
-        throw new InvalidArgumentException('The specified driver is not valid.');
+        throw new InvalidArgumentException("Unsupported driver: $driver");
     }
 }

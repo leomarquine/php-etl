@@ -3,50 +3,49 @@
 namespace Tests;
 
 use Mockery;
-use Generator;
 use Marquine\Etl\Job;
+use Marquine\Etl\Factory;
 use Marquine\Etl\Pipeline;
-use Marquine\Etl\Loaders\LoaderInterface ;
-use Marquine\Etl\Extractors\ExtractorInterface;
-use Marquine\Etl\Transformers\TransformerInterface;
+use Marquine\Etl\Loaders\Loader;
+use Marquine\Etl\Extractors\Extractor;
+use Marquine\Etl\Transformers\Transformer;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class JobTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-     /** @test */
-    function new_job_instance_with_static_extract_call()
-    {
-        $extractor = Mockery::mock(ExtractorInterface::class);
-        $extractor->shouldReceive('extract')->with('source')->once()->andReturn((function () { yield ' foo '; })());
-
-        $this->assertInstanceOf(Job::class, Job::extract($extractor, 'source'));
-    }
-
     /** @test */
-    function job_execution()
+    function job()
     {
+        $factory = Mockery::mock(Factory::class);
+        $pipeline = Mockery::mock(Pipeline::class);
+        $extractor = Mockery::mock(Extractor::class);
+        $transformer = Mockery::mock(Transformer::class);
+        $loader = Mockery::mock(Loader::class);
+
+        $handler = function () {};
+        $generator = function () { yield 'data'; };
+        $data = $generator();
+
         $job = new Job;
+        $job->setFactory($factory);
 
-        $extractor = Mockery::mock(ExtractorInterface::class);
-        $extractor->shouldReceive('extract')->with('source')->once()->andReturn((function () { yield ' foo '; })());
+        $factory->shouldReceive('make')->once()->with(Extractor::class, 'extractor-name', ['options'])->andReturn($extractor);
+        $extractor->shouldReceive('pipeline')->once()->with('source')->andReturn($pipeline);
+        $job->extract('extractor-name', 'source', ['options']);
 
-        $this->assertInstanceOf(Job::class, $job->extract($extractor, 'source'));
+        $factory->shouldReceive('make')->once()->with(Transformer::class, 'transformer-name', ['options'])->andReturn($transformer);
+        $transformer->shouldReceive('handler')->once()->withNoArgs()->andReturn($handler);
+        $pipeline->shouldReceive('pipe')->once()->with($handler);
+        $job->transform('transformer-name', ['options']);
 
-        $this->assertInstanceOf(Pipeline::class, $this->readAttribute($job, 'pipeline'));
+        $factory->shouldReceive('make')->once()->with(Loader::class, 'loader-name', ['options'])->andReturn($loader);
+        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($data);
+        $loader->shouldReceive('load')->once()->with($data, 'destination');
+        $job->load('loader-name', 'destination', ['options']);
 
-        $transformer = Mockery::mock(TransformerInterface::class);
-        $transformer->shouldReceive('handler')->once()->andReturn(function ($row) { return trim($row); });
-
-        $this->assertInstanceOf(Job::class, $job->transform($transformer));
-
-        $loader = Mockery::mock(LoaderInterface::class);
-        $loader->shouldReceive('load')->with(Mockery::type('Generator'), 'destination')->once();
-
-        $this->assertInstanceOf(Job::class, $job->load($loader, 'destination'));
-
-        $this->assertInstanceOf(Generator::class, $job->data());
-        $this->assertEquals('foo', $job->toArray()[0]);
+        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($data);
+        $this->assertEquals(['data'], $job->toArray());
     }
 }

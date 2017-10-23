@@ -14,8 +14,6 @@ class SqliteConnector extends Connector
     */
     public function connect($config)
     {
-        $database = $config['database'];
-
-        return new PDO("sqlite:{$database}", null, null, $this->options);
+        return $this->createConnection('sqlite:'.$config['database'], $config);
     }
 }

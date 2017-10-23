@@ -9,7 +9,7 @@ class ConnectionFactory
     /**
     * Make a new database connection.
     *
-    * @param array $config
+    * @param  array  $config
     * @return \Marquine\Etl\Database\Connection
     */
     public function make($config)
@@ -26,7 +26,7 @@ class ConnectionFactory
     /**
     * Get the database connector.
     *
-    * @param string $driver
+    * @param  string  $driver
     * @return \Marquine\Etl\Database\Connectors\Connector
     */
     protected function getConnector($driver)

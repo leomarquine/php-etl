@@ -7,7 +7,7 @@ class MySqlConnector extends Connector
     /**
     * Connect to a database.
     *
-    * @param array $config
+    * @param  array  $config
     * @return \PDO
     */
     public function connect($config)
@@ -24,7 +24,7 @@ class MySqlConnector extends Connector
     /**
      * Get the DSN string.
      *
-     * @param array $config
+     * @param  array  $config
      * @return string
      */
     public function getDsn($config)
@@ -55,8 +55,8 @@ class MySqlConnector extends Connector
     /**
      * Handle tasks after connection.
      *
-     * @param \PDO $connection
-     * @param array $config
+     * @param  \PDO  $connection
+     * @param  array  $config
      * @return void
      */
     public function afterConnection($connection, $config)

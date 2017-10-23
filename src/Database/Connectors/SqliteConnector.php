@@ -9,7 +9,7 @@ class SqliteConnector extends Connector
     /**
     * Connect to a database.
     *
-    * @param array $config
+    * @param  array  $config
     * @return \PDO
     */
     public function connect($config)

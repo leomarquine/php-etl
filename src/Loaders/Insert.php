@@ -5,7 +5,7 @@ namespace Marquine\Etl\Loaders;
 use Generator;
 use Marquine\Etl\Database\Manager as DB;
 
-class Insert implements LoaderInterface
+class Insert extends Loader
 {
     /**
      * The columns to insert.

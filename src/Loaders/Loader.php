@@ -4,7 +4,7 @@ namespace Marquine\Etl\Loaders;
 
 use Generator;
 
-interface LoaderInterface
+abstract class Loader
 {
     /**
      * Load data into the given destination.
@@ -13,5 +13,5 @@ interface LoaderInterface
      * @param  string  $destination
      * @return void
      */
-    public function load(Generator $data, $destination);
+    abstract public function load(Generator $data, $destination);
 }

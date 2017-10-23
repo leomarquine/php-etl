@@ -12,25 +12,24 @@ class ConnectionFactory
     * @param array $config
     * @return \Marquine\Etl\Database\Connection
     */
-    public static function make($config)
+    public function make($config)
     {
         if (! isset($config['driver'])) {
             throw new InvalidArgumentException('A driver must be specified.');
         }
 
-        $pdo = static::selectConnector($config['driver'])
-                     ->connect($config);
+        $pdo = $this->getConnector($config['driver'])->connect($config);
 
         return new Connection($pdo);
     }
 
     /**
-    * Select the database connector.
+    * Get the database connector.
     *
     * @param string $driver
     * @return \Marquine\Etl\Database\Connectors\Connector
     */
-    public static function selectConnector($driver)
+    protected function getConnector($driver)
     {
         switch ($driver) {
             case 'sqlite':

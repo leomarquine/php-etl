@@ -5,7 +5,7 @@ namespace Marquine\Etl\Extractors;
 use Flow\JSONPath\JSONPath;
 use Marquine\Etl\Support\ValidateSource;
 
-class Json implements ExtractorInterface
+class Json extends Extractor
 {
     use ValidateSource;
 

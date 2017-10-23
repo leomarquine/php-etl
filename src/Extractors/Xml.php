@@ -5,7 +5,7 @@ namespace Marquine\Etl\Extractors;
 use SimpleXMLElement;
 use Marquine\Etl\Support\ValidateSource;
 
-class Xml implements ExtractorInterface
+class Xml extends Extractor
 {
     use ValidateSource;
 

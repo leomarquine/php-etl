@@ -4,7 +4,7 @@ namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Support\ValidateSource;
 
-class FixedWidth implements ExtractorInterface
+class FixedWidth extends Extractor
 {
     use ValidateSource;
 

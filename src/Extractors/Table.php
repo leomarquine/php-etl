@@ -4,7 +4,7 @@ namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Database\Manager as DB;
 
-class Table implements ExtractorInterface
+class Table extends Extractor
 {
     /**
      * The connection name.

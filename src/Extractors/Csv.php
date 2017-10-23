@@ -4,7 +4,7 @@ namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Support\ValidateSource;
 
-class Csv implements ExtractorInterface
+class Csv extends Extractor
 {
     use ValidateSource;
 

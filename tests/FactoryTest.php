@@ -12,60 +12,52 @@ use Marquine\Etl\Transformers\TransformerInterface;
 class FactoryTest extends TestCase
 {
     /** @test */
-    function extractor()
+    function create_a_new_step_instance_and_set_options()
     {
-        $extractor = Factory::extractor(FactoryFakeExtractor::class, ['property' => 'value']);
+        $factory = new Factory;
 
-        $this->assertInstanceOf(ExtractorInterface::class, $extractor);
-        $this->assertEquals($extractor->property, 'value');
+        $instance = $factory->make(FakeStepInterface::class, 'FakeStep', ['option' => 'value']);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Extractor must implement 'Marquine\Etl\Extractors\ExtractorInterface");
-
-        Factory::extractor('Random\Class');
+        $this->assertInstanceOf(FakeStep::class, $instance);
+        $this->assertEquals('value', $instance->option);
     }
 
     /** @test */
-    function transformer()
+    function normalize_step_name()
     {
-        $transformer = Factory::transformer(FactoryFakeTransformer::class, ['property' => 'value']);
+        $factory = new Factory;
 
-        $this->assertInstanceOf(TransformerInterface::class, $transformer);
-        $this->assertEquals($transformer->property, 'value');
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Transformer must implement 'Marquine\Etl\Transformers\TransformerInterface");
-
-        Factory::transformer('Random\Class');
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fakeStep'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake-step'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake_step'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake step'));
     }
 
     /** @test */
-    function loader()
+    function throws_an_exception_for_invalid_step()
     {
-        $loader = Factory::loader(FactoryFakeLoader::class, ['property' => 'value']);
-
-        $this->assertInstanceOf(LoaderInterface::class, $loader);
-        $this->assertEquals($loader->property, 'value');
+        $factory = new Factory;
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Loader must implement 'Marquine\Etl\Loaders\LoaderInterface");
+        $this->expectExceptionMessage("AnotherFakeStep is not a valid '".__FUNCTION__."' step."); // name from caller's method name
 
-        Factory::loader('Random\Class');
+        $factory->make(FakeStepInterface::class, 'AnotherFakeStep');
+    }
+
+    /** @test */
+    function throws_an_exception_for_inexistent_class()
+    {
+        $factory = new Factory;
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("InexistentFakeStep is not a valid '".__FUNCTION__."' step."); // name from caller's method name
+
+        $factory->make(FakeStepInterface::class, 'InexistentFakeStep');
     }
 }
 
+interface FakeStepInterface {}
 
-class FactoryFakeExtractor implements ExtractorInterface {
-    public $property;
-    public function extract($source) {}
-}
+class FakeStep implements FakeStepInterface { public $option; }
 
-class FactoryFakeTransformer implements TransformerInterface {
-    public $property;
-    public function handler() {}
-}
-
-class FactoryFakeLoader implements LoaderInterface {
-    public $property;
-    public function load(\Generator $data, $destination) {}
-}
+class AnotherFakeStep {}

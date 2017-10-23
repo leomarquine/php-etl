@@ -2,12 +2,12 @@
 
 namespace Marquine\Etl\Transformers;
 
-interface TransformerInterface
+abstract class Transformer
 {
     /**
      * Get the transformer handler.
      *
      * @return callable
      */
-    public function handler();
+    abstract public function handler();
 }

@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Transformers;
 
-class JsonEncode implements TransformerInterface
+class JsonEncode extends Transformer
 {
     /**
      * Transformer columns.

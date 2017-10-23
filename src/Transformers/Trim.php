@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Transformers;
 
-class Trim implements TransformerInterface
+class Trim extends Transformer
 {
     /**
      * Transformer columns.

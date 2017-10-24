@@ -5,9 +5,6 @@ namespace Tests;
 use Tests\TestCase;
 use Marquine\Etl\Factory;
 use InvalidArgumentException;
-use Marquine\Etl\Loaders\LoaderInterface;
-use Marquine\Etl\Extractors\ExtractorInterface;
-use Marquine\Etl\Transformers\TransformerInterface;
 
 class FactoryTest extends TestCase
 {

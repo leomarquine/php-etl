@@ -16,7 +16,7 @@ class FactoryTest extends TestCase
     {
         $factory = new Factory;
 
-        $instance = $factory->make(FakeStepInterface::class, 'FakeStep', ['option' => 'value']);
+        $instance = $factory->make(FakeBaseStep::class, 'FakeStep', ['option' => 'value']);
 
         $this->assertInstanceOf(FakeStep::class, $instance);
         $this->assertEquals('value', $instance->option);
@@ -27,10 +27,10 @@ class FactoryTest extends TestCase
     {
         $factory = new Factory;
 
-        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fakeStep'));
-        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake-step'));
-        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake_step'));
-        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeStepInterface::class, 'fake step'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeBaseStep::class, 'fakeStep'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeBaseStep::class, 'fake-step'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeBaseStep::class, 'fake_step'));
+        $this->assertInstanceOf(FakeStep::class, $factory->make(FakeBaseStep::class, 'fake step'));
     }
 
     /** @test */
@@ -41,7 +41,7 @@ class FactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("AnotherFakeStep is not a valid '".__FUNCTION__."' step."); // name from caller's method name
 
-        $factory->make(FakeStepInterface::class, 'AnotherFakeStep');
+        $factory->make(FakeBaseStep::class, 'AnotherFakeStep');
     }
 
     /** @test */
@@ -52,12 +52,12 @@ class FactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("InexistentFakeStep is not a valid '".__FUNCTION__."' step."); // name from caller's method name
 
-        $factory->make(FakeStepInterface::class, 'InexistentFakeStep');
+        $factory->make(FakeBaseStep::class, 'InexistentFakeStep');
     }
 }
 
-interface FakeStepInterface {}
+abstract class FakeBaseStep {}
 
-class FakeStep implements FakeStepInterface { public $option; }
+class FakeStep extends FakeBaseStep { public $option; }
 
 class AnotherFakeStep {}

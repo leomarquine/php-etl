@@ -26,7 +26,7 @@ class JobTest extends TestCase
 
         $handler = function () {};
         $generator = function () { yield 'data'; };
-        $data = $generator();
+        $generator = $generator();
 
         $job = new Job;
         $job->setFactory($factory);
@@ -41,11 +41,11 @@ class JobTest extends TestCase
         $job->transform('transformer-name', ['options']);
 
         $factory->shouldReceive('make')->once()->with(Loader::class, 'loader-name', ['options'])->andReturn($loader);
-        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($data);
-        $loader->shouldReceive('load')->once()->with($data, 'destination');
+        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($generator);
+        $loader->shouldReceive('load')->once()->with($generator, 'destination');
         $job->load('loader-name', 'destination', ['options']);
 
-        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($data);
+        $pipeline->shouldReceive('get')->once()->withNoArgs()->andReturn($generator);
         $this->assertEquals(['data'], $job->toArray());
     }
 }

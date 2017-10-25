@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Support;
 
 use Tests\TestCase;
 use Marquine\Etl\Support\ValidateSource;

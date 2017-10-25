@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Marquine\Etl\Factory;
 use InvalidArgumentException;
 

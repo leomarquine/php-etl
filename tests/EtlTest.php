@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-
 class EtlTest extends TestCase
 {
     /** @test */

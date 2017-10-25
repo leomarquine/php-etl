@@ -2,8 +2,6 @@
 
 namespace Marquine\Etl\Database\Connectors;
 
-use PDO;
-
 class PostgresConnector extends Connector
 {
     /**

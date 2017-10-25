@@ -80,6 +80,5 @@ class MySqlConnector extends Connector
         if (isset($timezone)) {
             $connection->prepare("set time_zone = '$timezone'")->execute();
         }
-
     }
 }

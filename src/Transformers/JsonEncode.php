@@ -9,7 +9,7 @@ class JsonEncode extends Transformer
      *
      * @var array
      */
-     public $columns;
+    public $columns;
 
     /**
      * Options.

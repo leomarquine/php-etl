@@ -191,4 +191,3 @@ class Statement
         return implode(', ', $columns);
     }
 }
-

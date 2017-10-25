@@ -141,9 +141,9 @@ class Query
      */
     public function delete($table)
     {
-         $this->query[] = "delete from {$table}";
+        $this->query[] = "delete from {$table}";
 
-         return $this;
+        return $this;
     }
 
     /**
@@ -295,4 +295,3 @@ class Query
         return implode(', ', $columns);
     }
 }
-

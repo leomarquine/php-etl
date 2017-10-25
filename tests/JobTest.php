@@ -16,7 +16,7 @@ class JobTest extends TestCase
     use MockeryPHPUnitIntegration;
 
     /** @test */
-    function job()
+    public function job()
     {
         $factory = Mockery::mock(Factory::class);
         $pipeline = Mockery::mock(Pipeline::class);
@@ -24,8 +24,11 @@ class JobTest extends TestCase
         $transformer = Mockery::mock(Transformer::class);
         $loader = Mockery::mock(Loader::class);
 
-        $handler = function () {};
-        $generator = function () { yield 'data'; };
+        $handler = function () {
+        };
+        $generator = function () {
+            yield 'data';
+        };
         $generator = $generator();
 
         $job = new Job;

@@ -8,7 +8,7 @@ use Marquine\Etl\Transformers\JsonEncode;
 class JsonEncodeTest extends TestCase
 {
     /** @test */
-    function convert_all_columns_to_json()
+    public function convert_all_columns_to_json()
     {
         $items = [
             ['id' => '1', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
@@ -28,7 +28,7 @@ class JsonEncodeTest extends TestCase
     }
 
     /** @test */
-    function convert_specific_columns_to_json()
+    public function convert_specific_columns_to_json()
     {
         $items = [
             ['id' => '1', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']],

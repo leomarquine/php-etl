@@ -14,7 +14,7 @@ class TableTest extends TestCase
     ];
 
     /** @test */
-    function extract_data_from_a_database_table()
+    public function extract_data_from_a_database_table()
     {
         $this->createUsersTable('default');
 
@@ -29,7 +29,7 @@ class TableTest extends TestCase
     }
 
     /** @test */
-    function extract_specific_columns_from_a_database_table()
+    public function extract_specific_columns_from_a_database_table()
     {
         $this->createUsersTable('default', true);
 
@@ -46,7 +46,7 @@ class TableTest extends TestCase
     }
 
     /** @test */
-    function extract_data_from_a_database_table_with_a_where_clause()
+    public function extract_data_from_a_database_table_with_a_where_clause()
     {
         $this->createUsersTable('default');
 
@@ -65,7 +65,7 @@ class TableTest extends TestCase
     }
 
     /** @test */
-    function extract_data_from_a_database_table_using_a_custom_connection()
+    public function extract_data_from_a_database_table_using_a_custom_connection()
     {
         $this->createUsersTable('secondary');
 

@@ -14,7 +14,7 @@ class QueryTest extends TestCase
     ];
 
     /** @test */
-    function extract_data_from_a_database_using_a_custom_query()
+    public function extract_data_from_a_database_using_a_custom_query()
     {
         $this->createUsersTable('default');
 
@@ -31,7 +31,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function extract_data_from_a_database_using_a_custom_query_and_bindings()
+    public function extract_data_from_a_database_using_a_custom_query_and_bindings()
     {
         $this->createUsersTable('default');
 
@@ -52,7 +52,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
+    public function extract_data_from_a_database_using_a_custom_query_and_named_bindings()
     {
         $this->createUsersTable('default');
 
@@ -73,7 +73,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function extract_data_from_a_database_using_a_custom_query_and_connection()
+    public function extract_data_from_a_database_using_a_custom_query_and_connection()
     {
         $this->createUsersTable('secondary');
 

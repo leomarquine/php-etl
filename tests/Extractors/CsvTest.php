@@ -13,7 +13,7 @@ class CsvTest extends TestCase
     ];
 
     /** @test */
-    function extracts_data_from_a_csv_file()
+    public function extracts_data_from_a_csv_file()
     {
         $extractor = new Csv;
 
@@ -23,7 +23,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    function extracts_data_from_a_csv_file_with_custom_options()
+    public function extracts_data_from_a_csv_file_with_custom_options()
     {
         $extractor = new Csv;
 
@@ -37,7 +37,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    function it_extracts_data_from_a_csv_file_without_a_header_line()
+    public function it_extracts_data_from_a_csv_file_without_a_header_line()
     {
         $extractor = new Csv;
 

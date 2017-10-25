@@ -13,7 +13,7 @@ class FixedWidthTest extends TestCase
     ];
 
     /** @test */
-    function extracts_data_from_a_fixed_width_text_file()
+    public function extracts_data_from_a_fixed_width_text_file()
     {
         $extractor = new FixedWidth;
 

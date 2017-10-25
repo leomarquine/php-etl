@@ -14,7 +14,7 @@ class ManagerTest extends TestCase
     use MockeryPHPUnitIntegration;
 
     /** @test */
-    function create_a_new_connection()
+    public function create_a_new_connection()
     {
         Etl::addConnection([
             'driver' => 'sqlite',

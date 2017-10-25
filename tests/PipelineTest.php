@@ -8,7 +8,7 @@ use Marquine\Etl\Pipeline;
 class PipelineTest extends TestCase
 {
     /** @test */
-    function it_pipes_tasks_into_generators()
+    public function it_pipes_tasks_into_generators()
     {
         $pipeline = new Pipeline($this->generator());
 

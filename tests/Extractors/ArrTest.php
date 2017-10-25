@@ -13,7 +13,7 @@ class ArrTest extends TestCase
     ];
 
     /** @test */
-    function extracts_data_from_an_array()
+    public function extracts_data_from_an_array()
     {
         $extractor = new Arr;
 
@@ -23,7 +23,7 @@ class ArrTest extends TestCase
     }
 
     /** @test */
-    function extracts_specific_columns_from_an_array()
+    public function extracts_specific_columns_from_an_array()
     {
         $expected = [
             ['id' => 1, 'name' => 'John Doe'],

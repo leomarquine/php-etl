@@ -10,7 +10,7 @@ class ValidateSourceTeste extends TestCase
     use ValidateSource;
 
     /** @test */
-    function validate_source()
+    public function validate_source()
     {
         $this->assertTrue(is_file($this->validateSource('csv1.csv')));
 

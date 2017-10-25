@@ -13,7 +13,7 @@ class JsonTest extends TestCase
     ];
 
     /** @test */
-    function extracts_data_from_a_json_file()
+    public function extracts_data_from_a_json_file()
     {
         $extractor = new Json;
 
@@ -23,7 +23,7 @@ class JsonTest extends TestCase
     }
 
     /** @test */
-    function extracts_data_from_a_json_file_with_custom_attributes_path()
+    public function extracts_data_from_a_json_file_with_custom_attributes_path()
     {
         $extractor = new Json;
 

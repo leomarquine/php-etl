@@ -8,7 +8,7 @@ use InvalidArgumentException;
 class FactoryTest extends TestCase
 {
     /** @test */
-    function create_a_new_step_instance_and_set_options()
+    public function create_a_new_step_instance_and_set_options()
     {
         $factory = new Factory;
 
@@ -19,7 +19,7 @@ class FactoryTest extends TestCase
     }
 
     /** @test */
-    function normalize_step_name()
+    public function normalize_step_name()
     {
         $factory = new Factory;
 
@@ -30,7 +30,7 @@ class FactoryTest extends TestCase
     }
 
     /** @test */
-    function throws_an_exception_for_invalid_step()
+    public function throws_an_exception_for_invalid_step()
     {
         $factory = new Factory;
 
@@ -41,7 +41,7 @@ class FactoryTest extends TestCase
     }
 
     /** @test */
-    function throws_an_exception_for_inexistent_class()
+    public function throws_an_exception_for_inexistent_class()
     {
         $factory = new Factory;
 
@@ -52,8 +52,15 @@ class FactoryTest extends TestCase
     }
 }
 
-abstract class FakeBaseStep {}
+abstract class FakeBaseStep
+{
+}
 
-class FakeStep extends FakeBaseStep { public $option; }
+class FakeStep extends FakeBaseStep
+{
+    public $option;
+}
 
-class AnotherFakeStep {}
+class AnotherFakeStep
+{
+}

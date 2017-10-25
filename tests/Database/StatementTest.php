@@ -26,7 +26,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function select()
+    public function select()
     {
         $statement = new Statement($this->connection);
 
@@ -42,7 +42,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function insert()
+    public function insert()
     {
         $statement = new Statement($this->connection);
 
@@ -52,7 +52,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function update()
+    public function update()
     {
         $statement = new Statement($this->connection);
 
@@ -62,7 +62,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function delete()
+    public function delete()
     {
         $statement = new Statement($this->connection);
 
@@ -72,7 +72,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function where()
+    public function where()
     {
         $statement = new Statement($this->connection);
 
@@ -82,7 +82,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    function prepare()
+    public function prepare()
     {
         $this->connection->shouldReceive('prepare')->once()->with('')->andReturn($this->statement);
 

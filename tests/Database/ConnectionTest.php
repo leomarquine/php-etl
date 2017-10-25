@@ -28,25 +28,25 @@ class ConnectionTest extends TestCase
     }
 
     /** @test */
-    function get_a_new_query_instance()
+    public function get_a_new_query_instance()
     {
         $this->assertInstanceOf(Query::class, $this->connection->query());
     }
 
     /** @test */
-    function get_a_new_statement_instance()
+    public function get_a_new_statement_instance()
     {
         $this->assertInstanceOf(Statement::class, $this->connection->statement());
     }
 
     /** @test */
-    function get_a_new_transaction_instance()
+    public function get_a_new_transaction_instance()
     {
         $this->assertInstanceOf(Transaction::class, $this->connection->transaction(true));
     }
 
     /** @test */
-    function dynamically_pass_method_calls_to_the_pdo_instance()
+    public function dynamically_pass_method_calls_to_the_pdo_instance()
     {
         $this->pdo->shouldReceive('method')->once()->with('param');
 

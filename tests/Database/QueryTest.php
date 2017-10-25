@@ -26,7 +26,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function select()
+    public function select()
     {
         $query = new Query($this->connection);
         $query->select('users');
@@ -40,7 +40,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function insert()
+    public function insert()
     {
         $query = new Query($this->connection);
         $query->insert('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -50,7 +50,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function update()
+    public function update()
     {
         $query = new Query($this->connection);
         $query->update('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -60,7 +60,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function delete()
+    public function delete()
     {
         $query = new Query($this->connection);
         $query->delete('users');
@@ -70,7 +70,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function where()
+    public function where()
     {
         $query = new Query($this->connection);
         $query->where(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -80,7 +80,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function where_in()
+    public function where_in()
     {
         $query = new Query($this->connection);
         $query->whereIn('id', ['1', '2']);
@@ -90,7 +90,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function where_not_in()
+    public function where_not_in()
     {
         $query = new Query($this->connection);
         $query->whereNotIn('id', ['1', '2']);
@@ -100,7 +100,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function composite_where_in()
+    public function composite_where_in()
     {
         $query = new Query($this->connection);
         $query->whereIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
@@ -110,7 +110,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function composite_where_not_in()
+    public function composite_where_not_in()
     {
         $query = new Query($this->connection);
         $query->whereNotIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
@@ -120,7 +120,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    function execute()
+    public function execute()
     {
         $this->connection->shouldReceive('prepare')->once()->with('')->andReturn($this->statement);
         $this->statement->shouldReceive('execute')->once()->with([]);

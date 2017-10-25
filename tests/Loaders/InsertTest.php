@@ -9,7 +9,7 @@ use Marquine\Etl\Database\Manager as DB;
 class InsertTest extends TestCase
 {
     /** @test */
-    function insert_data_into_the_database()
+    public function insert_data_into_the_database()
     {
         $this->createUsersTable('default');
 
@@ -33,7 +33,7 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    function insert_specified_into_the_database()
+    public function insert_specified_into_the_database()
     {
         $this->createUsersTable('default');
 
@@ -60,7 +60,7 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    function insert_data_into_the_database_with_timestamps()
+    public function insert_data_into_the_database_with_timestamps()
     {
         $this->createUsersTable('default', true);
 

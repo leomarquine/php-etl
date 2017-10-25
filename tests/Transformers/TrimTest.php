@@ -13,7 +13,7 @@ class TrimTest extends TestCase
     ];
 
     /** @test */
-    function trim_all_columns()
+    public function trim_all_columns()
     {
         $transformer = new Trim;
 
@@ -28,7 +28,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    function trim_specific_columns()
+    public function trim_specific_columns()
     {
         $transformer = new Trim;
 
@@ -45,7 +45,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    function trim_right()
+    public function trim_right()
     {
         $transformer = new Trim;
 
@@ -62,7 +62,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    function trim_left()
+    public function trim_left()
     {
         $transformer = new Trim;
 
@@ -79,7 +79,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    function trim_with_custom_character_mask()
+    public function trim_with_custom_character_mask()
     {
         $transformer = new Trim;
 

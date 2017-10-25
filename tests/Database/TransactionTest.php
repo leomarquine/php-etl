@@ -27,11 +27,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function no_transaction()
+    public function no_transaction()
     {
         $data = range(1, 20);
         $mode = 'none';
-        $callback = function ($row) { return $row; };
+        $callback = function ($row) {
+            return $row;
+        };
 
         $this->connection->shouldNotReceive('beginTransaction');
         $this->connection->shouldNotReceive('commit');
@@ -41,11 +43,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function single_transaction()
+    public function single_transaction()
     {
         $data = range(1, 20);
         $mode = 'single';
-        $callback = function ($row) { return $row; };
+        $callback = function ($row) {
+            return $row;
+        };
 
         $this->connection->shouldReceive('beginTransaction')->once();
         $this->connection->shouldReceive('commit')->once();
@@ -54,11 +58,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function transaction_size_is_multiple_of_data_size()
+    public function transaction_size_is_multiple_of_data_size()
     {
         $data = range(1, 20);
         $mode = 10;
-        $callback = function ($row) { return $row; };
+        $callback = function ($row) {
+            return $row;
+        };
 
         $this->connection->shouldReceive('beginTransaction')->times(2);
         $this->connection->shouldReceive('commit')->times(2);
@@ -67,11 +73,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function transaction_size_is_not_multiple_of_data_size()
+    public function transaction_size_is_not_multiple_of_data_size()
     {
         $data = range(1, 17);
         $mode = 10;
-        $callback = function ($row) { return $row; };
+        $callback = function ($row) {
+            return $row;
+        };
 
         $this->connection->shouldReceive('beginTransaction')->times(2);
         $this->connection->shouldReceive('commit')->times(2);
@@ -80,11 +88,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function transaction_rollback_on_error()
+    public function transaction_rollback_on_error()
     {
         $data = range(1, 20);
         $mode = 10;
-        $callback = function () { throw new Exception; };
+        $callback = function () {
+            throw new Exception;
+        };
 
         $this->connection->shouldReceive('beginTransaction')->times(1);
         $this->connection->shouldReceive('rollBack')->times(1);
@@ -95,11 +105,12 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    function invalid_transaction_mode_throws_an_exception()
+    public function invalid_transaction_mode_throws_an_exception()
     {
         $data = range(1, 20);
         $mode = 'invalid';
-        $callback = function () {};
+        $callback = function () {
+        };
 
         $this->expectException(InvalidArgumentException::class);
 

@@ -5,7 +5,7 @@ namespace Tests;
 class EtlTest extends TestCase
 {
     /** @test */
-    function get_and_set_configuration_options()
+    public function get_and_set_configuration_options()
     {
         $this->assertNull(Etl::get('nested.key'));
 
@@ -16,7 +16,7 @@ class EtlTest extends TestCase
     }
 
     /** @test */
-    function add_connection()
+    public function add_connection()
     {
         $this->assertNull(Etl::get('connections.default'));
         $this->assertNull(Etl::get('connections.mysql'));
@@ -29,6 +29,7 @@ class EtlTest extends TestCase
     }
 }
 
-class Etl extends \Marquine\Etl\Etl {
+class Etl extends \Marquine\Etl\Etl
+{
     protected static $config = [];
 }

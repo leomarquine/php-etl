@@ -13,7 +13,7 @@ class XmlTest extends TestCase
     ];
 
     /** @test */
-    function extracts_data_from_a_xml_file()
+    public function extracts_data_from_a_xml_file()
     {
         $extractor = new Xml;
 
@@ -25,7 +25,7 @@ class XmlTest extends TestCase
     }
 
     /** @test */
-    function extracts_data_from_a_xml_file_with_custom_columns_path()
+    public function extracts_data_from_a_xml_file_with_custom_columns_path()
     {
         $extractor = new Xml;
 

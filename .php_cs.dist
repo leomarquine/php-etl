@@ -1,0 +1,11 @@
+<?php
+
+$finder = PhpCsFixer\Finder::create()->in(__DIR__);
+
+$rules = [
+    '@PSR2' => true,
+    'no_unused_imports' => true,
+    'array_syntax' => ['syntax' => 'short'],
+];
+
+return PhpCsFixer\Config::create()->setRules($rules)->setFinder($finder);

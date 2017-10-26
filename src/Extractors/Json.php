@@ -3,12 +3,9 @@
 namespace Marquine\Etl\Extractors;
 
 use Flow\JSONPath\JSONPath;
-use Marquine\Etl\Support\ValidateSource;
 
 class Json extends Extractor
 {
-    use ValidateSource;
-
     /**
      * Extractor columns.
      *
@@ -24,7 +21,7 @@ class Json extends Extractor
      */
     public function extract($source)
     {
-        $source = $this->validateSource($source);
+        $source = $this->validateSourceFile($source);
 
         $items = json_decode(file_get_contents($source), true);
 

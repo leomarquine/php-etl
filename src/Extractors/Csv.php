@@ -2,12 +2,8 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Support\ValidateSource;
-
 class Csv extends Extractor
 {
-    use ValidateSource;
-
     /**
      * Extractor columns.
      *
@@ -37,7 +33,7 @@ class Csv extends Extractor
      */
     public function extract($source)
     {
-        $source = $this->validateSource($source);
+        $source = $this->validateSourceFile($source);
 
         $handle = fopen($source, 'r');
 

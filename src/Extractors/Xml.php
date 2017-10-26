@@ -3,12 +3,9 @@
 namespace Marquine\Etl\Extractors;
 
 use SimpleXMLElement;
-use Marquine\Etl\Support\ValidateSource;
 
 class Xml extends Extractor
 {
-    use ValidateSource;
-
     /**
      * Extractor columns.
      *
@@ -31,7 +28,7 @@ class Xml extends Extractor
      */
     public function extract($source)
     {
-        $source = $this->validateSource($source);
+        $source = $this->validateSourceFile($source);
 
         $xml = new SimpleXMLElement(file_get_contents($source));
 

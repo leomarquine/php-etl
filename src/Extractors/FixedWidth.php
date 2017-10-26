@@ -2,12 +2,8 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Support\ValidateSource;
-
 class FixedWidth extends Extractor
 {
-    use ValidateSource;
-
     /**
      * Extractor columns.
      *
@@ -23,7 +19,7 @@ class FixedWidth extends Extractor
      */
     public function extract($source)
     {
-        $source = $this->validateSource($source);
+        $source = $this->validateSourceFile($source);
 
         $handle = fopen($source, 'r');
 

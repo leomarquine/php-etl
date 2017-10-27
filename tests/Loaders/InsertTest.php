@@ -27,7 +27,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'],
         ];
 
-        $query = DB::connection('default')->query()->select('users')->execute();
+        $query = DB::connection('default')->query('select * from users');
 
         $this->assertEquals($expected, $query->fetchAll());
     }
@@ -54,7 +54,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => ''],
         ];
 
-        $query = DB::connection('default')->query()->select('users')->execute();
+        $query = DB::connection('default')->query('select * from users');
 
         $this->assertEquals($expected, $query->fetchAll());
     }
@@ -80,7 +80,7 @@ class InsertTest extends TestCase
             ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
         ];
 
-        $query = DB::connection('default')->query()->select('users')->execute();
+        $query = DB::connection('default')->query('select * from users');
 
         $this->assertEquals($expected, $query->fetchAll());
     }

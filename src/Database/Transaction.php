@@ -40,6 +40,17 @@ class Transaction
     }
 
     /**
+     * Get a transaction instance for the given connection.
+     *
+     * @param  string  $connection
+     * @return static
+     */
+    public static function connection($connection)
+    {
+        return new static(Manager::connection($connection));
+    }
+
+    /**
      * Set the transaction mode.
      *
      * @param  string|int  $mode

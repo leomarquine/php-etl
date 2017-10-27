@@ -23,38 +23,6 @@ class Connection
     }
 
     /**
-     * Get a new query builder instance.
-     *
-     * @return \Marquine\Etl\Database\Query
-     */
-    public function query()
-    {
-        return new Query($this);
-    }
-
-    /**
-     * Get a new statement builder instance.
-     *
-     * @return \Marquine\Etl\Database\Statement
-     */
-    public function statement()
-    {
-        return new Statement($this);
-    }
-
-    /**
-     * Get a new transaction instance.
-     *
-     * @return \Marquine\Etl\Database\Transaction
-     */
-    public function transaction($mode)
-    {
-        $transaction = new Transaction($this);
-
-        return $transaction->mode($mode);
-    }
-
-    /**
      * Dynamically pass method calls to the PDO instance.
      *
      * @param  string  $method

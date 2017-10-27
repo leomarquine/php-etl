@@ -44,6 +44,17 @@ class Query
     }
 
     /**
+     * Get a query instance for the given connection.
+     *
+     * @param  string  $connection
+     * @return static
+     */
+    public static function connection($connection)
+    {
+        return new static(Manager::connection($connection));
+    }
+
+    /**
      * Execute the query.
      *
      * @return \PDOStatement

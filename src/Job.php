@@ -54,7 +54,7 @@ class Job
      * @param  array  $options
      * @return $this
      */
-    public function utility($utility, $options = null)
+    protected function utility($utility, $options = null)
     {
         $utility = $this->factory->make(Utility::class, $utility, $options);
 

@@ -4,6 +4,7 @@ namespace Marquine\Etl;
 
 use BadMethodCallException;
 use Marquine\Etl\Loaders\Loader;
+use Marquine\Etl\Utilities\Utility;
 use Marquine\Etl\Extractors\Extractor;
 use Marquine\Etl\Transformers\Transformer;
 
@@ -42,6 +43,22 @@ class Job
     public function setFactory(Factory $factory)
     {
         $this->factory = $factory;
+
+        return $this;
+    }
+
+    /**
+     * Run the utility step.
+     *
+     * @param  string  $utility
+     * @param  array  $options
+     * @return $this
+     */
+    public function utility($utility, $options = null)
+    {
+        $utility = $this->factory->make(Utility::class, $utility, $options);
+
+        $utility->run();
 
         return $this;
     }
@@ -127,11 +144,11 @@ class Job
      */
     public function __call($method, $parameters)
     {
-        if ($method != 'extract') {
+        if (! in_array($method, ['extract', 'utility'])) {
             throw new BadMethodCallException("Method {$method} does not exist.");
         }
 
-        return $this->extract(...$parameters);
+        return $this->{$method}(...$parameters);
     }
 
     /**
@@ -145,10 +162,10 @@ class Job
      */
     public static function __callStatic($method, $parameters)
     {
-        if ($method != 'extract') {
+        if (! in_array($method, ['extract', 'utility'])) {
             throw new BadMethodCallException("Method {$method} does not exist.");
         }
 
-        return (new static)->extract(...$parameters);
+        return (new static)->{$method}(...$parameters);
     }
 }

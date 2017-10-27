@@ -12,11 +12,11 @@ class Command extends Utility
     public $command;
 
     /**
-     * List of commands to run.
+     * Command output handler.
      *
-     * @var array
+     * @var callable
      */
-    public $commands = [];
+    public $handler;
 
     /**
      * Run the utility.
@@ -25,12 +25,42 @@ class Command extends Utility
      */
     public function run()
     {
-        if ($this->command) {
-            shell_exec($this->command);
+        if (is_string($this->command)) {
+            $output = $this->runCommand();
         }
 
-        foreach ($this->commands as $command) {
-            shell_exec($command);
+        if (is_array($this->command)) {
+            $output = $this->runCommands();
         }
+
+        if (is_callable($this->handler)) {
+            call_user_func($this->handler, $output);
+        }
+    }
+
+    /**
+     * Execute a single command.
+     *
+     * @return string
+     */
+    protected function runCommand()
+    {
+        return shell_exec($this->command);
+    }
+
+    /**
+     * Execute multiple commands.
+     *
+     * @return array
+     */
+    protected function runCommands()
+    {
+        $output = [];
+
+        foreach ($this->command as $command) {
+            $output[] = shell_exec($command);
+        }
+
+        return $output;
     }
 }

@@ -50,7 +50,7 @@ class CommandTest extends TestCase
     {
         $utility = new Command;
 
-        $utility->commands = [
+        $utility->command = [
             "touch {$this->path('file.txt')}",
             "mv {$this->path('file.txt')} {$this->path('new.txt')}",
         ];
@@ -58,5 +58,39 @@ class CommandTest extends TestCase
         $utility->run();
 
         $this->assertFileExists($this->path('new.txt'));
+    }
+
+    /** @test */
+    public function handle_output_of_a_single_command()
+    {
+        $utility = new Command;
+
+        $result;
+
+        $utility->command = 'echo foobar';
+        $utility->handler = function ($output) use (&$result) {
+            $result = $output;
+        };
+
+        $utility->run();
+
+        $this->assertEquals('foobar', trim($result));
+    }
+
+    /** @test */
+    public function handle_output_of_multiple_commands()
+    {
+        $utility = new Command;
+
+        $result;
+
+        $utility->command = ['echo foo', 'echo bar'];
+        $utility->handler = function ($output) use (&$result) {
+            $result = $output;
+        };
+
+        $utility->run();
+
+        $this->assertEquals(['foo', 'bar'], array_map('trim', $result));
     }
 }

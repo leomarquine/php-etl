@@ -138,7 +138,7 @@ class Job
      *
      * @param  string  $method
      * @param  array  $parameters
-     * @return void
+     * @return $this
      *
      * @throws \BadMethodCallException
      */
@@ -156,7 +156,7 @@ class Job
      *
      * @param  string  $method
      * @param  array  $parameters
-     * @return void
+     * @return static
      *
      * @throws \BadMethodCallException
      */

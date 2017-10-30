@@ -60,8 +60,8 @@ class Insert extends Loader
     /**
      * Load data into the given destination.
      *
-     * @param  string  $destination
      * @param  \Generator  $data
+     * @param  string  $destination
      * @return void
      */
     public function load(Generator $data, $destination)

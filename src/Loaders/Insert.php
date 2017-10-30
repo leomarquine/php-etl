@@ -9,18 +9,18 @@ use Marquine\Etl\Database\Transaction;
 class Insert extends Loader
 {
     /**
-     * The columns to insert.
-     *
-     * @var array
-     */
-    public $columns = [];
-
-    /**
      * The connection name.
      *
      * @var string
      */
     public $connection = 'default';
+
+    /**
+     * The columns to insert.
+     *
+     * @var array
+     */
+    public $columns = [];
 
     /**
      * Indicates if the table has timestamps columns.
@@ -37,13 +37,6 @@ class Insert extends Loader
     public $transaction = 'single';
 
     /**
-     * The insert statement.
-     *
-     * @var \PDOStatement
-     */
-    protected $insert;
-
-    /**
      * The database table.
      *
      * @var string
@@ -56,6 +49,13 @@ class Insert extends Loader
      * @var string
      */
     protected $time;
+
+    /**
+     * The insert statement.
+     *
+     * @var \PDOStatement
+     */
+    protected $insert;
 
     /**
      * Load data into the given destination.

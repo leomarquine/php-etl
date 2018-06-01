@@ -38,6 +38,8 @@ class ConnectionFactory
                 return new Connectors\MySqlConnector;
             case 'pgsql':
                 return new Connectors\PostgresConnector;
+            case 'mssql':
+                return new Connectors\MsSqlConnector;
         }
 
         throw new InvalidArgumentException("Unsupported driver: $driver");

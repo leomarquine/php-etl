@@ -2,44 +2,44 @@
 
 namespace Marquine\Etl;
 
-use Generator;
+use IteratorAggregate;
 
 class Pipeline
 {
     /**
-     * The pipeline data generator.
+     * The pipeline data flow.
      *
-     * @var \Generator
+     * @var \IteratorAggregate
      */
-    protected $generator;
+    protected $flow;
 
     /**
-     * The array of transformers.
+     * The array of tasks.
      *
      * @var array
      */
-    protected $transformers = [];
+    protected $tasks = [];
 
     /**
      * Make a new Pipeline instance.
      *
-     * @param  \Generator  $generator
+     * @param  \IteratorAggregate  $flow
      * @return void
      */
-    public function __construct(Generator $generator)
+    public function __construct(IteratorAggregate $flow)
     {
-        $this->generator = $generator;
+        $this->flow = $flow;
     }
 
     /**
-     * Pipe a transformer.
+     * Pipe a task.
      *
-     * @param  callable  $transformer
+     * @param  callable  $task
      * @return $this
      */
-    public function pipe(callable $transformer)
+    public function pipe(callable $task)
     {
-        $this->transformers[] = $transformer;
+        $this->tasks[] = $task;
 
         return $this;
     }
@@ -51,21 +51,21 @@ class Pipeline
      */
     public function get()
     {
-        foreach ($this->generator as $row) {
-            yield $this->transform($row);
+        foreach ($this->flow as $row) {
+            yield $this->runTasks($row);
         }
     }
 
     /**
-     * Transform the row data.
+     * Run tasks for the given row.
      *
      * @param  array  $row
      * @return array
      */
-    protected function transform($row)
+    protected function runTasks($row)
     {
-        foreach ($this->transformers as $transformer) {
-            $row = $transformer($row);
+        foreach ($this->tasks as $task) {
+            $row = $task($row);
         }
 
         return $row;

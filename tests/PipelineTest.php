@@ -24,11 +24,13 @@ class PipelineTest extends TestCase
     }
 
     /** @test */
-    public function pipeline_flow()
+    public function pipeline_flow_and_metadata()
     {
         $pipeline = new Pipeline($this->flow);
 
-        $generator = $pipeline->pipe(function ($row) {
+        $generator = $pipeline->pipe(function ($row, $meta) {
+            $this->assertEquals($meta, ['total' => 2, 'current' => substr($row, -1)]);
+
             return "*{$row}*";
         })->get();
 

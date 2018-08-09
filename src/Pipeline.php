@@ -21,6 +21,20 @@ class Pipeline
     protected $tasks = [];
 
     /**
+     * Current row.
+     *
+     * @var int
+     */
+    protected $current = 0;
+
+    /**
+     * Total rows.
+     *
+     * @var int
+     */
+    protected $total = 0;
+
+    /**
      * Make a new Pipeline instance.
      *
      * @param  \IteratorAggregate  $flow
@@ -51,7 +65,11 @@ class Pipeline
      */
     public function get()
     {
+        $this->total = iterator_count($this->flow);
+
         foreach ($this->flow as $row) {
+            $this->current++;
+
             yield $this->runTasks($row);
         }
     }
@@ -65,9 +83,23 @@ class Pipeline
     protected function runTasks($row)
     {
         foreach ($this->tasks as $task) {
-            $row = $task($row);
+            $row = $task($row, $this->metadata());
         }
 
         return $row;
+    }
+
+
+    /**
+     * Get the metadata.
+     *
+     * @return array
+     */
+    protected function metadata()
+    {
+        return [
+            'current' => $this->current,
+            'total' => $this->total,
+        ];
     }
 }

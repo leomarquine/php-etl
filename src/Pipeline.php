@@ -35,6 +35,20 @@ class Pipeline
     protected $total = 0;
 
     /**
+     * Maximum number of rows.
+     *
+     * @var int
+     */
+    protected $limit;
+
+    /**
+     * Number of rows to skip.
+     *
+     * @var int
+     */
+    protected $skip;
+
+    /**
      * Pre execution tasks.
      *
      * @var array
@@ -88,6 +102,14 @@ class Pipeline
         foreach ($this->flow as $row) {
             $this->current++;
 
+            if ($this->skip && $this->current <= $this->skip) {
+                continue;
+            }
+
+            if ($this->limit && $this->current > $this->limit) {
+                break;
+            }
+
             yield $this->runTasks($row);
         }
 
@@ -122,6 +144,32 @@ class Pipeline
             'current' => $this->current,
             'total' => $this->total,
         ];
+    }
+
+    /**
+     * Set the maximum number of rows.
+     *
+     * @param  int  $value
+     * @return $this
+     */
+    public function limit($value)
+    {
+        $this->limit = $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the number of rows to skip.
+     *
+     * @param  int  $value
+     * @return $this
+     */
+    public function skip($value)
+    {
+        $this->skip = $value;
+
+        return $this;
     }
 
     /**

@@ -77,4 +77,24 @@ class PipelineTest extends TestCase
 
         $this->assertTrue($control);
     }
+
+    /** @test */
+    public function maximum_number_of_rows_can_be_limited()
+    {
+        $pipeline = new Pipeline($this->flow);
+
+        $generator = $pipeline->limit(1)->get();
+
+        $this->assertEquals(['row1'], iterator_to_array($generator));
+    }
+
+    /** @test */
+    public function initial_rows_can_be_skipped()
+    {
+        $pipeline = new Pipeline($this->flow);
+
+        $generator = $pipeline->skip(1)->get();
+
+        $this->assertEquals(['row2'], iterator_to_array($generator));
+    }
 }

@@ -38,4 +38,43 @@ class PipelineTest extends TestCase
 
         $this->assertEquals(['*row1*', '*row2*'], iterator_to_array($generator));
     }
+
+    /** @test */
+    public function tasks_can_be_run_before_the_pipeline_flow_starts()
+    {
+        $control = false;
+
+        $callback = function () use (&$control) {
+            $control = true;
+        };
+
+        $pipeline = new Pipeline($this->flow);
+
+        $generator = $pipeline->registerPreExecutionTask($callback)->get();
+
+        $generator->rewind();
+
+        $this->assertTrue($control);
+    }
+
+    /** @test */
+    public function tasks_can_be_run_after_the_pipeline_flow_ends()
+    {
+        $control = false;
+
+        $callback = function () use (&$control) {
+            $control = true;
+        };
+
+        $pipeline = new Pipeline($this->flow);
+
+        $generator = $pipeline->registerPostExecutionTask($callback)->get();
+
+        while ($generator->valid()) {
+            $this->assertFalse($control);
+            $generator->next();
+        }
+
+        $this->assertTrue($control);
+    }
 }

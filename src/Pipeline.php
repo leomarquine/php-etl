@@ -35,6 +35,20 @@ class Pipeline
     protected $total = 0;
 
     /**
+     * Pre execution tasks.
+     *
+     * @var array
+     */
+    protected $preExecutionTasks = [];
+
+    /**
+     * Post execution tasks.
+     *
+     * @var array
+     */
+    protected $postExecutionTasks = [];
+
+    /**
      * Make a new Pipeline instance.
      *
      * @param  \IteratorAggregate  $flow
@@ -67,10 +81,18 @@ class Pipeline
     {
         $this->total = iterator_count($this->flow);
 
+        foreach ($this->preExecutionTasks as $callback) {
+            $callback();
+        }
+
         foreach ($this->flow as $row) {
             $this->current++;
 
             yield $this->runTasks($row);
+        }
+
+        foreach ($this->postExecutionTasks as $callback) {
+            $callback();
         }
     }
 
@@ -89,7 +111,6 @@ class Pipeline
         return $row;
     }
 
-
     /**
      * Get the metadata.
      *
@@ -101,5 +122,31 @@ class Pipeline
             'current' => $this->current,
             'total' => $this->total,
         ];
+    }
+
+    /**
+     * Register pre execution tasks.
+     *
+     * @param  callable  $task
+     * @return $this
+     */
+    public function registerPreExecutionTask(callable $task)
+    {
+        $this->preExecutionTasks[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Register post execution tasks.
+     *
+     * @param  callable  $task
+     * @return $this
+     */
+    public function registerPostExecutionTask(callable $task)
+    {
+        $this->postExecutionTasks[] = $task;
+
+        return $this;
     }
 }

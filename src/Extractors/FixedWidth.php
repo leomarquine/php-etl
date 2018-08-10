@@ -34,7 +34,6 @@ class FixedWidth implements ExtractorInterface, IteratorAggregate
     /**
      * Get the extractor iterator.
      *
-     * @param  array  $source
      * @return \Generator
      */
     public function getIterator()

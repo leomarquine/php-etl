@@ -7,38 +7,38 @@ use Marquine\Etl\Extractors\Xml;
 
 class XmlTest extends TestCase
 {
-    private $expected = [
+    protected $expected = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
     /** @test */
-    public function extracts_data_from_a_xml_file()
+    public function extracts_data_from_an_xml_file_retrieving_all_fields_within_the_loop_path()
     {
         $extractor = new Xml;
 
         $extractor->loop = '/users/user';
 
-        $results = $extractor->extract('xml1.xml');
+        $extractor->source(__DIR__ . '/../data/xml1.xml');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 
     /** @test */
-    public function extracts_data_from_a_xml_file_with_custom_columns_path()
+    public function extracts_data_from_an_xml_file_retrieving_custom_fields_within_the_loop_path()
     {
         $extractor = new Xml;
 
         $extractor->loop = '/users/user';
 
         $extractor->columns = [
-            'id' => 'id/value',
-            'name' => 'name/value',
-            'email' => 'email/value'
+            'id' => '/@id',
+            'name' => '/profile/name',
+            'email' => '/profile/email/@value',
         ];
 
-        $results = $extractor->extract('xml2.xml');
+        $extractor->source(__DIR__ . '/../data/xml2.xml');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 }

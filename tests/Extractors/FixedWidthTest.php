@@ -7,7 +7,7 @@ use Marquine\Etl\Extractors\FixedWidth;
 
 class FixedWidthTest extends TestCase
 {
-    private $expected = [
+    protected $expected = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
@@ -23,8 +23,8 @@ class FixedWidthTest extends TestCase
             'email' => [9, 17],
         ];
 
-        $results = $extractor->extract('fixed-width.txt');
+        $extractor->source(__DIR__.'/../data/fixed-width.txt');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 }

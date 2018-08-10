@@ -2,9 +2,10 @@
 
 namespace Marquine\Etl\Extractors;
 
+use IteratorAggregate;
 use Flow\JSONPath\JSONPath;
 
-class Json extends Extractor
+class Json implements ExtractorInterface, IteratorAggregate
 {
     /**
      * Extractor columns.
@@ -14,16 +15,32 @@ class Json extends Extractor
     public $columns;
 
     /**
-     * Extract data from the given source.
+     * Path to the file.
      *
-     * @param  string  $source
+     * @var string
+     */
+    protected $file;
+
+    /**
+     * Set the extractor source.
+     *
+     * @param  mixed  $source
+     * @return void
+     */
+    public function source($source)
+    {
+        $this->file = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @param  array  $source
      * @return \Generator
      */
-    public function extract($source)
+    public function getIterator()
     {
-        $source = $this->validateSourceFile($source);
-
-        $items = json_decode(file_get_contents($source), true);
+        $items = json_decode(file_get_contents($this->file), true);
 
         if ($this->columns) {
             $jsonPath = new JSONPath($items);
@@ -35,7 +52,11 @@ class Json extends Extractor
             $items = $this->transpose($this->columns);
         }
 
-        return (new Arr)->extract($items);
+        $data = new Arr;
+
+        $data->source($items);
+
+        return $data;
     }
 
     /**

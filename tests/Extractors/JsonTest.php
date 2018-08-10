@@ -7,7 +7,7 @@ use Marquine\Etl\Extractors\Json;
 
 class JsonTest extends TestCase
 {
-    private $expected = [
+    protected $expected = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
@@ -17,9 +17,9 @@ class JsonTest extends TestCase
     {
         $extractor = new Json;
 
-        $results = $extractor->extract('json1.json');
+        $extractor->source(__DIR__.'/../data/json1.json');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -33,8 +33,8 @@ class JsonTest extends TestCase
             'email' => '$..bindings[*].email.value'
         ];
 
-        $results = $extractor->extract('json2.json');
+        $extractor->source(__DIR__.'/../data/json2.json');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 }

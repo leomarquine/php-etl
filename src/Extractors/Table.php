@@ -2,9 +2,10 @@
 
 namespace Marquine\Etl\Extractors;
 
+use IteratorAggregate;
 use Marquine\Etl\Database\Query;
 
-class Table extends Extractor
+class Table implements ExtractorInterface, IteratorAggregate
 {
     /**
      * The connection name.
@@ -26,6 +27,56 @@ class Table extends Extractor
      * @var array
      */
     public $where = [];
+
+    /**
+     * The database table.
+     *
+     * @var string
+     */
+    protected $table;
+
+    /**
+     * Set the extractor source.
+     *
+     * @param  mixed  $source
+     * @return void
+     */
+    public function source($source)
+    {
+        $this->table = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        if (empty($this->columns)) {
+            $this->columns = ['*'];
+        }
+
+        $statement = $this->query($this->connection)
+            ->select($this->table, $this->columns)
+            ->where($this->where)
+            ->execute();
+
+        while ($row = $statement->fetch()) {
+            yield $row;
+        }
+    }
+
+    /**
+     * Get a database connection.
+     *
+     * @param  string  $connection
+     * @return \Marquine\Etl\Database\Connection
+     */
+    protected function query($connection)
+    {
+        return Query::connection($connection);
+    }
 
     /**
      * Extract data from the given source.

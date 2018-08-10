@@ -3,81 +3,48 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Extractors\Table;
-use Marquine\Etl\Database\Manager as DB;
 
 class TableTest extends TestCase
 {
-    protected $items = [
-        ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-        ['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-    ];
-
     /** @test */
-    public function extract_data_from_a_database_table()
+    public function extract_from_a_database_table_with_default_options()
     {
-        $this->createUsersTable('default');
+        $statement = $this->createMock('PDOStatement');
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
 
-        $extractor = new Table;
+        $query = $this->createMock('Marquine\Etl\Database\Query');
+        $query->expects($this->once())->method('select')->with('table', ['*'])->will($this->returnSelf());
+        $query->expects($this->once())->method('where')->with([])->will($this->returnSelf());
+        $query->expects($this->once())->method('execute')->willReturn($statement);
 
-        DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
+        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Table')->setMethods(['query'])->getMock();
+        $extractor->expects($this->once())->method('query')->with('default')->willReturn($query);
 
-        $results = $extractor->extract('users');
+        $extractor->source('table');
 
-        $this->assertEquals($this->items, iterator_to_array($results));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 
     /** @test */
-    public function extract_specific_columns_from_a_database_table()
+    public function extract_from_a_database_table_with_custom_options()
     {
-        $this->createUsersTable('default', true);
+        $statement = $this->createMock('PDOStatement');
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
 
-        DB::connection('default')->exec("insert into users (id, name, email) values (1, 'John Doe', 'johndoe@email.com')");
-        DB::connection('default')->exec("insert into users (id, name, email) values (2, 'Jane Doe', 'janedoe@email.com')");
+        $query = $this->createMock('Marquine\Etl\Database\Query');
+        $query->expects($this->once())->method('select')->with('table', 'columns')->will($this->returnSelf());
+        $query->expects($this->once())->method('where')->with('where')->will($this->returnSelf());
+        $query->expects($this->once())->method('execute')->willReturn($statement);
 
-        $extractor = new Table;
+        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Table')->setMethods(['query'])->getMock();
+        $extractor->expects($this->once())->method('query')->with('connection')->willReturn($query);
 
-        $extractor->columns = ['id', 'name', 'email'];
+        $extractor->connection = 'connection';
+        $extractor->columns = 'columns';
+        $extractor->where = 'where';
 
-        $results = $extractor->extract('users');
+        $extractor->source('table');
 
-        $this->assertEquals($this->items, iterator_to_array($results));
-    }
-
-    /** @test */
-    public function extract_data_from_a_database_table_with_a_where_clause()
-    {
-        $this->createUsersTable('default');
-
-        DB::connection('default')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        DB::connection('default')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
-
-        $extractor = new Table;
-
-        $extractor->where = ['id' => 1];
-
-        $results = $extractor->extract('users');
-
-        $expected = [['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']];
-
-        $this->assertEquals($expected, iterator_to_array($results));
-    }
-
-    /** @test */
-    public function extract_data_from_a_database_table_using_a_custom_connection()
-    {
-        $this->createUsersTable('secondary');
-
-        DB::connection('secondary')->exec("insert into users values (1, 'John Doe', 'johndoe@email.com')");
-        DB::connection('secondary')->exec("insert into users values (2, 'Jane Doe', 'janedoe@email.com')");
-
-        $extractor = new Table;
-
-        $extractor->connection = 'secondary';
-
-        $results = $extractor->extract('users');
-
-        $this->assertEquals($this->items, iterator_to_array($results));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 }

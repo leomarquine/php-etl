@@ -2,9 +2,10 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Database\Manager as DB;
+use IteratorAggregate;
+use Marquine\Etl\Database\Manager;
 
-class Query extends Extractor
+class Query implements ExtractorInterface, IteratorAggregate
 {
     /**
      * The connection name.
@@ -21,19 +22,47 @@ class Query extends Extractor
     public $bindings = [];
 
     /**
-     * Extract data from the given source.
+     * SQL query statement.
      *
-     * @param  string  $query
+     * @var string
+     */
+    protected $query;
+
+    /**
+     * Set the extractor source.
+     *
+     * @param  mixed  $source
+     * @return void
+     */
+    public function source($source)
+    {
+        $this->query = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
      * @return \Generator
      */
-    public function extract($query)
+    public function getIterator()
     {
-        $query = DB::connection($this->connection)->prepare($query);
+        $statement = $this->db($this->connection)->prepare($this->query);
 
-        $query->execute($this->bindings);
+        $statement->execute($this->bindings);
 
-        while ($row = $query->fetch()) {
+        while ($row = $statement->fetch()) {
             yield $row;
         }
+    }
+
+    /**
+     * Get a database connection.
+     *
+     * @param  string  $connection
+     * @return \Marquine\Etl\Database\Connection
+     */
+    protected function db($connection)
+    {
+        return Manager::connection($connection);
     }
 }

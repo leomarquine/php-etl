@@ -7,19 +7,19 @@ use Marquine\Etl\Extractors\Csv;
 
 class CsvTest extends TestCase
 {
-    private $expected = [
+    protected $expected = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
     /** @test */
-    public function extracts_data_from_a_csv_file()
+    public function extracts_data_from_a_csv_file_with_default_options()
     {
         $extractor = new Csv;
 
-        $results = $extractor->extract('csv1.csv');
+        $extractor->source(__DIR__.'/../data/csv1.csv');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -28,23 +28,22 @@ class CsvTest extends TestCase
         $extractor = new Csv;
 
         $extractor->delimiter = ';';
-
         $extractor->enclosure = '"';
 
-        $results = $extractor->extract('csv2.csv');
+        $extractor->source(__DIR__.'/../data/csv2.csv');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 
     /** @test */
-    public function it_extracts_data_from_a_csv_file_without_a_header_line()
+    public function extracts_data_from_a_csv_file_without_a_header_line()
     {
         $extractor = new Csv;
 
         $extractor->columns = ['id' => 1, 'name' => 2, 'email' => 3];
 
-        $results = $extractor->extract('csv3.csv');
+        $extractor->source(__DIR__.'/../data/csv3.csv');
 
-        $this->assertEquals($this->expected, iterator_to_array($results));
+        $this->assertEquals($this->expected, iterator_to_array($extractor));
     }
 }

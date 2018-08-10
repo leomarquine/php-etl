@@ -48,22 +48,6 @@ class Job
     }
 
     /**
-     * Run the utility step.
-     *
-     * @param  string  $utility
-     * @param  array  $options
-     * @return $this
-     */
-    protected function utility($utility, $options = null)
-    {
-        $utility = $this->factory->make(Utility::class, $utility, $options);
-
-        $utility->run();
-
-        return $this;
-    }
-
-    /**
      * Extract data from the given source.
      *
      * @param  string  $extractor
@@ -144,7 +128,7 @@ class Job
      */
     public function __call($method, $parameters)
     {
-        if (! in_array($method, ['extract', 'utility'])) {
+        if ($method !== 'extract') {
             throw new BadMethodCallException("Method {$method} does not exist.");
         }
 
@@ -162,7 +146,7 @@ class Job
      */
     public static function __callStatic($method, $parameters)
     {
-        if (! in_array($method, ['extract', 'utility'])) {
+        if ($method !== 'extract') {
             throw new BadMethodCallException("Method {$method} does not exist.");
         }
 

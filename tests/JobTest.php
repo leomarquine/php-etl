@@ -7,7 +7,6 @@ use Marquine\Etl\Job;
 use Marquine\Etl\Factory;
 use Marquine\Etl\Pipeline;
 use Marquine\Etl\Loaders\Loader;
-use Marquine\Etl\Utilities\Utility;
 use Marquine\Etl\Extractors\Extractor;
 use Marquine\Etl\Transformers\Transformer;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -22,7 +21,6 @@ class JobTest extends TestCase
         $factory = Mockery::mock(Factory::class);
         $pipeline = Mockery::mock(Pipeline::class);
         $extractor = Mockery::mock(Extractor::class);
-        $utility = Mockery::mock(Utility::class);
         $transformer = Mockery::mock(Transformer::class);
         $loader = Mockery::mock(Loader::class);
 
@@ -39,10 +37,6 @@ class JobTest extends TestCase
         $factory->shouldReceive('make')->once()->with(Extractor::class, 'extractor-name', ['options'])->andReturn($extractor);
         $extractor->shouldReceive('pipeline')->once()->with('source')->andReturn($pipeline);
         $job->extract('extractor-name', 'source', ['options']);
-
-        $factory->shouldReceive('make')->once()->with(Utility::class, 'utility-name', ['options'])->andReturn($utility);
-        $utility->shouldReceive('run')->once()->withNoArgs();
-        $job->utility('utility-name', ['options']);
 
         $factory->shouldReceive('make')->once()->with(Transformer::class, 'transformer-name', ['options'])->andReturn($transformer);
         $transformer->shouldReceive('handler')->once()->withNoArgs()->andReturn($handler);

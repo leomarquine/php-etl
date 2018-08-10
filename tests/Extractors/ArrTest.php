@@ -7,23 +7,23 @@ use Marquine\Etl\Extractors\Arr;
 
 class ArrTest extends TestCase
 {
-    private $items = [
+    protected $items = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
     /** @test */
-    public function extracts_data_from_an_array()
+    public function extracts_data_from_an_array_with_default_options()
     {
         $extractor = new Arr;
 
-        $results = $extractor->extract($this->items);
+        $extractor->source($this->items);
 
-        $this->assertEquals($this->items, iterator_to_array($results));
+        $this->assertEquals($this->items, iterator_to_array($extractor));
     }
 
     /** @test */
-    public function extracts_specific_columns_from_an_array()
+    public function extracts_data_from_an_array_with_custom_options()
     {
         $expected = [
             ['id' => 1, 'name' => 'John Doe'],
@@ -34,8 +34,8 @@ class ArrTest extends TestCase
 
         $extractor->columns = ['id', 'name'];
 
-        $results = $extractor->extract($this->items);
+        $extractor->source($this->items);
 
-        $this->assertEquals($expected, iterator_to_array($results));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 }

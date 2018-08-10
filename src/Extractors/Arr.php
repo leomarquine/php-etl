@@ -2,7 +2,9 @@
 
 namespace Marquine\Etl\Extractors;
 
-class Arr extends Extractor
+use IteratorAggregate;
+
+class Arr implements ExtractorInterface, IteratorAggregate
 {
     /**
      * Extractor columns.
@@ -12,14 +14,32 @@ class Arr extends Extractor
     public $columns;
 
     /**
-     * Extract data from the given source.
+     * The extractor data.
+     *
+     * @var array
+     */
+    protected $data;
+
+    /**
+     * Set the extractor source.
+     *
+     * @param  mixed  $source
+     * @return void
+     */
+    public function source($source)
+    {
+        $this->data = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
      *
      * @param  array  $source
      * @return \Generator
      */
-    public function extract($source)
+    public function getIterator()
     {
-        foreach ($source as $row) {
+        foreach ($this->data as $row) {
             if ($this->columns) {
                 yield array_intersect_key($row, array_flip($this->columns));
             } else {

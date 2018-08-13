@@ -2,7 +2,9 @@
 
 namespace Marquine\Etl\Transformers;
 
-class JsonEncode extends Transformer
+use Marquine\Etl\Pipeline;
+
+class JsonEncode implements TransformerInterface
 {
     /**
      * Transformer columns.
@@ -28,9 +30,10 @@ class JsonEncode extends Transformer
     /**
      * Get the transformer handler.
      *
+     * @param  \Marquine\Etl\Pipeline  $pipeline
      * @return callable
      */
-    public function handler()
+    public function handler(Pipeline $pipeline)
     {
         return function ($row) {
             if ($this->columns) {

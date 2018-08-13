@@ -63,12 +63,12 @@ class Pipeline
     protected $postExecutionTasks = [];
 
     /**
-     * Make a new Pipeline instance.
+     * Set the pipeline flow.
      *
      * @param  \IteratorAggregate  $flow
      * @return void
      */
-    public function __construct(IteratorAggregate $flow)
+    public function flow(IteratorAggregate $flow)
     {
         $this->flow = $flow;
     }

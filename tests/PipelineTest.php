@@ -26,7 +26,8 @@ class PipelineTest extends TestCase
     /** @test */
     public function pipeline_flow_and_metadata()
     {
-        $pipeline = new Pipeline($this->flow);
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
 
         $generator = $pipeline->pipe(function ($row, $meta) {
             $this->assertEquals($meta, ['total' => 2, 'current' => substr($row, -1)]);
@@ -48,7 +49,8 @@ class PipelineTest extends TestCase
             $control = true;
         };
 
-        $pipeline = new Pipeline($this->flow);
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
 
         $generator = $pipeline->registerPreExecutionTask($callback)->get();
 
@@ -66,7 +68,8 @@ class PipelineTest extends TestCase
             $control = true;
         };
 
-        $pipeline = new Pipeline($this->flow);
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
 
         $generator = $pipeline->registerPostExecutionTask($callback)->get();
 
@@ -81,7 +84,8 @@ class PipelineTest extends TestCase
     /** @test */
     public function maximum_number_of_rows_can_be_limited()
     {
-        $pipeline = new Pipeline($this->flow);
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
 
         $generator = $pipeline->limit(1)->get();
 
@@ -91,7 +95,8 @@ class PipelineTest extends TestCase
     /** @test */
     public function initial_rows_can_be_skipped()
     {
-        $pipeline = new Pipeline($this->flow);
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
 
         $generator = $pipeline->skip(1)->get();
 

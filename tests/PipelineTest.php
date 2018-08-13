@@ -102,4 +102,15 @@ class PipelineTest extends TestCase
 
         $this->assertEquals(['row2'], iterator_to_array($generator));
     }
+
+    /** @test */
+    public function maximum_number_of_rows_should_not_count_skipped_rows()
+    {
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
+
+        $generator = $pipeline->skip(1)->limit(1)->get();
+
+        $this->assertEquals(['row2'], iterator_to_array($generator));
+    }
 }

@@ -106,7 +106,7 @@ class Pipeline
                 continue;
             }
 
-            if ($this->limit && $this->current > $this->limit) {
+            if ($this->limit && $this->current > $this->limit + $this->skip) {
                 break;
             }
 

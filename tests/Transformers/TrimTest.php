@@ -15,9 +15,11 @@ class TrimTest extends TestCase
     /** @test */
     public function trim_all_columns()
     {
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+
         $transformer = new Trim;
 
-        $results = array_map($transformer->handler(), $this->items);
+        $results = array_map($transformer->handler($pipeline), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -30,11 +32,12 @@ class TrimTest extends TestCase
     /** @test */
     public function trim_specific_columns()
     {
-        $transformer = new Trim;
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
 
+        $transformer = new Trim;
         $transformer->columns = ['id', 'name'];
 
-        $results = array_map($transformer->handler(), $this->items);
+        $results = array_map($transformer->handler($pipeline), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => ' johndoe@email.com '],
@@ -47,11 +50,12 @@ class TrimTest extends TestCase
     /** @test */
     public function trim_right()
     {
-        $transformer = new Trim;
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
 
+        $transformer = new Trim;
         $transformer->type = 'right';
 
-        $results = array_map($transformer->handler(), $this->items);
+        $results = array_map($transformer->handler($pipeline), $this->items);
 
         $expected = [
             ['id' => ' 1', 'name' => 'John Doe', 'email' => ' johndoe@email.com'],
@@ -64,11 +68,12 @@ class TrimTest extends TestCase
     /** @test */
     public function trim_left()
     {
-        $transformer = new Trim;
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
 
+        $transformer = new Trim;
         $transformer->type = 'left';
 
-        $results = array_map($transformer->handler(), $this->items);
+        $results = array_map($transformer->handler($pipeline), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe  ', 'email' => 'johndoe@email.com '],
@@ -81,11 +86,12 @@ class TrimTest extends TestCase
     /** @test */
     public function trim_with_custom_character_mask()
     {
-        $transformer = new Trim;
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
 
+        $transformer = new Trim;
         $transformer->mask = ' cmo.';
 
-        $results = array_map($transformer->handler(), $this->items);
+        $results = array_map($transformer->handler($pipeline), $this->items);
 
         $expected = [
             ['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email'],
@@ -93,5 +99,18 @@ class TrimTest extends TestCase
         ];
 
         $this->assertEquals($expected, $results);
+    }
+
+    /** @test */
+    public function throws_an_exception_for_unsupported_trim_type()
+    {
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+
+        $transformer = new Trim;
+        $transformer->type = 'invalid';
+
+        $this->expectException('InvalidArgumentException');
+
+        $transformer->handler($pipeline);
     }
 }

@@ -30,7 +30,7 @@ class PipelineTest extends TestCase
         $pipeline->flow($this->flow);
 
         $generator = $pipeline->pipe(function ($row, $meta) {
-            $this->assertEquals($meta, ['total' => 2, 'current' => substr($row, -1)]);
+            $this->assertEquals($meta, (object) ['total' => 2, 'current' => substr($row, -1)]);
 
             return "*{$row}*";
         })->get();

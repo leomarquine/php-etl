@@ -140,7 +140,7 @@ class Pipeline
      */
     protected function metadata()
     {
-        return [
+        return (object) [
             'current' => $this->current,
             'total' => $this->total,
         ];

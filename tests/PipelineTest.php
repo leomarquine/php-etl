@@ -8,8 +8,6 @@ use Marquine\Etl\Pipeline;
 
 class PipelineTest extends TestCase
 {
-    protected $flow;
-
     protected function setUp()
     {
         parent::setUp();
@@ -19,6 +17,7 @@ class PipelineTest extends TestCase
             {
                 yield 'row1';
                 yield 'row2';
+                yield 'row3';
             }
         };
     }
@@ -30,14 +29,14 @@ class PipelineTest extends TestCase
         $pipeline->flow($this->flow);
 
         $generator = $pipeline->pipe(function ($row, $meta) {
-            $this->assertEquals($meta, (object) ['total' => 2, 'current' => substr($row, -1)]);
+            $this->assertEquals($meta, (object) ['total' => 3, 'current' => substr($row, -1)]);
 
             return "*{$row}*";
         })->get();
 
         $this->assertInstanceOf(Generator::class, $generator);
 
-        $this->assertEquals(['*row1*', '*row2*'], iterator_to_array($generator));
+        $this->assertEquals(['*row1*', '*row2*', '*row3*'], iterator_to_array($generator));
     }
 
     /** @test */
@@ -100,7 +99,7 @@ class PipelineTest extends TestCase
 
         $generator = $pipeline->skip(1)->get();
 
-        $this->assertEquals(['row2'], iterator_to_array($generator));
+        $this->assertEquals(['row2', 'row3'], iterator_to_array($generator));
     }
 
     /** @test */
@@ -112,5 +111,33 @@ class PipelineTest extends TestCase
         $generator = $pipeline->skip(1)->limit(1)->get();
 
         $this->assertEquals(['row2'], iterator_to_array($generator));
+    }
+
+    /** @test */
+    public function total_rows_and_current_row_must_not_count_skipped_rows()
+    {
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
+
+        $generator = $pipeline->skip(2)->pipe(function ($row, $meta) {
+            $this->assertEquals(1, $meta->total);
+            $this->assertEquals(1, $meta->current);
+        })->get();
+
+        iterator_to_array($generator);
+    }
+
+    /** @test */
+    public function total_rows_must_not_be_greater_then_row_limit()
+    {
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
+
+        $generator = $pipeline->limit(1)->pipe(function ($row, $meta) {
+            $this->assertEquals(1, $meta->total);
+            $this->assertEquals(1, $meta->current);
+        })->get();
+
+        iterator_to_array($generator);
     }
 }

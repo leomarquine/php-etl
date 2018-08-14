@@ -93,20 +93,20 @@ class Pipeline
      */
     public function get()
     {
-        $this->total = iterator_count($this->flow);
+        $this->total = $this->getRowsCount();
 
         foreach ($this->preExecutionTasks as $callback) {
             $callback();
         }
 
-        foreach ($this->flow as $row) {
-            $this->current++;
-
-            if ($this->skip && $this->current <= $this->skip) {
+        foreach ($this->flow as $index => $row) {
+            if ($this->skip && $index < $this->skip) {
                 continue;
             }
 
-            if ($this->limit && $this->current > $this->limit + $this->skip) {
+            $this->current++;
+
+            if ($this->limit && $this->current > $this->limit) {
                 break;
             }
 
@@ -131,6 +131,26 @@ class Pipeline
         }
 
         return $row;
+    }
+
+    /**
+     * Get the total rows count.
+     *
+     * @return int
+     */
+    protected function getRowsCount()
+    {
+        $count = iterator_count($this->flow);
+
+        if ($this->skip) {
+            $count -= $this->skip;
+        }
+
+        if ($this->limit && $count > $this->limit) {
+            $count = $this->limit;
+        }
+
+        return $count;
     }
 
     /**

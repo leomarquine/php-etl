@@ -3,7 +3,6 @@
 namespace Marquine\Etl\Database;
 
 use Exception;
-use InvalidArgumentException;
 
 class Transaction
 {
@@ -15,18 +14,11 @@ class Transaction
     protected $connection;
 
     /**
-     * The transaction data.
+     * Commit size.
      *
-     * @var mixed
+     * @var int
      */
-    protected $data;
-
-    /**
-    * The transaction mode.
-    *
-    * @var string|int
-    */
-    protected $mode;
+    protected $size;
 
     /**
     * Create a new Transaction instance.
@@ -40,153 +32,79 @@ class Transaction
     }
 
     /**
-     * Get a transaction instance for the given connection.
+     * Set the commit size.
      *
-     * @param  string  $connection
-     * @return static
-     */
-    public static function connection($connection)
-    {
-        return new static(Manager::connection($connection));
-    }
-
-    /**
-     * Set the transaction mode.
-     *
-     * @param  string|int  $mode
+     * @param  int  $size
      * @return $this
      */
-    public function mode($mode)
+    public function size($size)
     {
-        $this->mode = $mode;
+        $this->size = $size;
 
         return $this;
     }
 
     /**
-     * Set the transactoin data.
+     * Run the given callback.
      *
-     * @param  mixed  $data
-     * @return $this
+     * @param  callbale  $callback
+     * @param  \stdClass  $metadata
+     * @return void
      */
-    public function data($data)
+    public function run($callback, $metadata)
     {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * Run the transaction.
-     *
-     * @param  callable  $callback
-     * @return array
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function run($callback)
-    {
-        if ($this->mode > 0) {
-            return $this->multiple($callback);
+        if ($this->shouldBeginTransaction($metadata)) {
+            $this->connection->beginTransaction();
         }
 
-        if ($this->mode == 'single') {
-            return $this->single($callback);
+        try {
+            call_user_func($callback);
+        } catch (Exception $exception) {
+            $this->connection->rollBack();
+
+            throw $exception;
         }
 
-        if ($this->mode == 'none') {
-            return $this->none($callback);
-        }
-
-        throw new InvalidArgumentException('The specified transaction mode is not valid.');
-    }
-
-    /**
-    * Execute queries in multiple transactions.
-    *
-    * @param  callable  $callback
-    * @return array
-    */
-    protected function multiple($callback)
-    {
-        $count = 0;
-
-        $results = [];
-
-        foreach ($this->data as $row) {
-            if ($count % $this->mode == 0) {
-                $this->connection->beginTransaction();
-            }
-
-            try {
-                if ($result = $callback($row)) {
-                    $results[] = $result;
-                }
-            } catch (Exception $e) {
-                $this->connection->rollBack();
-
-                throw $e;
-            }
-
-            if ($count % $this->mode == $this->mode - 1) {
-                $this->connection->commit();
-            }
-
-            $count++;
-        }
-
-        if ($count % $this->mode != 0) {
+        if ($this->shouldCommit($metadata)) {
             $this->connection->commit();
         }
-
-        return $results;
     }
 
     /**
-    * Execute queries in a single transaction.
-    *
-    * @param  callable  $callback
-    * @return array
-    */
-    protected function single($callback)
+     * Check if it should begin a new transaction.
+     *
+     * @param  \stdClass  $metadata
+     * @return bool
+     */
+    protected function shouldBeginTransaction($metadata)
     {
-        $results = [];
-
-        $this->connection->beginTransaction();
-
-        foreach ($this->data as $row) {
-            try {
-                if ($result = $callback($row)) {
-                    $results[] = $result;
-                }
-            } catch (Exception $e) {
-                $this->connection->rollBack();
-
-                throw $e;
-            }
+        if (empty($this->size) && $metadata->current == 1) {
+            return true;
         }
 
-        $this->connection->commit();
+        if (!empty($this->size) && ($metadata->current - 1) % $this->size == 0) {
+            return true;
+        }
 
-        return $results;
+        return false;
     }
 
     /**
-    * Execute queries with no transaction.
-    *
-    * @param  callable  $callback
-    * @return array
-    */
-    protected function none($callback)
+     * Check if it should commit a transaction.
+     *
+     * @param  \stdClass  $metadata
+     * @return bool
+     */
+    protected function shouldCommit($metadata)
     {
-        $results = [];
-
-        foreach ($this->data as $row) {
-            if ($result = $callback($row)) {
-                $results[] = $result;
-            }
+        if (empty($this->size) && $metadata->current == $metadata->total) {
+            return true;
         }
 
-        return $results;
+        if (!empty($this->size) && (($metadata->current - 1) % $this->size == $this->size - 1 || $metadata->current == $metadata->total)) {
+            return true;
+        }
+
+        return false;
     }
 }

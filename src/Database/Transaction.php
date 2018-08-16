@@ -32,6 +32,17 @@ class Transaction
     }
 
     /**
+     * Get a transaction instance for the given connection.
+     *
+     * @param  string  $connection
+     * @return static
+     */
+    public static function connection($connection)
+    {
+        return new static(Manager::connection($connection));
+    }
+
+    /**
      * Set the commit size.
      *
      * @param  int  $size
@@ -47,11 +58,11 @@ class Transaction
     /**
      * Run the given callback.
      *
-     * @param  callbale  $callback
      * @param  \stdClass  $metadata
+     * @param  callbale  $callback
      * @return void
      */
-    public function run($callback, $metadata)
+    public function run($metadata, $callback)
     {
         if ($this->shouldBeginTransaction($metadata)) {
             $this->connection->beginTransaction();

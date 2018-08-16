@@ -28,7 +28,7 @@ class TransactionTest extends TestCase
         $this->connection->expects($this->exactly(1))->method('commit');
 
         foreach (range(1, 4) as $current) {
-            $this->transaction->run([$this->callback, 'callback'], (object) ['total' => 4, 'current' => $current]);
+            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
         }
     }
 
@@ -44,7 +44,7 @@ class TransactionTest extends TestCase
         $this->transaction->size(2);
 
         foreach (range(1, 4) as $current) {
-            $this->transaction->run([$this->callback, 'callback'], (object) ['total' => 4, 'current' => $current]);
+            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
         }
     }
 
@@ -60,7 +60,7 @@ class TransactionTest extends TestCase
         $this->transaction->size(2);
 
         foreach (range(1, 3) as $current) {
-            $this->transaction->run([$this->callback, 'callback'], (object) ['total' => 3, 'current' => $current]);
+            $this->transaction->run((object) ['total' => 3, 'current' => $current], [$this->callback, 'callback']);
         }
     }
 
@@ -80,7 +80,7 @@ class TransactionTest extends TestCase
         $this->expectException('Exception');
 
         foreach (range(1, 4) as $current) {
-            $this->transaction->run([$this->callback, 'callback'], (object) ['total' => 4, 'current' => $current]);
+            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
         }
     }
 }

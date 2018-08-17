@@ -140,4 +140,13 @@ class PipelineTest extends TestCase
 
         iterator_to_array($generator);
     }
+
+    /** @test */
+    public function provides_the_first_row_as_sample()
+    {
+        $pipeline = new Pipeline;
+        $pipeline->flow($this->flow);
+
+        $this->assertEquals('row1', $pipeline->sample());
+    }
 }

@@ -119,6 +119,16 @@ class Pipeline
     }
 
     /**
+     * Get a sample row of the flow.
+     *
+     * @return array
+     */
+    public function sample()
+    {
+        return $this->flow->getIterator()->current();
+    }
+
+    /**
      * Run tasks for the given row.
      *
      * @param  array  $row

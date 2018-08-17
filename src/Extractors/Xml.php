@@ -3,9 +3,8 @@
 namespace Marquine\Etl\Extractors;
 
 use XMLReader;
-use IteratorAggregate;
 
-class Xml implements ExtractorInterface, IteratorAggregate
+class Xml implements ExtractorInterface
 {
     /**
      * Extractor columns.

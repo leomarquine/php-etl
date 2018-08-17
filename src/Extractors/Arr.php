@@ -2,9 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use IteratorAggregate;
-
-class Arr implements ExtractorInterface, IteratorAggregate
+class Arr implements ExtractorInterface
 {
     /**
      * Extractor columns.

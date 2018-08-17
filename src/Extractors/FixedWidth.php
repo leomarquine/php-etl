@@ -2,9 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use IteratorAggregate;
-
-class FixedWidth implements ExtractorInterface, IteratorAggregate
+class FixedWidth implements ExtractorInterface
 {
     /**
      * Extractor columns.

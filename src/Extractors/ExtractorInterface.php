@@ -2,7 +2,9 @@
 
 namespace Marquine\Etl\Extractors;
 
-interface ExtractorInterface
+use IteratorAggregate;
+
+interface ExtractorInterface extends IteratorAggregate
 {
     /**
      * Set the extractor source.

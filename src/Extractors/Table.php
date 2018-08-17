@@ -2,10 +2,9 @@
 
 namespace Marquine\Etl\Extractors;
 
-use IteratorAggregate;
 use Marquine\Etl\Database\Query;
 
-class Table implements ExtractorInterface, IteratorAggregate
+class Table implements ExtractorInterface
 {
     /**
      * The connection name.

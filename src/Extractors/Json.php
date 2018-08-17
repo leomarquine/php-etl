@@ -2,10 +2,9 @@
 
 namespace Marquine\Etl\Extractors;
 
-use IteratorAggregate;
 use Flow\JSONPath\JSONPath;
 
-class Json implements ExtractorInterface, IteratorAggregate
+class Json implements ExtractorInterface
 {
     /**
      * Extractor columns.

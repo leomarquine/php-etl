@@ -2,9 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use IteratorAggregate;
-
-class Csv implements ExtractorInterface, IteratorAggregate
+class Csv implements ExtractorInterface
 {
     /**
      * Extractor columns.

@@ -2,17 +2,12 @@
 
 namespace Tests\Database;
 
-use Mockery;
 use Tests\TestCase;
 use Marquine\Etl\Etl;
 use Marquine\Etl\Database\Manager as DB;
-use Marquine\Etl\Database\ConnectionFactory;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class ManagerTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
     /** @test */
     public function create_a_new_connection()
     {
@@ -21,8 +16,8 @@ class ManagerTest extends TestCase
             'database' => ':memory:',
         ], 'test');
 
-        $factory = Mockery::mock(ConnectionFactory::class);
-        $factory->shouldReceive('make')->with(['driver' => 'sqlite', 'database' => ':memory:'])->andReturn('connection');
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with(['driver' => 'sqlite', 'database' => ':memory:'])->willReturn('connection');
 
         $this->assertEquals('connection', DB::connection('test', $factory));
     }

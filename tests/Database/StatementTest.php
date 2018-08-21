@@ -2,27 +2,19 @@
 
 namespace Tests\Database;
 
-use Mockery;
 use PDOStatement;
 use Tests\TestCase;
 use Marquine\Etl\Database\Statement;
 use Marquine\Etl\Database\Connection;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class StatementTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
-    protected $connection;
-
-    protected $statement;
-
     protected function setUp()
     {
         parent::setUp();
 
-        $this->connection = Mockery::mock(Connection::class);
-        $this->statement = Mockery::mock(PDOStatement::class);
+        $this->connection = $this->getMockBuilder(Connection::class)->setMethods(['prepare'])->disableOriginalConstructor()->getMock();
+        $this->statement = $this->createMock(PDOStatement::class);
     }
 
     /** @test */
@@ -84,7 +76,7 @@ class StatementTest extends TestCase
     /** @test */
     public function prepare()
     {
-        $this->connection->shouldReceive('prepare')->once()->with('')->andReturn($this->statement);
+        $this->connection->expects($this->once())->method('prepare')->with('')->willReturn($this->statement);
 
         $statement = new Statement($this->connection);
 

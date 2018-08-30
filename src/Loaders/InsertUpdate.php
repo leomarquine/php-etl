@@ -2,11 +2,10 @@
 
 namespace Marquine\Etl\Loaders;
 
-use Generator;
-use Marquine\Etl\Database\Statement;
-use Marquine\Etl\Database\Transaction;
+use Marquine\Etl\Pipeline;
+use Marquine\Etl\Database\Manager;
 
-class InsertUpdate extends Loader
+class InsertUpdate implements LoaderInterface
 {
     /**
      * The connection name.
@@ -27,7 +26,7 @@ class InsertUpdate extends Loader
      *
      * @var array
      */
-    public $columns = [];
+    public $columns;
 
     /**
      * Indicates if the table has timestamps columns.
@@ -37,21 +36,21 @@ class InsertUpdate extends Loader
     public $timestamps = false;
 
     /**
-     * Transaction mode.
+     * Indicates if the loader will perform transactions.
      *
-     * @var mixed
+     * @var bool
      */
-    public $transaction = 'single';
+    public $transaction = true;
 
     /**
-     * The database table.
+     * Transaction commit size.
      *
-     * @var string
+     * @var int
      */
-    protected $table;
+    public $commitSize = 100;
 
     /**
-     * Timestamps columns value.
+     * Time for timestamps columns.
      *
      * @var string
      */
@@ -79,62 +78,161 @@ class InsertUpdate extends Loader
     protected $update;
 
     /**
-     * Load data into the given destination.
+     * The database manager.
      *
-     * @param  \Generator  $data
-     * @param  string  $destination
+     * @var \Marquine\Etl\Database\Manager
+     */
+    protected $db;
+
+    /**
+     * Create a new InsertUpdate Loader instance.
+     *
+     * @param  \Marquine\Etl\Database\Manager  $manager
      * @return void
      */
-    public function load(Generator $data, $destination)
+    public function __construct(Manager $manager)
     {
-        $this->normalizeColumns($data);
-
-        $this->normalizeKey();
-
-        $this->table = $destination;
-
-        $this->time = date('Y-m-d G:i:s');
-
-        Transaction::connection($this->connection)->mode($this->transaction)->data($data)->run(function ($row) {
-            if ($this->exists($row)) {
-                $this->update($row);
-            } else {
-                $this->insert($row);
-            }
-        });
+        $this->db = $manager;
     }
 
     /**
-     * Verify if a row exists on the database.
+     * Get the loader handler.
      *
-     * @param  array  $row
-     * @return bool
+     * @param  \Marquine\Etl\Pipeline  $pipeline
+     * @param  string  $destination
+     * @return callable
      */
-    protected function exists($row)
+    public function handler(Pipeline $pipeline, $destination)
     {
-        if (! $this->select) {
-            $this->select = Statement::connection($this->connection)->select($this->table)->where($this->key)->prepare();
+        if ($this->timestamps) {
+            $this->time = date('Y-m-d G:i:s');
         }
 
-        $this->select->execute(array_intersect_key($row, $this->key));
+        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+            $this->columns = array_combine($this->columns, $this->columns);
+        }
 
-        return (bool) $this->select->fetch();
+        $this->prepareStatements($destination, $pipeline->sample());
+
+        $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
+
+        return function ($row, $metadata) use ($transaction) {
+            if ($transaction) {
+                $transaction->run($metadata, function () use ($row) {
+                    $this->execute($row);
+                });
+            } else {
+                $this->execute($row);
+            }
+
+            return $row;
+        };
     }
 
     /**
-     * Insert the row.
+     * Prepare the loader statements.
+     *
+     * @param  string  $table
+     * @param  array   $sample
+     * @return void
+     */
+    protected function prepareStatements($table, $sample)
+    {
+        $this->prepareSelect($table);
+        $this->prepareInsert($table, $sample);
+        $this->prepareUpdate($table, $sample);
+    }
+
+    /**
+     * Prepare the select statement.
+     *
+     * @param  string  $table
+     * @return void
+     */
+    protected function prepareSelect($table)
+    {
+        $this->select = $this->db->statement($this->connection)->select($table)->where($this->key)->prepare();
+    }
+
+    /**
+     * Prepare the insert statement.
+     *
+     * @param  string  $table
+     * @param  array   $sample
+     * @return void
+     */
+    protected function prepareInsert($table, $sample)
+    {
+        if ($this->columns) {
+            $columns = array_values($this->columns);
+        } else {
+            $columns = array_keys($sample);
+        }
+
+        if ($this->timestamps) {
+            array_push($columns, 'created_at', 'updated_at');
+        }
+
+        $this->insert = $this->db->statement($this->connection)->insert($table, $columns)->prepare();
+    }
+
+    /**
+     * Prepare the update statement.
+     *
+     * @param  string  $table
+     * @param  array   $sample
+     * @return void
+     */
+    protected function prepareUpdate($table, $sample)
+    {
+        if ($this->columns) {
+            $columns = array_values(array_diff($this->columns, $this->key));
+        } else {
+            $columns = array_keys(array_diff_key($sample, array_flip($this->key)));
+        }
+
+        if ($this->timestamps) {
+            array_push($columns, 'updated_at');
+        }
+
+        $this->update = $this->db->statement($this->connection)->update($table, $columns)->where($this->key)->prepare();
+    }
+
+    /**
+     * Execute the given row.
+     *
+     * @param  array  $row
+     * @return void
+     */
+    protected function execute($row)
+    {
+        $this->select->execute(array_intersect_key($row, array_flip($this->key)));
+
+        if ($this->columns) {
+            $result = [];
+
+            foreach ($this->columns as $key => $column) {
+                $result[$column] = $row[$key];
+            }
+
+            $row = $result;
+        }
+
+        if ($this->select->fetch()) {
+            $this->update($row);
+        } else {
+            $this->insert($row);
+        }
+    }
+
+    /**
+     * Execute the insert statement.
      *
      * @param  array  $row
      * @return void
      */
     protected function insert($row)
     {
-        if (! $this->insert) {
-            $this->insert = Statement::connection($this->connection)->insert($this->table, $this->getInsertColumns())->prepare();
-        }
-
-        $row = array_intersect_key($row, $this->columns + $this->key);
-
         if ($this->timestamps) {
             $row['created_at'] = $this->time;
             $row['updated_at'] = $this->time;
@@ -144,85 +242,17 @@ class InsertUpdate extends Loader
     }
 
     /**
-     * Update the row.
+     * Execute the update statement.
      *
      * @param  array  $row
      * @return void
      */
     protected function update($row)
     {
-        if (! $this->update) {
-            $this->update = Statement::connection($this->connection)->update($this->table, $this->getUpdateColumns())->where($this->key)->prepare();
-        }
-
-        $row = array_intersect_key($row, $this->columns + $this->key);
-
         if ($this->timestamps) {
             $row['updated_at'] = $this->time;
         }
 
-        $this->update->execute($row);
-    }
-
-    /**
-     * Get the columns for the insert statement.
-     *
-     * @return array
-     */
-    protected function getInsertColumns()
-    {
-        $columns = array_values($this->columns);
-
-        if ($this->timestamps) {
-            $columns[] = 'created_at';
-            $columns[] = 'updated_at';
-        }
-
-        return $columns;
-    }
-
-    /**
-     * Get the columns for the update statement.
-     *
-     * @return void
-     */
-    protected function getUpdateColumns()
-    {
-        $columns = array_values(array_diff_key($this->columns, $this->key));
-
-        if ($this->timestamps) {
-            $columns[] = 'updated_at';
-        }
-
-        return $columns;
-    }
-
-    /**
-     * Normalize the columns list.
-     *
-     * @param  \Generator  $data
-     * @return void
-     */
-    protected function normalizeColumns($data)
-    {
-        if (empty($this->columns)) {
-            $this->columns = array_keys($data->current());
-        }
-
-        $this->columns = array_combine($this->columns, $this->columns);
-    }
-
-    /**
-     * Normalize the primary key.
-     *
-     * @return void
-     */
-    protected function normalizeKey()
-    {
-        if (is_string($this->key)) {
-            $this->key = [$this->key];
-        }
-
-        $this->key = array_combine($this->key, $this->key);
+        $this->update->execute(array_diff_key($row, array_flip($this->key)));
     }
 }

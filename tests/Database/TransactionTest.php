@@ -12,7 +12,7 @@ class TransactionTest extends TestCase
     {
         parent::setUp();
 
-        $this->connection = $this->getMockBuilder('Marquine\Etl\Database\Connection')->setMethods(['beginTransaction', 'rollBack', 'commit'])->disableOriginalConstructor()->getMock();
+        $this->connection = $this->createMock('PDO');
         $this->callback = $this->getMockBuilder('stdClass')->setMethods(['callback'])->getMock();
 
         $this->transaction = new Transaction($this->connection);

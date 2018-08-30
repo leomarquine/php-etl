@@ -2,14 +2,16 @@
 
 namespace Marquine\Etl\Database;
 
+use PDO;
+
 class Statement
 {
     /**
      * The database connection.
      *
-     * @var \Marquine\Etl\Database\Connection
+     * @var \PDO
      */
-    protected $connection;
+    protected $pdo;
 
     /**
      * The sql query components.
@@ -28,23 +30,12 @@ class Statement
     /**
      * Create a new Statement instance.
      *
-     * @param  \Marquine\Etl\Database\Connection  $connection
+     * @param  \PDO  $pdo
      * @return void
      */
-    public function __construct(Connection $connection)
+    public function __construct(PDO $pdo)
     {
-        $this->connection = $connection;
-    }
-
-    /**
-     * Get a statement instance for the given connection.
-     *
-     * @param  string  $connection
-     * @return static
-     */
-    public static function connection($connection)
-    {
-        return new static(Manager::connection($connection));
+        $this->pdo = $pdo;
     }
 
     /**
@@ -54,7 +45,7 @@ class Statement
      */
     public function prepare()
     {
-        return $this->connection->prepare($this->toSql());
+        return $this->pdo->prepare($this->toSql());
     }
 
     /**

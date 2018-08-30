@@ -2,32 +2,20 @@
 
 namespace Tests\Database;
 
-use PDOStatement;
 use Tests\TestCase;
 use Marquine\Etl\Database\Statement;
-use Marquine\Etl\Database\Connection;
 
 class StatementTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->connection = $this->getMockBuilder(Connection::class)->setMethods(['prepare'])->disableOriginalConstructor()->getMock();
-        $this->statement = $this->createMock(PDOStatement::class);
-    }
-
     /** @test */
     public function select()
     {
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->select('users');
 
         $this->assertEquals('select * from users', $statement->toSql());
 
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->select('users', ['name', 'email']);
 
         $this->assertEquals('select name, email from users', $statement->toSql());
@@ -36,8 +24,7 @@ class StatementTest extends TestCase
     /** @test */
     public function insert()
     {
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->insert('users', ['name', 'email']);
 
         $this->assertEquals('insert into users (name, email) values (:name, :email)', $statement->toSql());
@@ -46,8 +33,7 @@ class StatementTest extends TestCase
     /** @test */
     public function update()
     {
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->update('users', ['name', 'email']);
 
         $this->assertEquals('update users set name = :name, email = :email', $statement->toSql());
@@ -56,8 +42,7 @@ class StatementTest extends TestCase
     /** @test */
     public function delete()
     {
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->delete('users');
 
         $this->assertEquals('delete from users', $statement->toSql());
@@ -66,8 +51,7 @@ class StatementTest extends TestCase
     /** @test */
     public function where()
     {
-        $statement = new Statement($this->connection);
-
+        $statement = new Statement($this->createMock('PDO'));
         $statement->where(['name', 'email']);
 
         $this->assertEquals('where name = :name and email = :email', $statement->toSql());
@@ -76,10 +60,13 @@ class StatementTest extends TestCase
     /** @test */
     public function prepare()
     {
-        $this->connection->expects($this->once())->method('prepare')->with('')->willReturn($this->statement);
+        $pdoStatement = $this->createMock('PDOStatement');
 
-        $statement = new Statement($this->connection);
+        $pdo = $this->createMock('PDO');
+        $pdo->expects($this->once())->method('prepare')->with('')->willReturn($pdoStatement);
 
-        $this->assertInstanceOf(PDOStatement::class, $statement->prepare());
+        $statement = new Statement($pdo);
+
+        $this->assertInstanceOf('PDOStatement', $statement->prepare());
     }
 }

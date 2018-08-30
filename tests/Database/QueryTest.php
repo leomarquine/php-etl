@@ -2,30 +2,20 @@
 
 namespace Tests\Database;
 
-use PDOStatement;
 use Tests\TestCase;
 use Marquine\Etl\Database\Query;
-use Marquine\Etl\Database\Connection;
 
 class QueryTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->connection = $this->getMockBuilder(Connection::class)->setMethods(['prepare'])->disableOriginalConstructor()->getMock();
-        $this->statement = $this->createMock(PDOStatement::class);
-    }
-
     /** @test */
     public function select()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->select('users');
 
         $this->assertEquals('select * from users', $query->toSql());
 
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->select('users', ['name', 'email']);
 
         $this->assertEquals('select name, email from users', $query->toSql());
@@ -34,7 +24,7 @@ class QueryTest extends TestCase
     /** @test */
     public function insert()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->insert('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->assertEquals('insert into users (name, email) values (?, ?)', $query->toSql());
@@ -44,7 +34,7 @@ class QueryTest extends TestCase
     /** @test */
     public function update()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->update('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->assertEquals('update users set name = ?, email = ?', $query->toSql());
@@ -54,7 +44,7 @@ class QueryTest extends TestCase
     /** @test */
     public function delete()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->delete('users');
 
         $this->assertEquals('delete from users', $query->toSql());
@@ -64,7 +54,7 @@ class QueryTest extends TestCase
     /** @test */
     public function where()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->where(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->assertEquals('where name = ? and email = ?', $query->toSql());
@@ -74,7 +64,7 @@ class QueryTest extends TestCase
     /** @test */
     public function where_in()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->whereIn('id', ['1', '2']);
 
         $this->assertEquals('where id in (?, ?)', $query->toSql());
@@ -84,7 +74,7 @@ class QueryTest extends TestCase
     /** @test */
     public function where_not_in()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->whereNotIn('id', ['1', '2']);
 
         $this->assertEquals('where id not in (?, ?)', $query->toSql());
@@ -94,7 +84,7 @@ class QueryTest extends TestCase
     /** @test */
     public function composite_where_in()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->whereIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
 
         $this->assertEquals('where (company, id) in ((?, ?), (?, ?))', $query->toSql());
@@ -104,7 +94,7 @@ class QueryTest extends TestCase
     /** @test */
     public function composite_where_not_in()
     {
-        $query = new Query($this->connection);
+        $query = new Query($this->createMock('PDO'));
         $query->whereNotIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
 
         $this->assertEquals('where (company, id) not in ((?, ?), (?, ?))', $query->toSql());
@@ -114,11 +104,14 @@ class QueryTest extends TestCase
     /** @test */
     public function execute()
     {
-        $this->connection->expects($this->once())->method('prepare')->with('')->willReturn($this->statement);
-        $this->statement->expects($this->once())->method('execute')->with([]);
+        $statement = $this->createMock('PDOStatement');
+        $statement->expects($this->once())->method('execute')->with([]);
 
-        $query = new Query($this->connection);
+        $pdo = $this->createMock('PDO');
+        $pdo->expects($this->once())->method('prepare')->with('')->willReturn($statement);
 
-        $this->assertInstanceOf(PDOStatement::class, $query->execute());
+        $query = new Query($pdo);
+
+        $this->assertInstanceOf('PDOStatement', $query->execute());
     }
 }

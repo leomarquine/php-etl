@@ -2,16 +2,17 @@
 
 namespace Marquine\Etl\Database;
 
+use PDO;
 use Exception;
 
 class Transaction
 {
     /**
-    * The database connection.
-    *
-    * @var \Marquine\Etl\Database\Connection
-    */
-    protected $connection;
+     * The database connection.
+     *
+     * @var \PDO
+     */
+    protected $pdo;
 
     /**
      * Commit size.
@@ -21,25 +22,14 @@ class Transaction
     protected $size;
 
     /**
-    * Create a new Transaction instance.
-    *
-    * @param  \Marquine\Etl\Database\Connection  $connection
-    * @return void
-    */
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
-     * Get a transaction instance for the given connection.
+     * Create a new Transaction instance.
      *
-     * @param  string  $connection
-     * @return static
+     * @param  \PDO  $pdo
+     * @return void
      */
-    public static function connection($connection)
+    public function __construct(PDO $pdo)
     {
-        return new static(Manager::connection($connection));
+        $this->pdo = $pdo;
     }
 
     /**
@@ -65,19 +55,19 @@ class Transaction
     public function run($metadata, $callback)
     {
         if ($this->shouldBeginTransaction($metadata)) {
-            $this->connection->beginTransaction();
+            $this->pdo->beginTransaction();
         }
 
         try {
             call_user_func($callback);
         } catch (Exception $exception) {
-            $this->connection->rollBack();
+            $this->pdo->rollBack();
 
             throw $exception;
         }
 
         if ($this->shouldCommit($metadata)) {
-            $this->connection->commit();
+            $this->pdo->commit();
         }
     }
 

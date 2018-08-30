@@ -3,22 +3,90 @@
 namespace Tests\Database;
 
 use Tests\TestCase;
-use Marquine\Etl\Etl;
-use Marquine\Etl\Database\Manager as DB;
+use Marquine\Etl\Database\Manager;
 
 class ManagerTest extends TestCase
 {
     /** @test */
-    public function create_a_new_connection()
+    public function default_connection()
     {
-        Etl::addConnection([
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-        ], 'test');
-
         $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with(['driver' => 'sqlite', 'database' => ':memory:'])->willReturn('connection');
+        $factory->expects($this->once())->method('make')->with(['options'])->willReturn('connection');
 
-        $this->assertEquals('connection', DB::connection('test', $factory));
+        $manager = new Manager($factory);
+        $manager->addConnection(['options']);
+
+        $this->assertAttributeEquals(['default' => 'connection'], 'connections', $manager);
+    }
+
+    /** @test */
+    public function connection_with_custom_name()
+    {
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with(['options'])->willReturn('connection');
+
+        $manager = new Manager($factory);
+        $manager->addConnection(['options'], 'custom');
+
+        $this->assertAttributeEquals(['custom' => 'connection'], 'connections', $manager);
+    }
+
+    /** @test */
+    public function get_a_query_builder_instance_for_the_given_connection()
+    {
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+
+        $manager = new Manager($factory);
+        $manager->addConnection([]);
+
+        $this->assertInstanceOf('Marquine\Etl\Database\Query', $manager->query('default'));
+    }
+
+    /** @test */
+    public function get_a_statement_builder_instance_for_the_given_connection()
+    {
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+
+        $manager = new Manager($factory);
+        $manager->addConnection([]);
+
+        $this->assertInstanceOf('Marquine\Etl\Database\Statement', $manager->statement('default'));
+    }
+
+    /** @test */
+    public function get_a_transaction_manager_instance_for_the_given_connection()
+    {
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+
+        $manager = new Manager($factory);
+        $manager->addConnection([]);
+
+        $this->assertInstanceOf('Marquine\Etl\Database\Transaction', $manager->transaction('default'));
+    }
+
+    /** @test */
+    public function get_the_pdo_connection()
+    {
+        $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
+        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+
+        $manager = new Manager($factory);
+        $manager->addConnection([]);
+
+        $this->assertInstanceOf('PDO', $manager->pdo('default'));
+    }
+
+    /** @test */
+    public function invalid_connection_throws_exception()
+    {
+        $manager = new Manager($this->createMock('Marquine\Etl\Database\ConnectionFactory'));
+
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Database [default] not configured.');
+
+        $manager->pdo('default');
     }
 }

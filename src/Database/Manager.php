@@ -2,32 +2,105 @@
 
 namespace Marquine\Etl\Database;
 
-use Marquine\Etl\Etl;
+use InvalidArgumentException;
 
 class Manager
 {
     /**
-     * Database connections.
+     * The Connection Factory.
+     *
+     * @var \Marquine\Etl\Database\ConnectionFactory
+     */
+    protected $factory;
+
+    /**
+     * The connections instances.
      *
      * @var array
      */
-    protected static $connections = [];
+    protected $connections = [];
 
     /**
-     * Get the specified database connection.
+     * Create a new database manager instance.
+     *
+     * @param  \Marquine\Etl\Database\ConnectionFactory $factory
+     * @return void
+     */
+    public function __construct(ConnectionFactory $factory)
+    {
+        $this->factory = $factory;
+    }
+
+    /**
+     * Register a connection.
+     *
+     * @param  array   $config
+     * @param  string  $name
+     * @return void
+     */
+    public function addConnection($config, $name = 'default')
+    {
+        $this->connections[$name] = $this->factory->make($config);
+    }
+
+    /**
+     * Get a connection instance.
      *
      * @param  string  $name
-     * @param  \Marquine\Etl\Database\ConnectionFactory  $factory
      * @return \Marquine\Etl\Database\Connection
+     *
+     * @throws \InvalidArgumentException
      */
-    public static function connection($name, $factory = null)
+    protected function getConnection($name)
     {
-        $factory = $factory ?: new ConnectionFactory;
-
-        if (! isset(static::$connections[$name])) {
-            static::$connections[$name] = $factory->make(Etl::get("connections.$name"));
+        if (isset($this->connections[$name])) {
+            return $this->connections[$name];
         }
 
-        return static::$connections[$name];
+        throw new InvalidArgumentException("Database [{$name}] not configured.");
+    }
+
+    /**
+     * Get a new query builder instance.
+     *
+     * @param  string  $connection
+     * @return \Marquine\Etl\Database\Query
+     */
+    public function query($connection)
+    {
+        return new Query($this->getConnection($connection));
+    }
+
+    /**
+     * Get a new statement builder instance.
+     *
+     * @param  string  $connection
+     * @return \Marquine\Etl\Database\Statement
+     */
+    public function statement($connection)
+    {
+        return new Statement($this->getConnection($connection));
+    }
+
+    /**
+     * Get a new transaction instance.
+     *
+     * @param  string  $connection
+     * @return \Marquine\Etl\Database\Transaction
+     */
+    public function transaction($connection)
+    {
+        return new Transaction($this->getConnection($connection));
+    }
+
+    /**
+     * Get the pdo connection instance.
+     *
+     * @param  string  $connection
+     * @return \PDO
+     */
+    public function pdo($connection)
+    {
+        return $this->getConnection($connection);
     }
 }

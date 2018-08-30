@@ -3,6 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Marquine\Etl\Extractors\Query;
 
 class QueryTest extends TestCase
 {
@@ -16,8 +17,10 @@ class QueryTest extends TestCase
         $connection = $this->createMock('PDO');
         $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
 
-        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Query')->setMethods(['db'])->getMock();
-        $extractor->expects($this->once())->method('db')->with('default')->willReturn($connection);
+        $manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $manager->expects($this->once())->method('pdo')->with('default')->willReturn($connection);
+
+        $extractor = new Query($manager);
 
         $extractor->source('select query');
 
@@ -34,8 +37,10 @@ class QueryTest extends TestCase
         $connection = $this->createMock('PDO');
         $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
 
-        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Query')->setMethods(['db'])->getMock();
-        $extractor->expects($this->once())->method('db')->with('connection')->willReturn($connection);
+        $manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $manager->expects($this->once())->method('pdo')->with('connection')->willReturn($connection);
+
+        $extractor = new Query($manager);
 
         $extractor->connection = 'connection';
         $extractor->bindings = 'bindings';

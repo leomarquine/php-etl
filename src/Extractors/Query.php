@@ -28,6 +28,24 @@ class Query implements ExtractorInterface
     protected $query;
 
     /**
+     * The database manager.
+     *
+     * @var \Marquine\Etl\Database\Manager
+     */
+    protected $db;
+
+    /**
+     * Create a new Query Extractor instance.
+     *
+     * @param  \Marquine\Etl\Database\Manager  $manager
+     * @return void
+     */
+    public function __construct(Manager $manager)
+    {
+        $this->db = $manager;
+    }
+
+    /**
      * Set the extractor source.
      *
      * @param  mixed  $source
@@ -45,23 +63,12 @@ class Query implements ExtractorInterface
      */
     public function getIterator()
     {
-        $statement = $this->db($this->connection)->prepare($this->query);
+        $statement = $this->db->pdo($this->connection)->prepare($this->query);
 
         $statement->execute($this->bindings);
 
         while ($row = $statement->fetch()) {
             yield $row;
         }
-    }
-
-    /**
-     * Get a database connection.
-     *
-     * @param  string  $connection
-     * @return \Marquine\Etl\Database\Connection
-     */
-    protected function db($connection)
-    {
-        return Manager::connection($connection);
     }
 }

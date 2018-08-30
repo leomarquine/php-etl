@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-use Marquine\Etl\Database\Query;
+use Marquine\Etl\Database\Manager;
 
 class Table implements ExtractorInterface
 {
@@ -35,6 +35,23 @@ class Table implements ExtractorInterface
     protected $table;
 
     /**
+     * The database manager.
+     *
+     * @var \Marquine\Etl\Database\Manager
+     */
+    protected $db;
+
+    /**
+     * Create a new Table Extractor instance.
+     *
+     * @param \Marquine\Etl\Database\Manager $manager
+     */
+    public function __construct(Manager $manager)
+    {
+        $this->db = $manager;
+    }
+
+    /**
      * Set the extractor source.
      *
      * @param  mixed  $source
@@ -56,47 +73,11 @@ class Table implements ExtractorInterface
             $this->columns = ['*'];
         }
 
-        $statement = $this->query($this->connection)
+        $statement = $this->db
+            ->query($this->connection)
             ->select($this->table, $this->columns)
             ->where($this->where)
             ->execute();
-
-        while ($row = $statement->fetch()) {
-            yield $row;
-        }
-    }
-
-    /**
-     * Get a database connection.
-     *
-     * @param  string  $connection
-     * @return \Marquine\Etl\Database\Connection
-     */
-    protected function query($connection)
-    {
-        return Query::connection($connection);
-    }
-
-    /**
-     * Extract data from the given source.
-     *
-     * @param  string  $table
-     * @return \Generator
-     */
-    public function extract($table)
-    {
-        if (is_string($this->columns)) {
-            $this->columns = [$this->columns];
-        }
-
-        if (empty($this->columns)) {
-            $this->columns = ['*'];
-        }
-
-        $statement = Query::connection($this->connection)
-                        ->select($table, $this->columns)
-                        ->where($this->where)
-                        ->execute();
 
         while ($row = $statement->fetch()) {
             yield $row;

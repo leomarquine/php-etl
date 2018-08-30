@@ -3,6 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Marquine\Etl\Extractors\Table;
 
 class TableTest extends TestCase
 {
@@ -17,9 +18,10 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('where')->with([])->will($this->returnSelf());
         $query->expects($this->once())->method('execute')->willReturn($statement);
 
-        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Table')->setMethods(['query'])->getMock();
-        $extractor->expects($this->once())->method('query')->with('default')->willReturn($query);
+        $manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $manager->expects($this->once())->method('query')->with('default')->willReturn($query);
 
+        $extractor = new Table($manager);
         $extractor->source('table');
 
         $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
@@ -36,9 +38,10 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('where')->with('where')->will($this->returnSelf());
         $query->expects($this->once())->method('execute')->willReturn($statement);
 
-        $extractor = $this->getMockBuilder('Marquine\Etl\Extractors\Table')->setMethods(['query'])->getMock();
-        $extractor->expects($this->once())->method('query')->with('connection')->willReturn($query);
+        $manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $manager->expects($this->once())->method('query')->with('connection')->willReturn($query);
 
+        $extractor = new Table($manager);
         $extractor->connection = 'connection';
         $extractor->columns = 'columns';
         $extractor->where = 'where';

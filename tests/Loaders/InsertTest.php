@@ -2,86 +2,131 @@
 
 namespace Tests\Loaders;
 
+use Mockery;
 use Tests\TestCase;
 use Marquine\Etl\Loaders\Insert;
-use Marquine\Etl\Database\Manager as DB;
 
 class InsertTest extends TestCase
 {
-    /** @test */
-    public function insert_data_into_the_database()
+    protected function setUp()
     {
-        $this->createUsersTable('default');
+        parent::setUp();
 
-        $data = function () {
-            yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
-            yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
-        };
+        $this->pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $this->pipeline->expects($this->any())->method('sample')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $loader = new Insert;
+        $this->statement = $this->createMock('PDOStatement');
+        $this->statement->expects($this->any())->method('execute');
 
-        $loader->load($data(), 'users');
+        $this->transaction = $this->createMock('Marquine\Etl\Database\Transaction');
+        $this->transaction->expects($this->any())->method('size')->willReturnSelf();
+        $this->transaction->expects($this->any())->method('run')->with('meta', $this->isType('callable'))->willReturnCallback(function ($metadata, $callback) {
+            call_user_func($callback);
+        });
 
-        $expected = [
-            ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'],
-            ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'],
-        ];
+        $this->builder = $this->createMock('Marquine\Etl\Database\Statement');
+        $this->builder->expects($this->any())->method('insert')->willReturnSelf();
+        $this->builder->expects($this->any())->method('prepare')->willReturn($this->statement);
 
-        $query = DB::connection('default')->query('select * from users');
+        $this->manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $this->manager->expects($this->any())->method('statement')->willReturn($this->builder);
+        $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
-        $this->assertEquals($expected, $query->fetchAll());
+        $this->loader = new Insert($this->manager);
+
+        $this->data = ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
     }
 
     /** @test */
-    public function insert_specified_into_the_database()
+    public function loader_handler_must_return_the_row()
     {
-        $this->createUsersTable('default');
+        $handler = $this->loader->handler($this->pipeline, 'table');
 
-        $data = function () {
-            yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
-            yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
-        };
+        $this->assertEquals($this->data, call_user_func($handler, $this->data, 'meta'));
+    }
 
-        $loader = new Insert;
+    /** @test */
+    public function insert_data_into_the_database_with_default_options()
+    {
+        $this->manager->expects($this->once())->method('statement')->with('default')->willReturn($this->builder);
+        $this->manager->expects($this->once())->method('transaction')->with('default')->willReturn($this->transaction);
+        $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email'])->willReturnSelf();
+        $this->transaction->expects($this->once())->method('size')->with(100)->willReturnSelf();
+        $this->transaction->expects($this->once())->method('run');
 
-        $loader->columns = ['id', 'name'];
+        $handler = $this->loader->handler($this->pipeline, 'table');
 
-        $loader->load($data(), 'users');
+        call_user_func($handler, $this->data, 'meta');
+    }
 
+    /** @test */
+    public function insert_data_into_the_database_filtering_columns()
+    {
+        $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
+        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name'])->willReturnSelf();
 
-        $expected = [
-            ['id' => '1', 'name' => 'Jane Doe', 'email' => ''],
-            ['id' => '2', 'name' => 'John Doe', 'email' => ''],
+        $this->loader->columns = ['id', 'name'];
+
+        $handler = $this->loader->handler($this->pipeline, 'table');
+
+        call_user_func($handler, $this->data, 'meta');
+    }
+
+    /** @test */
+    public function insert_data_into_the_database_mapping_columns()
+    {
+        $this->statement->expects($this->once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
+        $this->builder->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name'])->willReturnSelf();
+
+        $this->loader->columns = [
+            'id' => 'user_id',
+            'name' => 'full_name',
         ];
 
-        $query = DB::connection('default')->query('select * from users');
+        $handler = $this->loader->handler($this->pipeline, 'table');
 
-        $this->assertEquals($expected, $query->fetchAll());
+        call_user_func($handler, $this->data, 'meta');
+    }
+
+    /** @test */
+    public function insert_data_into_the_database_without_transactions()
+    {
+        $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email'])->willReturnSelf();
+        $this->transaction->expects($this->never())->method('size');
+        $this->transaction->expects($this->never())->method('run');
+        $this->manager->expects($this->never())->method('transaction');
+
+        $this->loader->transaction = false;
+
+        $handler = $this->loader->handler($this->pipeline, 'table');
+
+        call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
     public function insert_data_into_the_database_with_timestamps()
     {
-        $this->createUsersTable('default', true);
+        $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
+        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email', 'created_at', 'updated_at'])->willReturnSelf();
 
-        $data = function () {
-            yield ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
-            yield ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com'];
-        };
+        $this->loader->timestamps = true;
 
-        $loader = new Insert;
+        $handler = $this->loader->handler($this->pipeline, 'table');
 
-        $loader->timestamps = true;
+        call_user_func($handler, $this->data, 'meta');
+    }
 
-        $loader->load($data(), 'users');
+    /** @test */
+    public function insert_data_into_the_database_with_custom_commit_size()
+    {
+        $this->transaction->expects($this->once())->method('size')->with(50)->willReturnSelf();
 
-        $expected = [
-            ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
-            ['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s'), 'deleted_at' => null],
-        ];
+        $this->loader->commitSize = 50;
 
-        $query = DB::connection('default')->query('select * from users');
+        $handler = $this->loader->handler($this->pipeline, 'table');
 
-        $this->assertEquals($expected, $query->fetchAll());
+        call_user_func($handler, $this->data, 'meta');
     }
 }

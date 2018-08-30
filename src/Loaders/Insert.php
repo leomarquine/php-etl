@@ -2,11 +2,10 @@
 
 namespace Marquine\Etl\Loaders;
 
-use Generator;
-use Marquine\Etl\Database\Statement;
-use Marquine\Etl\Database\Transaction;
+use Marquine\Etl\Pipeline;
+use Marquine\Etl\Database\Manager;
 
-class Insert extends Loader
+class Insert implements LoaderInterface
 {
     /**
      * The connection name.
@@ -20,7 +19,7 @@ class Insert extends Loader
      *
      * @var array
      */
-    public $columns = [];
+    public $columns;
 
     /**
      * Indicates if the table has timestamps columns.
@@ -30,21 +29,21 @@ class Insert extends Loader
     public $timestamps = false;
 
     /**
-     * Transaction mode.
+     * Indicates if the loader will perform transactions.
      *
-     * @var mixed
+     * @var bool
      */
-    public $transaction = 'single';
+    public $transaction = true;
 
     /**
-     * The database table.
+     * Transaction commit size.
      *
-     * @var string
+     * @var int
      */
-    protected $table;
+    public $commitSize = 100;
 
     /**
-     * Timestamps columns value.
+     * Time for timestamps columns.
      *
      * @var string
      */
@@ -58,35 +57,95 @@ class Insert extends Loader
     protected $insert;
 
     /**
-     * Load data into the given destination.
+     * The database manager.
      *
-     * @param  \Generator  $data
-     * @param  string  $destination
+     * @var \Marquine\Etl\Database\Manager
+     */
+    protected $db;
+
+    /**
+     * Create a new Insert Loader instance.
+     *
+     * @param  \Marquine\Etl\Database\Manager  $manager
      * @return void
      */
-    public function load(Generator $data, $destination)
+    public function __construct(Manager $manager)
     {
-        $this->normalizeColumns($data);
-
-        $this->table = $destination;
-
-        $this->time = date('Y-m-d G:i:s');
-
-        Transaction::connection($this->connection)->mode($this->transaction)->data($data)->run(function ($row) {
-            $this->insert(array_intersect_key($row, $this->columns));
-        });
+        $this->db = $manager;
     }
 
     /**
-     * Execute the insert statement.
+     * Get the loader handler.
+     *
+     * @param  \Marquine\Etl\Pipeline  $pipeline
+     * @param  string  $destination
+     * @return callable
+     */
+    public function handler(Pipeline $pipeline, $destination)
+    {
+        $this->prepareInsert($destination, $pipeline->sample());
+
+        if ($this->timestamps) {
+            $this->time = date('Y-m-d G:i:s');
+        }
+
+        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) -1)) {
+            $this->columns = array_combine($this->columns, $this->columns);
+        }
+
+        $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
+
+        return function ($row, $metadata) use ($transaction) {
+            if ($transaction) {
+                $transaction->run($metadata, function () use ($row) {
+                    $this->insert($row);
+                });
+            } else {
+                $this->insert($row);
+            }
+
+            return $row;
+        };
+    }
+
+    /**
+     * Prepare the insert statement.
+     *
+     * @param  string  $table
+     * @param  array  $sample
+     * @return void
+     */
+    protected function prepareInsert($table, $sample)
+    {
+        if ($this->columns) {
+            $columns = array_values($this->columns);
+        } else {
+            $columns = array_keys($sample);
+        }
+
+        if ($this->timestamps) {
+            array_push($columns, 'created_at', 'updated_at');
+        }
+
+        $this->insert = $this->db->statement($this->connection)->insert($table, $columns)->prepare();
+    }
+
+    /**
+     * Execute the insert query.
      *
      * @param  array  $row
      * @return void
      */
     protected function insert($row)
     {
-        if (! $this->insert) {
-            $this->insert = Statement::connection($this->connection)->insert($this->table, $this->columns)->prepare();
+        if ($this->columns) {
+            $result = [];
+
+            foreach ($this->columns as $key => $column) {
+                $result[$column] = $row[$key];
+            }
+
+            $row = $result;
         }
 
         if ($this->timestamps) {
@@ -95,25 +154,5 @@ class Insert extends Loader
         }
 
         $this->insert->execute($row);
-    }
-
-    /**
-     * Normalize columns.
-     *
-     * @param  \Generator  $data
-     * @return void
-     */
-    protected function normalizeColumns($data)
-    {
-        if (empty($this->columns)) {
-            $this->columns = array_keys($data->current());
-        }
-
-        if ($this->timestamps) {
-            $this->columns[] = 'created_at';
-            $this->columns[] = 'updated_at';
-        }
-
-        $this->columns = array_combine($this->columns, $this->columns);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Tests\Loaders;
 
-use Mockery;
 use Tests\TestCase;
 use Marquine\Etl\Loaders\Insert;
 

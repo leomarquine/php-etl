@@ -2,34 +2,97 @@
 
 namespace Tests;
 
+use Marquine\Etl\Etl;
+
 class EtlTest extends TestCase
 {
     /** @test */
-    public function get_and_set_configuration_options()
+    public function extract_step()
     {
-        $this->assertNull(Etl::get('nested.key'));
+        $extractor = $this->createMock('Marquine\Etl\Extractors\ExtractorInterface');
+        $extractor->expects($this->once())->method('source')->with('source');
 
-        Etl::set('nested.key', 'value');
+        $container = $this->createMOck('Marquine\Etl\Container');
+        $container->expects($this->once())->method('make')->with('extractor.step_name')->willReturn($extractor);
+        $container->expects($this->once())->method('setProperties')->with($extractor, ['options']);
 
-        $this->assertEquals(['key' => 'value'], Etl::get('nested'));
-        $this->assertEquals('value', Etl::get('nested.key'));
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $pipeline->expects($this->once())->method('flow')->with($extractor);
+
+        $etl = new Etl($container, $pipeline);
+
+        $etl->extract('step_name', 'source', ['options']);
     }
 
     /** @test */
-    public function add_connection()
+    public function transform_step()
     {
-        $this->assertNull(Etl::get('connections.default'));
-        $this->assertNull(Etl::get('connections.mysql'));
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $transformer = $this->createMock('Marquine\Etl\Transformers\TransformerInterface');
 
-        Etl::addConnection(['driver' => 'pgsql']);
-        Etl::addConnection(['driver' => 'mysql'], 'mysql');
+        $pipeline->expects($this->once())->method('pipe')->with(function () {});
+        $transformer->expects($this->once())->method('handler')->with($pipeline)->willReturn(function () {});
 
-        $this->assertEquals(['driver' => 'pgsql'], Etl::get('connections.default'));
-        $this->assertEquals(['driver' => 'mysql'], Etl::get('connections.mysql'));
+        $container = $this->createMOck('Marquine\Etl\Container');
+        $container->expects($this->once())->method('make')->with('transformer.step_name')->willReturn($transformer);
+        $container->expects($this->once())->method('setProperties')->with($transformer, ['options']);
+
+        $etl = new Etl($container, $pipeline);
+
+        $etl->transform('step_name', ['options']);
     }
-}
 
-class Etl extends \Marquine\Etl\Etl
-{
-    protected static $config = [];
+    /** @test */
+    public function load_step()
+    {
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $loader = $this->createMock('Marquine\Etl\Loaders\LoaderInterface');
+
+        $pipeline->expects($this->once())->method('pipe')->with(function () {});
+        $loader->expects($this->once())->method('handler')->with($pipeline, 'destination')->willReturn(function () {});
+
+        $container = $this->createMOck('Marquine\Etl\Container');
+        $container->expects($this->once())->method('make')->with('loader.step_name')->willReturn($loader);
+        $container->expects($this->once())->method('setProperties')->with($loader, ['options']);
+
+        $etl = new Etl($container, $pipeline);
+
+        $etl->load('step_name', 'destination', ['options']);
+    }
+
+    /** @test */
+    public function execute_the_etl()
+    {
+        $generator = $this->createMock('Iterator');
+        $generator->expects($this->exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);
+        $generator->expects($this->exactly(2))->method('next');
+
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $pipeline->expects($this->once())->method('get')->willReturn($generator);
+
+        $container = $this->createMOck('Marquine\Etl\Container');
+
+        $etl = new Etl($container, $pipeline);
+
+        $etl->run();
+    }
+
+    /** @test */
+    public function get_an_array_of_the_etl_data()
+    {
+        $generator = $this->createMock('Iterator');
+        $generator->expects($this->exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);
+        $generator->expects($this->exactly(2))->method('key')->willReturnOnConsecutiveCalls(0, 1);
+        $generator->expects($this->exactly(2))->method('current')->willReturnOnConsecutiveCalls('row1', 'row2');
+        $generator->expects($this->exactly(2))->method('next');
+
+        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $pipeline->expects($this->once())->method('get')->willReturn($generator);
+
+        $container = $this->createMOck('Marquine\Etl\Container');
+
+        $etl = new Etl($container, $pipeline);
+
+        $this->assertEquals(['row1', 'row2'], $etl->toArray());
+    }
 }

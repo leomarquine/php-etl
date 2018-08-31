@@ -2,67 +2,164 @@
 
 namespace Marquine\Etl;
 
+use ReflectionClass;
+
 class Etl
 {
     /**
-     * Global configuration array.
+     * The etl container.
      *
-     * @var array
+     * @var \Marquine\Etl\Container
      */
-    protected static $config = [];
+    protected $container;
 
     /**
-     * Get the specified configuration value.
+     * The etl pipeline.
      *
-     * @param  string  $key
-     * @return mixed
+     * @var \Marquine\Etl\Pipeline
      */
-    public static function get($key)
+    protected $pipeline;
+
+    /**
+     * Create a new Etl instance.
+     *
+     * @param  Container  $container
+     * @param  Pipeline  $pipeline
+     * @return void
+     */
+    public function __construct(Container $container = null, Pipeline $pipeline = null)
     {
-        $value = static::$config;
+        $this->container = $container ?? Container::getInstance();
+        $this->pipeline = $pipeline ?? new Pipeline;
 
-        foreach (explode('.', $key) as $segment) {
-            $value = isset($value[$segment]) ? $value[$segment] : null;
-        }
-
-        return $value;
+        $this->registerBindings();
     }
 
     /**
-     * Set a given configuration value.
+     * Register bindings.
      *
-     * @param  string  $key
-     * @param  mixed  $value
      * @return void
      */
-    public static function set($key, $value)
+    protected function registerBindings()
     {
-        $keys = explode('.', $key);
+        if (empty($this->container->getBindings())) {
+            require __DIR__ . '/bindings.php';
+        }
+    }
 
-        $array = &static::$config;
+    /**
+     * Extract.
+     *
+     * @param  string  $extractor
+     * @param  string  $source
+     * @param  array  $options
+     * @return $this
+     */
+    public function extract($extractor, $source, $options = [])
+    {
+        $extractor = $this->make('extractor', $extractor, $options);
 
-        while (count($keys) > 1) {
-            $key = array_shift($keys);
+        $extractor->source($source);
 
-            if (! isset($array[$key]) || ! is_array($array[$key])) {
-                $array[$key] = [];
+        $this->pipeline->flow($extractor);
+
+        return $this;
+    }
+
+    /**
+     * Transform.
+     *
+     * @param  string  $transformer
+     * @param  array  $options
+     * @return $this
+     */
+    public function transform($transformer, $options = [])
+    {
+        $transformer = $this->make('transformer', $transformer, $options);
+
+        $this->pipeline->pipe($transformer->handler($this->pipeline));
+
+        return $this;
+    }
+
+    /**
+     * Load.
+     *
+     * @param  string  $loader
+     * @param  string  $destination
+     * @param  array  $options
+     * @return $this
+     */
+    public function load($loader, $destination, $options = [])
+    {
+        $loader = $this->make('loader', $loader, $options);
+
+        $this->pipeline->pipe($loader->handler($this->pipeline, $destination));
+
+        return $this;
+    }
+
+    /**
+     * Execute the ETL.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $generator = $this->pipeline->get();
+
+        while($generator->valid()) {
+            $generator->next();
+        }
+    }
+
+    /**
+     * Get an array of the resulting ETL data.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return iterator_to_array($this->pipeline->get());
+    }
+
+    /**
+     * Make a new step instance.
+     *
+     * @param  string  $type
+     * @param  string  $step
+     * @param  array  $options
+     * @return object
+     */
+    protected function make($type, $step, $options)
+    {
+        $step = $this->container->make("$type.$step");
+
+        if (!empty($options)) {
+            $reflector = new ReflectionClass($step);
+
+            foreach ($options as $property => $value) {
+                $property = lcfirst(implode('', array_map('ucfirst', explode('_', $property))));
+
+                if ($reflector->hasProperty($property) && $reflector->getProperty($property)->isPublic()) {
+                    $step->$property = $value;
+                }
             }
-
-            $array = &$array[$key];
         }
 
-        $array[array_shift($keys)] = $value;
+        return $step;
     }
 
     /**
-     * Add a database connection.
+     * Handle dynamic method calls.
      *
-     * @param  array  $config
-     * @param  string  $name
-     * @return void
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     *
      */
-    public static function addConnection($config, $name = 'default')
+    public function __call($method, $parameters)
     {
-        static::set("connections.$name", $config);
+        return $this->pipeline->$method(...$parameters);
     }
 }

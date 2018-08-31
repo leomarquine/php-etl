@@ -31,20 +31,6 @@ class Etl
     {
         $this->container = $container ?? Container::getInstance();
         $this->pipeline = $pipeline ?? new Pipeline;
-
-        $this->registerBindings();
-    }
-
-    /**
-     * Register bindings.
-     *
-     * @return void
-     */
-    protected function registerBindings()
-    {
-        if (empty($this->container->getBindings())) {
-            require __DIR__ . '/bindings.php';
-        }
     }
 
     /**

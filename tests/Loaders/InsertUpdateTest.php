@@ -97,7 +97,7 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
         $this->updateStatement->expects($this->once())->method('where')->with(['id']);
         $this->updateStatement->expects($this->once())->method('prepare');
-        $this->update->expects($this->once())->method('execute')->with(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->insert->expects($this->never())->method('execute');
 
@@ -131,7 +131,7 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(true);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name']);
-        $this->update->expects($this->once())->method('execute')->with(['name' => 'Jane Doe']);
+        $this->update->expects($this->once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
 
         $this->loader->columns = ['id', 'name'];
 
@@ -164,7 +164,7 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(true);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['full_name']);
-        $this->update->expects($this->once())->method('execute')->with(['full_name' => 'Jane Doe']);
+        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
 
         $this->loader->columns = [
             'id' => 'id',
@@ -197,7 +197,7 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(true);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email', 'updated_at']);
-        $this->update->expects($this->once())->method('execute')->with(['name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'updated_at' => date('Y-m-d G:i:s')]);
+        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'updated_at' => date('Y-m-d G:i:s')]);
 
         $this->loader->timestamps = true;
 

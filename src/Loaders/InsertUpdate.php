@@ -253,6 +253,6 @@ class InsertUpdate implements LoaderInterface
             $row['updated_at'] = $this->time;
         }
 
-        $this->update->execute(array_diff_key($row, array_flip($this->key)));
+        $this->update->execute($row);
     }
 }

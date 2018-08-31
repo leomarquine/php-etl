@@ -157,6 +157,8 @@ class Etl
      */
     public function __call($method, $parameters)
     {
-        return $this->pipeline->$method(...$parameters);
+        $this->pipeline->$method(...$parameters);
+
+        return $this;
     }
 }

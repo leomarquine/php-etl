@@ -6,6 +6,7 @@ $container = Container::getInstance();
 
 // Database
 $container->singleton(Marquine\Etl\Database\Manager::class);
+$container->alias(Marquine\Etl\Database\Manager::class, 'db');
 
 // Extractors
 $container->bind('extractor.array', Marquine\Etl\Extractors\Arr::class);

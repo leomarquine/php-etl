@@ -35,15 +35,15 @@ class MySqlConnector extends Connector
 
         $dsn = [];
 
-        if (isset($unix_socket)) {
+        if (!empty($unix_socket)) {
             $dsn['unix_socket'] = $unix_socket;
         }
 
-        if (isset($host) && ! isset($unix_socket)) {
+        if (isset($host) && empty($unix_socket)) {
             $dsn['host'] = $host;
         }
 
-        if (isset($port) && ! isset($unix_socket)) {
+        if (isset($port) && empty($unix_socket)) {
             $dsn['port'] = $port;
         }
 

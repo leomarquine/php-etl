@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Marquine\Etl\Etl;
+use Marquine\Etl\Container;
 
 class EtlTest extends TestCase
 {
@@ -91,5 +92,16 @@ class EtlTest extends TestCase
         $etl = new Etl($container, $pipeline);
 
         $this->assertEquals(['row1', 'row2'], $etl->toArray());
+    }
+
+    /** @test */
+    public function get_a_service_from_the_container()
+    {
+        $container = $this->createMock('Marquine\Etl\Container');
+        $container->expects($this->once())->method('make')->with('service')->willReturn('instance');
+
+        Container::setInstance($container);
+
+        $this->assertEquals('instance', Etl::service('service'));
     }
 }

@@ -34,6 +34,17 @@ class Etl
     }
 
     /**
+     * Get a service from the container.
+     *
+     * @param  string  $name
+     * @return mixed
+     */
+    public static function service($name)
+    {
+        return Container::getInstance()->make($name);
+    }
+
+    /**
      * Extract.
      *
      * @param  string  $extractor

@@ -218,8 +218,8 @@ class InsertUpdate implements LoaderInterface
             $row = $result;
         }
 
-        if ($this->select->fetch()) {
-            $this->update($row);
+        if ($current = $this->select->fetch()) {
+            $this->update($row, $current);
         } else {
             $this->insert($row);
         }
@@ -245,10 +245,15 @@ class InsertUpdate implements LoaderInterface
      * Execute the update statement.
      *
      * @param  array  $row
+     * @param  array  $current
      * @return void
      */
-    protected function update($row)
+    protected function update($row, $current)
     {
+        if ($row == array_intersect_key($current, $row)) {
+            return;
+        }
+
         if ($this->timestamps) {
             $row['updated_at'] = $this->time;
         }

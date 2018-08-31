@@ -92,7 +92,7 @@ class InsertUpdateTest extends TestCase
         $this->selectStatement->expects($this->once())->method('where')->with(['id']);
         $this->selectStatement->expects($this->once())->method('prepare');
         $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(true);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
         $this->updateStatement->expects($this->once())->method('where')->with(['id']);
@@ -107,7 +107,30 @@ class InsertUpdateTest extends TestCase
         $handler = $this->loader->handler($this->pipeline, 'table');
 
         call_user_func($handler, $this->data, 'meta');
+    }
 
+    /** @test */
+    public function do_not_update_if_there_are_no_changes()
+    {
+        $this->statement->expects($this->once())->method('select')->with('table');
+        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
+        $this->selectStatement->expects($this->once())->method('prepare');
+        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
+
+        $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
+        $this->updateStatement->expects($this->once())->method('where')->with(['id']);
+        $this->updateStatement->expects($this->once())->method('prepare');
+        $this->update->expects($this->never())->method('execute');
+
+        $this->insert->expects($this->never())->method('execute');
+
+        $this->transaction->expects($this->once())->method('size')->with(100);
+        $this->transaction->expects($this->once())->method('run');
+
+        $handler = $this->loader->handler($this->pipeline, 'table');
+
+        call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
@@ -128,7 +151,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function filtering_columns_to_update()
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(true);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
@@ -161,7 +184,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function mapping_columns_to_update()
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(true);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['full_name']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
@@ -194,7 +217,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function update_data_using_timestamps()
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(true);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email', 'updated_at']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'updated_at' => date('Y-m-d G:i:s')]);
@@ -230,7 +253,7 @@ class InsertUpdateTest extends TestCase
         $this->transaction->expects($this->never())->method('run');
         $this->manager->expects($this->never())->method('transaction');
 
-        $this->select->expects($this->once())->method('fetch')->willReturn(true);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
         $this->update->expects($this->once())->method('execute');
 
         $this->loader->transaction = false;

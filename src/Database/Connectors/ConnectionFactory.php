@@ -40,6 +40,8 @@ class ConnectionFactory
                 return new MySqlConnector;
             case 'pgsql':
                 return new PostgresConnector;
+            case 'sqlsrv':
+                return new SqlServerConnector;
         }
 
         throw new InvalidArgumentException('The specified driver is not valid.');

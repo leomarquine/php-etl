@@ -14,7 +14,6 @@ class EtlTest extends TestCase
 
         $container = $this->createMOck('Marquine\Etl\Container');
         $container->expects($this->once())->method('make')->with('extractor.step_name')->willReturn($extractor);
-        $container->expects($this->once())->method('setProperties')->with($extractor, ['options']);
 
         $pipeline = $this->createMock('Marquine\Etl\Pipeline');
         $pipeline->expects($this->once())->method('flow')->with($extractor);
@@ -35,7 +34,6 @@ class EtlTest extends TestCase
 
         $container = $this->createMOck('Marquine\Etl\Container');
         $container->expects($this->once())->method('make')->with('transformer.step_name')->willReturn($transformer);
-        $container->expects($this->once())->method('setProperties')->with($transformer, ['options']);
 
         $etl = new Etl($container, $pipeline);
 
@@ -53,7 +51,6 @@ class EtlTest extends TestCase
 
         $container = $this->createMOck('Marquine\Etl\Container');
         $container->expects($this->once())->method('make')->with('loader.step_name')->willReturn($loader);
-        $container->expects($this->once())->method('setProperties')->with($loader, ['options']);
 
         $etl = new Etl($container, $pipeline);
 

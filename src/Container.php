@@ -7,6 +7,13 @@ use Illuminate\Container\Container as BaseContainer;
 class Container extends BaseContainer
 {
     /**
+     * The current globally available container (if any).
+     *
+     * @var static
+     */
+    protected static $instance;
+
+    /**
      * Set the globally available instance of the container.
      *
      * @return static

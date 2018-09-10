@@ -52,11 +52,13 @@ class Csv implements ExtractorInterface
     {
         $handle = fopen($this->file, 'r');
 
+        $columns = $this->columns;
+
         while ($row = fgets($handle)) {
-            if (!$this->columns) {
-                $this->columns = $this->makeColumns($row);
+            if (!$columns) {
+                $columns = $this->makeColumns($row);
             } else {
-                yield $this->makeRow($row);
+                yield $this->makeRow($row, $columns);
             }
         }
 
@@ -69,13 +71,13 @@ class Csv implements ExtractorInterface
      * @param  string  $row
      * @return array
      */
-    protected function makeRow($row)
+    protected function makeRow($row, $columns)
     {
         $row = str_getcsv($row, $this->delimiter, $this->enclosure);
 
         $data = [];
 
-        foreach ($this->columns as $column => $index) {
+        foreach ($columns as $column => $index) {
             $data[$column] = $row[$index - 1];
         }
 

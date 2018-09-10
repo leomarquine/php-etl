@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Database\Connectors;
 
-class MsSqlConnector extends Connector
+class SqlServerConnector extends Connector
 {
     /**
     * Connect to a database.

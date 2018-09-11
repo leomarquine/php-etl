@@ -11,24 +11,22 @@ class ManagerTest extends TestCase
     public function default_connection()
     {
         $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with(['options'])->willReturn('connection');
 
         $manager = new Manager($factory);
         $manager->addConnection(['options']);
 
-        $this->assertAttributeEquals(['default' => 'connection'], 'connections', $manager);
+        $this->assertAttributeEquals(['default' => ['options']], 'config', $manager);
     }
 
     /** @test */
     public function connection_with_custom_name()
     {
         $factory = $this->createMock('Marquine\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with(['options'])->willReturn('connection');
 
         $manager = new Manager($factory);
         $manager->addConnection(['options'], 'custom');
 
-        $this->assertAttributeEquals(['custom' => 'connection'], 'connections', $manager);
+        $this->assertAttributeEquals(['custom' => ['options']], 'config', $manager);
     }
 
     /** @test */
@@ -85,8 +83,8 @@ class ManagerTest extends TestCase
         $manager = new Manager($this->createMock('Marquine\Etl\Database\ConnectionFactory'));
 
         $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Database [default] not configured.');
+        $this->expectExceptionMessage('Database [invalid] not configured.');
 
-        $manager->pdo('default');
+        $manager->pdo('invalid');
     }
 }

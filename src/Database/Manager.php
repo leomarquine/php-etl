@@ -14,6 +14,13 @@ class Manager
     protected $factory;
 
     /**
+     * The connections configuration.
+     *
+     * @var array
+     */
+    protected $config = [];
+
+    /**
      * The connections instances.
      *
      * @var array
@@ -23,7 +30,7 @@ class Manager
     /**
      * Create a new database manager instance.
      *
-     * @param  \Marquine\Etl\Database\ConnectionFactory $factory
+     * @param  \Marquine\Etl\Database\ConnectionFactory  $factory
      * @return void
      */
     public function __construct(ConnectionFactory $factory)
@@ -34,13 +41,13 @@ class Manager
     /**
      * Register a connection.
      *
-     * @param  array   $config
+     * @param  array  $config
      * @param  string  $name
      * @return void
      */
     public function addConnection($config, $name = 'default')
     {
-        $this->connections[$name] = $this->factory->make($config);
+        $this->config[$name] = $config;
     }
 
     /**
@@ -48,13 +55,28 @@ class Manager
      *
      * @param  string  $name
      * @return \Marquine\Etl\Database\Connection
-     *
-     * @throws \InvalidArgumentException
      */
     protected function getConnection($name)
     {
-        if (isset($this->connections[$name])) {
-            return $this->connections[$name];
+        if (! isset($this->connections[$name])) {
+            $this->connections[$name] = $this->makeConnection($name);
+        }
+
+        return $this->connections[$name];
+    }
+
+    /**
+     * Make a connection instance.
+     *
+     * @param  string  $name
+     * @return \Marquine\Etl\Database\Connection
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function makeConnection($name)
+    {
+        if (isset($this->config[$name])) {
+            return $this->factory->make($this->config[$name]);
         }
 
         throw new InvalidArgumentException("Database [{$name}] not configured.");

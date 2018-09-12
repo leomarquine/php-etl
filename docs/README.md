@@ -3,3 +3,4 @@
 * [Extractors](Extractors/README.md)
     * [Collection](Extractors/Collection.md)
     * [CSV](Extractors/Csv.md)
+    * [Fixed Width](Extractors/FixedWidth.md)

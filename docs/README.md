@@ -4,3 +4,4 @@
     * [Collection](Extractors/Collection.md)
     * [CSV](Extractors/Csv.md)
     * [Fixed Width](Extractors/FixedWidth.md)
+    * [JSON](Extractors/Json.md)

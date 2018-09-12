@@ -2,3 +2,4 @@
 * [Getting Started](GettingStarted.md)
 * [Extractors](Extractors/README.md)
     * [Collection](Extractors/Collection.md)
+    * [CSV](Extractors/Csv.md)

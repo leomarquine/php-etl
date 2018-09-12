@@ -9,7 +9,7 @@ $container->singleton(Marquine\Etl\Database\Manager::class);
 $container->alias(Marquine\Etl\Database\Manager::class, 'db');
 
 // Extractors
-$container->bind('extractor.array', Marquine\Etl\Extractors\Arr::class);
+$container->bind('extractor.collection', Marquine\Etl\Extractors\Collection::class);
 $container->bind('extractor.csv', Marquine\Etl\Extractors\Csv::class);
 $container->bind('extractor.fixed_width', Marquine\Etl\Extractors\FixedWidth::class);
 $container->bind('extractor.json', Marquine\Etl\Extractors\Json::class);

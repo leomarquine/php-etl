@@ -3,9 +3,9 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Extractors\Arr;
+use Marquine\Etl\Extractors\Collection;
 
-class ArrTest extends TestCase
+class CollectionTest extends TestCase
 {
     protected $items = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
@@ -13,9 +13,9 @@ class ArrTest extends TestCase
     ];
 
     /** @test */
-    public function extracts_data_from_an_array_with_default_options()
+    public function extracts_data_from_an_iterable_collection_with_default_options()
     {
-        $extractor = new Arr;
+        $extractor = new Collection;
 
         $extractor->source($this->items);
 
@@ -23,14 +23,14 @@ class ArrTest extends TestCase
     }
 
     /** @test */
-    public function extracts_data_from_an_array_with_custom_options()
+    public function extracts_data_from_an_iterable_collection_with_custom_options()
     {
         $expected = [
             ['id' => 1, 'name' => 'John Doe'],
             ['id' => 2, 'name' => 'Jane Doe'],
         ];
 
-        $extractor = new Arr;
+        $extractor = new Collection;
 
         $extractor->columns = ['id', 'name'];
 

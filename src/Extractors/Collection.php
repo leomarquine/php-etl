@@ -2,7 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
-class Arr implements ExtractorInterface
+class Collection implements ExtractorInterface
 {
     /**
      * Extractor columns.

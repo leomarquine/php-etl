@@ -13,5 +13,6 @@ $etl = new Etl;
 
 $etl->extract('csv', '/path/to/users.csv')
     ->transform('trim', ['columns' => ['name', 'email']])
-    ->load('insert', 'users');
+    ->load('insert', 'users')
+    ->run();
 ```

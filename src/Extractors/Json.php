@@ -50,7 +50,7 @@ class Json implements ExtractorInterface
             $items = $this->transpose($this->columns);
         }
 
-        $data = new Arr;
+        $data = new Collection;
 
         $data->source($items);
 

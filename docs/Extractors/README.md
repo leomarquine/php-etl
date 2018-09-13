@@ -4,3 +4,4 @@
 * [CSV](Csv.md)
 * [Fixed Width](FixedWidth.md)
 * [JSON](Json.md)
+* [Query](Query.md)

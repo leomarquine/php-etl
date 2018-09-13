@@ -11,3 +11,4 @@
 * [Transformers](Transformers/README.md)
     * [JSON Encode](Transformers/JsonEncode.md)
     * [Trim](Transformers/Trim.md)
+* [Loaders](Loaders/README.md)

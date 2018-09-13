@@ -13,3 +13,4 @@
     * [Trim](Transformers/Trim.md)
 * [Loaders](Loaders/README.md)
     * [Insert](Loaders/Insert.md)
+    * [Insert/Update](Loaders/InsertUpdate.md)

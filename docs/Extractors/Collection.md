@@ -1,6 +1,6 @@
 # Collection Extractor
 
-The collection extractor can be used to get data from any iterable item. It accepts arrays or traversables objects. The collection items must be associative arrays.
+Extracts data from any iterable item. It accepts arrays or traversables objects. The collection items must be associative arrays.
 
 > **Tip:** Using generators will decrease memory usage.
 

@@ -1,6 +1,6 @@
 # CSV Extractor
 
-The csv extractor can be used to get data from comma separated files with or without a header row.
+Extracts data from comma separated files with or without a header row.
 
 ## Options
 

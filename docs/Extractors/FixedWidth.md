@@ -1,6 +1,6 @@
 # Fixed Width Extractor
 
-The fixed width extractor can be used to get data from a text file with fields delimited by a fixed number of characters.
+Extracts data from a text file with fields delimited by a fixed number of characters.
 
 ## Options
 

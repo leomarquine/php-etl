@@ -7,3 +7,4 @@
     * [JSON](Extractors/Json.md)
     * [Query](Extractors/Query.md)
     * [Table](Extractors/Table.md)
+    * [XML](Extractors/Xml.md)

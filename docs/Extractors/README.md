@@ -6,3 +6,4 @@
 * [JSON](Json.md)
 * [Query](Query.md)
 * [Table](Table.md)
+* [XML](Xml.md)

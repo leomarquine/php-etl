@@ -6,7 +6,7 @@ Extracts data from comma separated files with or without a header row.
 
 | Name | Type | Default | Description |
 | ---- |----- | ------- | ----------- |
-| columns | array | null | Columns that will be extracted. |
+| columns | array | `null` | Columns that will be extracted. |
 | delimiter | string | , | Field delimiter (one character only). |
 | enclosure | string | | Field enclosure character (one character only). |
 

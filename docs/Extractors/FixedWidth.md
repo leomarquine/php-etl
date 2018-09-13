@@ -6,7 +6,7 @@ Extracts data from a text file with fields delimited by a fixed number of charac
 
 | Name | Type | Default | Description |
 | ---- |----- | ------- | ----------- |
-| columns | array | null | Columns that will be extracted. (required) |
+| columns | array | `null` | Columns that will be extracted. (required) |
 
 
 ## Usage

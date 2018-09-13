@@ -8,7 +8,7 @@ Extracts data from any iterable item. It accepts arrays or traversables objects.
 
 | Name | Type | Default | Description |
 | ---- |----- | ------- | ----------- |
-| columns | array | null | Columns that will be extracted. |
+| columns | array | `null` | Columns that will be extracted. |
 
 
 ## Usage

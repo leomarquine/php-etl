@@ -6,7 +6,7 @@ Extracts data from a JavaScript Object Notation file.
 
 | Name | Type | Default | Description |
 | ---- |----- | ------- | ----------- |
-| columns | array | null | Columns that will be extracted. |
+| columns | array | `null` | Columns that will be extracted. |
 
 
 ## Usage

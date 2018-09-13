@@ -7,3 +7,5 @@ $etl->transform('type', $options);
 ```
 
 ## Available transformers types
+
+* [JSON Encode](JsonEncode.md)

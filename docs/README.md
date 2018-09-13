@@ -12,3 +12,4 @@
     * [JSON Encode](Transformers/JsonEncode.md)
     * [Trim](Transformers/Trim.md)
 * [Loaders](Loaders/README.md)
+    * [Insert](Loaders/Insert.md)

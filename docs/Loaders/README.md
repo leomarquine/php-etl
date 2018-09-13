@@ -7,3 +7,5 @@ $etl->load('type', $destination, $options);
 ```
 
 ## Available loaders types
+
+* [Insert](Insert.md)

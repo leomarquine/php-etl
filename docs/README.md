@@ -6,3 +6,4 @@
     * [Fixed Width](Extractors/FixedWidth.md)
     * [JSON](Extractors/Json.md)
     * [Query](Extractors/Query.md)
+    * [Table](Extractors/Table.md)

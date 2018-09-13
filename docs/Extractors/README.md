@@ -5,3 +5,4 @@
 * [Fixed Width](FixedWidth.md)
 * [JSON](Json.md)
 * [Query](Query.md)
+* [Table](Table.md)

@@ -51,7 +51,7 @@ class PipelineTest extends TestCase
         $pipeline = new Pipeline;
         $pipeline->flow($this->flow);
 
-        $generator = $pipeline->registerPreExecutionTask($callback)->get();
+        $generator = $pipeline->before($callback)->get();
 
         $generator->rewind();
 
@@ -70,7 +70,7 @@ class PipelineTest extends TestCase
         $pipeline = new Pipeline;
         $pipeline->flow($this->flow);
 
-        $generator = $pipeline->registerPostExecutionTask($callback)->get();
+        $generator = $pipeline->after($callback)->get();
 
         while ($generator->valid()) {
             $this->assertFalse($control);

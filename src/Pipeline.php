@@ -49,18 +49,18 @@ class Pipeline
     protected $skip;
 
     /**
-     * Pre execution tasks.
+     * Pre execution callbacks.
      *
      * @var array
      */
-    protected $preExecutionTasks = [];
+    protected $preExecutionCallbacks = [];
 
     /**
-     * Post execution tasks.
+     * Post execution callbacks.
      *
      * @var array
      */
-    protected $postExecutionTasks = [];
+    protected $postExecutionCallbacks = [];
 
     /**
      * Set the pipeline flow.
@@ -95,7 +95,7 @@ class Pipeline
     {
         $this->total = $this->getRowsCount();
 
-        foreach ($this->preExecutionTasks as $callback) {
+        foreach ($this->preExecutionCallbacks as $callback) {
             $callback();
         }
 
@@ -113,7 +113,7 @@ class Pipeline
             yield $this->runTasks($row);
         }
 
-        foreach ($this->postExecutionTasks as $callback) {
+        foreach ($this->postExecutionCallbacks as $callback) {
             $callback();
         }
     }
@@ -203,27 +203,27 @@ class Pipeline
     }
 
     /**
-     * Register pre execution tasks.
+     * Register pre execution callback.
      *
-     * @param  callable  $task
+     * @param  callable  $callback
      * @return $this
      */
-    public function registerPreExecutionTask(callable $task)
+    public function before(callable $callback)
     {
-        $this->preExecutionTasks[] = $task;
+        $this->preExecutionCallbacks[] = $callback;
 
         return $this;
     }
 
     /**
-     * Register post execution tasks.
+     * Register post execution callback.
      *
-     * @param  callable  $task
+     * @param  callable  $callback
      * @return $this
      */
-    public function registerPostExecutionTask(callable $task)
+    public function after(callable $callback)
     {
-        $this->postExecutionTasks[] = $task;
+        $this->postExecutionCallbacks[] = $callback;
 
         return $this;
     }

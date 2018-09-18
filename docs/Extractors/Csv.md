@@ -1,31 +1,62 @@
-# CSV Extractor
+# CSV
 
-Extracts data from comma separated files with or without a header row.
+Extracts data from a character-separated values file.
+
+```php
+$etl->extract('csv', 'path/to/file.csv', $options);
+```
+
 
 ## Options
 
-| Name | Type | Default | Description |
-| ---- |----- | ------- | ----------- |
-| columns | array | `null` | Columns that will be extracted. |
-| delimiter | string | , | Field delimiter (one character only). |
-| enclosure | string | | Field enclosure character (one character only). |
+### Columns
+Columns that will be extracted. If `null`, all columns will be extracted and the first line will be used as the columns names.
 
+| Type | Default value |
+|----- | ------------- |
+| array | `null` |
 
-## Usage
-
-Default options:
+To select which columns will be extracted, use an array with the columns list:
 ```php
-$etl->extract('csv', 'path/to/file.csv');
+$options = ['columns' => ['id', 'name', 'email']];
 ```
 
-Custom options:
+To rename the columns, use an associative array where the `key` is the name of the column in the file and the `value` is the name that will be used in the etl process:
 ```php
-$options = [
-    'columns' => [
-        'id' => 1, // Index of the column in the csv file (The first column is 1).
-        'name' => 2
-    ]
-];
+$options = ['columns' => [
+    'id' => 'id',
+    'full_name' => 'name',
+    'email_address' => 'email',
+]];
+```
 
-$etl->extract('csv', 'path/to/file.csv', $options);
+If your file does not contains the columns names, you may set the name and the index of the columns to extract starting at 1:
+```php
+$options = ['columns' => [
+    'id' => 1,
+    'name' => 2,
+    'email' => 3,
+]];
+```
+
+### Delimiter
+Field delimiter (one character only).
+
+| Type | Default value |
+|----- | ------------- |
+| string | , |
+
+```php
+$options = ['delimiter' => ';'];
+```
+
+### Enclosure
+Field enclosure character (one character only).
+
+| Type | Default value |
+|----- | ------------- |
+| string | |
+
+```php
+$options = ['enclosure' => '"'];
 ```

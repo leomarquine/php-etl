@@ -1,28 +1,23 @@
-# Collection Extractor
+# Collection
 
 Extracts data from any iterable item. It accepts arrays or traversables objects. The collection items must be associative arrays.
 
+```php
+$etl->extract('collection', $iterable, $options);
+```
+
 > **Tip:** Using generators will decrease memory usage.
+
 
 ## Options
 
-| Name | Type | Default | Description |
-| ---- |----- | ------- | ----------- |
-| columns | array | `null` | Columns that will be extracted. |
+### Delimiter
+Columns from the iterable item that will be extracted.
 
+| Type | Default value |
+|----- | ------------- |
+| array | `null` |
 
-## Usage
-
-Default options:
 ```php
-$etl->extract('collection', $iterable);
-```
-
-Custom options:
-```php
-$options = [
-    'columns' => ['id', 'name']
-];
-
-$etl->extract('collection', $iterable, $options);
+$options = ['columns' => ['id', 'name', 'email']];
 ```

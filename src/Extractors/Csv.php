@@ -52,14 +52,10 @@ class Csv implements ExtractorInterface
     {
         $handle = fopen($this->file, 'r');
 
-        $columns = $this->columns;
+        $columns = $this->makeColumns($handle);
 
         while ($row = fgets($handle)) {
-            if (!$columns) {
-                $columns = $this->makeColumns($row);
-            } else {
-                yield $this->makeRow($row, $columns);
-            }
+            yield $this->makeRow($row, $columns);
         }
 
         fclose($handle);
@@ -69,6 +65,7 @@ class Csv implements ExtractorInterface
      * Converts the row string to array.
      *
      * @param  string  $row
+     * @param  array  $columns
      * @return array
      */
     protected function makeRow($row, $columns)
@@ -87,17 +84,35 @@ class Csv implements ExtractorInterface
     /**
      * Make columns based on csv header.
      *
-     * @param  string  $header
+     * @param  array  $handle
      * @return array
      */
-    protected function makeColumns($header)
+    protected function makeColumns($handle)
     {
-        $columns = array_flip(str_getcsv($header, $this->delimiter, $this->enclosure));
+        if (is_array($this->columns) && is_numeric(current($this->columns))) {
+            return $this->columns;
+        }
+
+        $columns = array_flip(str_getcsv(fgets($handle), $this->delimiter, $this->enclosure));
 
         foreach ($columns as $key => $index) {
             $columns[$key] = $index + 1;
         }
 
-        return $columns;
+        if (empty($this->columns)) {
+            return $columns;
+        }
+
+        if (array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+           return array_intersect_key($columns, array_flip($this->columns));
+        }
+
+        $result = [];
+
+        foreach ($this->columns as $key => $value) {
+            $result[$value] = $columns[$key];
+        }
+
+        return $result;
     }
 }

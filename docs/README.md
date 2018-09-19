@@ -9,6 +9,7 @@
     * [Table](Extractors/Table.md)
     * [XML](Extractors/Xml.md)
 * [Transformers](Transformers/README.md)
+    * [JSON Decode](Transformers/JsonDecode.md)
     * [JSON Encode](Transformers/JsonEncode.md)
     * [Trim](Transformers/Trim.md)
 * [Loaders](Loaders/README.md)

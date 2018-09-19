@@ -10,7 +10,7 @@ $etl->transform('json_encode', $options);
 ## Options
 
 ### Columns
-Columns that will be transformed. If `null`, all columns in the process will be transformed.
+Columns that will be transformed. If `null`, the transformation is applied to all columns.
 
 | Type | Default value |
 |----- | ------------- |

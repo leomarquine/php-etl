@@ -1,28 +1,38 @@
-# Query Extractor
+# Query
 
 Extracts data from a database table using a custom SQL query.
 
-## Options
-
-| Name | Type | Default | Description |
-| ---- |----- | ------- | ----------- |
-| connection | string | default | Name of the database connection to use. |
-| bindings | array | `[]` | Values to bind to the query statement. |
-
-
-## Usage
-
-Default options:
 ```php
-$etl->extract('query', 'select * from users');
+$etl->extract('query', 'select * from users', $options);
 ```
 
-Custom options:
-```php
-$options = [
-    'connection' => 'app',
-    'bindings' => ['active'],
-];
 
-$etl->extract('query', 'select * from users where status = ?', $options);
+## Options
+
+### Connection
+Name of the database connection to use.
+
+| Type | Default value |
+|----- | ------------- |
+| string | default |
+
+```php
+$options = ['connection' => 'app'];
+```
+
+### Bindings
+Values to bind to the query statement.
+
+| Type | Default value |
+|----- | ------------- |
+| array | `[]` |
+
+Using prepared statement with named placeholders `select * from users where status = :status`:
+```php
+$options = ['bindings' => ['status' => 'active']];
+```
+
+Using prepared statement with question mark placeholders `select * from users where status = ?`:
+```php
+$options = ['bindings' => ['active']];
 ```

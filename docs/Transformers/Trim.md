@@ -1,4 +1,4 @@
-# JSON Encode Transformer
+# Trim
 
 Strip whitespace (or other characters) from the beginning and/or end of a string.
 

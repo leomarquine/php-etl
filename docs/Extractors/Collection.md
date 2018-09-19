@@ -11,7 +11,7 @@ $etl->extract('collection', $iterable, $options);
 
 ## Options
 
-### Delimiter
+### Columns
 Columns from the iterable item that will be extracted.
 
 | Type | Default value |

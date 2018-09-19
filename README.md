@@ -14,26 +14,20 @@ composer require marquine/php-etl
 ```
 
 ## Documentation
-Documentation can be found [here](http://php-etl.readthedocs.io/).
+Documentation can be found [here](https://php-etl.gitbook.io/).
 
 
 ## Example
-In the example below, we will extract data from a csv file, trim two columns and load the data into database:
+In the example below, we will extract data from a csv file, trim white spaces from the name and email columns and then insert the values into the users table:
 ```php
-use Marquine\Etl\Job;
+use Marquine\Etl\Etl;
 
-Job::start()->extract('csv', 'path/to/file.csv')
-    ->transform('trim', ['columns' => ['name', 'email']])
-    ->load('table', 'users');
-```
-or
-```php
-use Marquine\Etl\Job;
+$etl = new Etl;
 
-$job = new Job;
-$job->extract('csv', 'path/to/file.csv')
+$etl->extract('csv', '/path/to/users.csv')
     ->transform('trim', ['columns' => ['name', 'email']])
-    ->load('table', 'users');
+    ->load('insert', 'users')
+    ->run();
 ```
 
 ## License

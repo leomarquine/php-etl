@@ -18,6 +18,7 @@ $container->bind('extractor.table', Marquine\Etl\Extractors\Table::class);
 $container->bind('extractor.xml', Marquine\Etl\Extractors\Xml::class);
 
 // Transformers
+$container->bind('transformer.convert_case', Marquine\Etl\Transformers\ConvertCase::class);
 $container->bind('transformer.json_decode', Marquine\Etl\Transformers\JsonDecode::class);
 $container->bind('transformer.json_encode', Marquine\Etl\Transformers\JsonEncode::class);
 $container->bind('transformer.trim', Marquine\Etl\Transformers\Trim::class);

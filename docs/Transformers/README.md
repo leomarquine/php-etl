@@ -8,6 +8,7 @@ $etl->transform('type', $options);
 
 ## Available transformers types
 
+* [Convert Case](ConvertCase.md)
 * [JSON Decode](JsonDecode.md)
 * [JSON Encode](JsonEncode.md)
 * [Trim](Trim.md)

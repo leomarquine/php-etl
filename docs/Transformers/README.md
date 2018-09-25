@@ -11,6 +11,7 @@ $etl->transform('type', $options);
 * [Convert Case](ConvertCase.md)
 * [JSON Decode](JsonDecode.md)
 * [JSON Encode](JsonEncode.md)
+* [Rename Columns](RenameColumns.md)
 * [Trim](Trim.md)
 
 

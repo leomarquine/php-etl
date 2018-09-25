@@ -12,6 +12,7 @@
     * [Convert Case](Transformers/ConvertCase.md)
     * [JSON Decode](Transformers/JsonDecode.md)
     * [JSON Encode](Transformers/JsonEncode.md)
+    * [Rename Columns](Transformers/RenameColumns.md)
     * [Trim](Transformers/Trim.md)
 * [Loaders](Loaders/README.md)
     * [Insert](Loaders/Insert.md)

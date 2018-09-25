@@ -21,6 +21,7 @@ $container->bind('extractor.xml', Marquine\Etl\Extractors\Xml::class);
 $container->bind('transformer.convert_case', Marquine\Etl\Transformers\ConvertCase::class);
 $container->bind('transformer.json_decode', Marquine\Etl\Transformers\JsonDecode::class);
 $container->bind('transformer.json_encode', Marquine\Etl\Transformers\JsonEncode::class);
+$container->bind('transformer.rename_columns', Marquine\Etl\Transformers\RenameColumns::class);
 $container->bind('transformer.trim', Marquine\Etl\Transformers\Trim::class);
 
 // Loaders

@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl;
 
+use InvalidArgumentException;
 use Illuminate\Container\Container as BaseContainer;
 
 class Container extends BaseContainer
@@ -27,5 +28,36 @@ class Container extends BaseContainer
         }
 
         return static::$instance;
+    }
+
+    /**
+     * Make an etl step.
+     *
+     * @param  mixed  $step
+     * @param  string  $abstract
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function step($step, $abstract)
+    {
+        $name = is_string($step) ? $step : get_class($step);
+        $type = strtolower(substr(strrchr($abstract, '\\'), 1));
+
+        if (is_string($step)) {
+            if (class_exists($step)) {
+                $step = $this->make($step);
+            }
+
+            if ($this->has("{$name}_{$type}")) {
+                $step = $this->make("{$name}_{$type}");
+            }
+        }
+
+        if ($step instanceof $abstract) {
+            return $step;
+        }
+
+        throw new InvalidArgumentException("The step [$name] is not a valid $type.");
     }
 }

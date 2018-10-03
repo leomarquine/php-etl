@@ -7,47 +7,51 @@ use Marquine\Etl\Transformers\JsonDecode;
 
 class JsonDecodeTest extends TestCase
 {
-    protected $items = [
+    protected $data = [
         ['id' => '"1"', 'data' => '{"name":"John Doe","email":"johndoe@email.com"}'],
         ['id' => '"2"', 'data' => '{"name":"Jane Doe","email":"janedoe@email.com"}'],
     ];
 
     /** @test */
-    public function decode_all_columns()
+    public function default_options()
     {
-        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $expected = [
+            ['id' => '1', 'data' => (object) ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
+            ['id' => '2', 'data' => (object) ['name' => 'Jane Doe', 'email' => 'janedoe@email.com']],
+        ];
 
         $transformer = new JsonDecode;
 
-        $transformer->assoc = true;
+        $this->assertEquals($expected, array_map($transformer->transform(), $this->data));
+    }
 
-        $results = array_map($transformer->handler($pipeline), $this->items);
-
+    /** @test */
+    public function converting_objects_to_associative_arrays()
+    {
         $expected = [
             ['id' => '1', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
             ['id' => '2', 'data' => ['name' => 'Jane Doe', 'email' => 'janedoe@email.com']],
         ];
 
-        $this->assertEquals($expected, $results);
+        $transformer = new JsonDecode;
+
+        $transformer->options(['assoc' => true]);
+
+        $this->assertEquals($expected, array_map($transformer->transform(), $this->data));
     }
 
     /** @test */
-    public function decode_specifc_columns()
+    public function custom_columns()
     {
-        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
+        $expected = [
+            ['id' => '"1"', 'data' => (object) ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
+            ['id' => '"2"', 'data' => (object) ['name' => 'Jane Doe', 'email' => 'janedoe@email.com']],
+        ];
 
         $transformer = new JsonDecode;
 
-        $transformer->assoc = true;
-        $transformer->columns = ['data'];
+        $transformer->options(['columns' => ['data']]);
 
-        $results = array_map($transformer->handler($pipeline), $this->items);
-
-        $expected = [
-            ['id' => '"1"', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
-            ['id' => '"2"', 'data' => ['name' => 'Jane Doe', 'email' => 'janedoe@email.com']],
-        ];
-
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($expected, array_map($transformer->transform(), $this->data));
     }
 }

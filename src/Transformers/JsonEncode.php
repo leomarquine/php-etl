@@ -2,38 +2,44 @@
 
 namespace Marquine\Etl\Transformers;
 
-use Marquine\Etl\Pipeline;
-
-class JsonEncode implements TransformerInterface
+class JsonEncode extends Transformer
 {
     /**
      * Transformer columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * Options.
      *
      * @var int
      */
-    public $options = 0;
+    protected $options = 0;
 
     /**
      * Maximum depth.
      *
      * @var string
      */
-    public $depth = 512;
+    protected $depth = 512;
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'depth', 'options'
+    ];
 
     /**
      * Get the transformer handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
      * @return callable
      */
-    public function handler(Pipeline $pipeline)
+    public function transform()
     {
         return function ($row) {
             if ($this->columns) {

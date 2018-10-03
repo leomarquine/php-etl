@@ -7,44 +7,36 @@ use Marquine\Etl\Transformers\JsonEncode;
 
 class JsonEncodeTest extends TestCase
 {
-    protected $items = [
+    protected $data = [
         ['id' => '1', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']],
         ['id' => '2', 'data' => ['name' => 'Jane Doe', 'email' => 'janedoe@email.com']],
     ];
 
     /** @test */
-    public function convert_all_columns_to_json()
+    public function default_options()
     {
-        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
-
-        $transformer = new JsonEncode;
-
-        $results = array_map($transformer->handler($pipeline), $this->items);
-
         $expected = [
             ['id' => '"1"', 'data' => '{"name":"John Doe","email":"johndoe@email.com"}'],
             ['id' => '"2"', 'data' => '{"name":"Jane Doe","email":"janedoe@email.com"}'],
         ];
 
-        $this->assertEquals($expected, $results);
+        $transformer = new JsonEncode;
+
+        $this->assertEquals($expected, array_map($transformer->transform(), $this->data));
     }
 
     /** @test */
-    public function convert_specific_columns_to_json()
+    public function custom_columns()
     {
-        $pipeline = $this->createMock('Marquine\Etl\Pipeline');
-
-        $transformer = new JsonEncode;
-
-        $transformer->columns = ['data'];
-
-        $results = array_map($transformer->handler($pipeline), $this->items);
-
         $expected = [
             ['id' => '1', 'data' => '{"name":"John Doe","email":"johndoe@email.com"}'],
             ['id' => '2', 'data' => '{"name":"Jane Doe","email":"janedoe@email.com"}'],
         ];
 
-        $this->assertEquals($expected, $results);
+        $transformer = new JsonEncode;
+
+        $transformer->options(['columns' => ['data']]);
+
+        $this->assertEquals($expected, array_map($transformer->transform(), $this->data));
     }
 }

@@ -4,28 +4,21 @@ namespace Marquine\Etl\Extractors;
 
 use XMLReader;
 
-class Xml implements ExtractorInterface
+class Xml extends Extractor
 {
     /**
      * Extractor columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * The loop path.
      *
      * @var string
      */
-    public $loop = '/';
-
-    /**
-     * Path to the file.
-     *
-     * @var array
-     */
-    protected $file;
+    protected $loop = '/';
 
     /**
      * XML Reader.
@@ -49,15 +42,22 @@ class Xml implements ExtractorInterface
     protected $row = [];
 
     /**
-     * Set the extractor source.
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'loop'
+    ];
+
+    /**
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
+    public function extract($source)
     {
-        $this->file = $source;
-
         if ($this->columns) {
             foreach ($this->columns as &$value) {
                 $value = $this->loop . $value;
@@ -65,16 +65,8 @@ class Xml implements ExtractorInterface
         }
 
         $this->reader = new XMLReader;
-    }
 
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        $this->reader->open($this->file);
+        $this->reader->open($source);
 
         while ($this->reader->read()) {
             $this->addElementToPath();

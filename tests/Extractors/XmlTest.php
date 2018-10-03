@@ -7,38 +7,44 @@ use Marquine\Etl\Extractors\Xml;
 
 class XmlTest extends TestCase
 {
-    protected $expected = [
-        ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-        ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-    ];
-
     /** @test */
-    public function extracts_data_from_an_xml_file_retrieving_all_fields_within_the_loop_path()
+    public function custom_loop_path()
     {
+        $expected = [
+            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
         $extractor = new Xml;
 
-        $extractor->loop = '/users/user';
+        $extractor->options(['loop' => '/users/user']);
 
-        $extractor->source(__DIR__ . '/../data/xml1.xml');
+        $iterator = $extractor->extract(__DIR__ . '/../data/xml1.xml');
 
-        $this->assertEquals($this->expected, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function extracts_data_from_an_xml_file_retrieving_custom_fields_within_the_loop_path()
+    public function custom_fields_within_the_loop_path()
     {
-        $extractor = new Xml;
-
-        $extractor->loop = '/users/user';
-
-        $extractor->columns = [
-            'id' => '/@id',
-            'name' => '/profile/name',
-            'email' => '/profile/email/@value',
+        $expected = [
+            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $extractor->source(__DIR__ . '/../data/xml2.xml');
+        $extractor = new Xml;
 
-        $this->assertEquals($this->expected, iterator_to_array($extractor));
+        $extractor->options([
+            'loop' => '/users/user',
+            'columns' => [
+                'id' => '/@id',
+                'name' => '/profile/name',
+                'email' => '/profile/email/@value',
+            ],
+        ]);
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/xml2.xml');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 }

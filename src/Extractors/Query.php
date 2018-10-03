@@ -4,28 +4,21 @@ namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Database\Manager;
 
-class Query implements ExtractorInterface
+class Query extends Extractor
 {
     /**
      * The connection name.
      *
      * @var string
      */
-    public $connection = 'default';
+    protected $connection = 'default';
 
     /**
      * Query bindings.
      *
      * @var array
      */
-    public $bindings = [];
-
-    /**
-     * SQL query statement.
-     *
-     * @var string
-     */
-    protected $query;
+    protected $bindings = [];
 
     /**
      * The database manager.
@@ -33,6 +26,15 @@ class Query implements ExtractorInterface
      * @var \Marquine\Etl\Database\Manager
      */
     protected $db;
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'bindings', 'connection'
+    ];
 
     /**
      * Create a new Query Extractor instance.
@@ -46,24 +48,14 @@ class Query implements ExtractorInterface
     }
 
     /**
-     * Set the extractor source.
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
+    public function extract($source)
     {
-        $this->query = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        $statement = $this->db->pdo($this->connection)->prepare($this->query);
+        $statement = $this->db->pdo($this->connection)->prepare($source);
 
         $statement->execute($this->bindings);
 

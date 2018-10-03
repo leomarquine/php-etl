@@ -8,7 +8,7 @@ use Marquine\Etl\Extractors\Query;
 class QueryTest extends TestCase
 {
     /** @test */
-    public function extract_data_from_a_database_using_a_query_with_default_options()
+    public function default_options()
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->once())->method('execute')->with([]);
@@ -22,13 +22,13 @@ class QueryTest extends TestCase
 
         $extractor = new Query($manager);
 
-        $extractor->source('select query');
+        $iterator = $extractor->extract('select query');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
     }
 
     /** @test */
-    public function extract_data_from_a_database_using_a_query_with_custom_options()
+    public function custom_connection_and_bindings()
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->once())->method('execute')->with('bindings');
@@ -42,11 +42,13 @@ class QueryTest extends TestCase
 
         $extractor = new Query($manager);
 
-        $extractor->connection = 'connection';
-        $extractor->bindings = 'bindings';
+        $extractor->options([
+            'connection' => 'connection',
+            'bindings' => 'bindings',
+        ]);
 
-        $extractor->source('select query');
+        $iterator = $extractor->extract('select query');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
     }
 }

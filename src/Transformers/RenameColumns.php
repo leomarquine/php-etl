@@ -2,24 +2,30 @@
 
 namespace Marquine\Etl\Transformers;
 
-use Marquine\Etl\Pipeline;
-
-class RenameColumns implements TransformerInterface
+class RenameColumns extends Transformer
 {
     /**
      * Transformer columns.
      *
      * @var array
      */
-    public $columns = [];
+    protected $columns = [];
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns'
+    ];
 
     /**
      * Get the transformer handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
      * @return callable
      */
-    public function handler(Pipeline $pipeline)
+    public function transform()
     {
         return function ($row) {
             foreach ($this->columns as $old => $new) {

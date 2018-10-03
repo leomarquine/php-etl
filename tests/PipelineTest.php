@@ -5,6 +5,7 @@ namespace Tests;
 use Generator;
 use IteratorAggregate;
 use Marquine\Etl\Pipeline;
+use Marquine\Etl\Flow;
 
 class PipelineTest extends TestCase
 {
@@ -12,14 +13,7 @@ class PipelineTest extends TestCase
     {
         parent::setUp();
 
-        $this->flow = new class implements IteratorAggregate {
-            public function getIterator()
-            {
-                yield 'row1';
-                yield 'row2';
-                yield 'row3';
-            }
-        };
+        $this->flow = new Flow(['row1', 'row2', 'row3']);
     }
 
     /** @test */

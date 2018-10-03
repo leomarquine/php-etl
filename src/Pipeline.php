@@ -9,7 +9,7 @@ class Pipeline
     /**
      * The pipeline data flow.
      *
-     * @var \IteratorAggregate
+     * @var \Marquine\Etl\Flow
      */
     protected $flow;
 
@@ -65,10 +65,10 @@ class Pipeline
     /**
      * Set the pipeline flow.
      *
-     * @param  \IteratorAggregate  $flow
+     * @param  \Marquine\Etl\Flow  $flow
      * @return void
      */
-    public function flow(IteratorAggregate $flow)
+    public function flow(Flow $flow)
     {
         $this->flow = $flow;
     }

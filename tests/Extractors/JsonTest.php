@@ -7,34 +7,39 @@ use Marquine\Etl\Extractors\Json;
 
 class JsonTest extends TestCase
 {
-    protected $expected = [
-        ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-        ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-    ];
-
     /** @test */
-    public function extracts_data_from_a_json_file()
+    public function default_options()
     {
+        $expected = [
+            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
         $extractor = new Json;
 
-        $extractor->source(__DIR__.'/../data/json1.json');
+        $iterator = $extractor->extract(__DIR__.'/../data/json1.json');
 
-        $this->assertEquals($this->expected, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function extracts_data_from_a_json_file_with_custom_attributes_path()
+    public function custom_columns_json_path()
     {
-        $extractor = new Json;
-
-        $extractor->columns = [
-            'id' => '$..bindings[*].id.value',
-            'name' => '$..bindings[*].name.value',
-            'email' => '$..bindings[*].email.value'
+        $expected = [
+            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $extractor->source(__DIR__.'/../data/json2.json');
+        $extractor = new Json;
 
-        $this->assertEquals($this->expected, iterator_to_array($extractor));
+        $extractor->options(['columns' => [
+            'id' => '$..bindings[*].id.value',
+            'name' => '$..bindings[*].name.value',
+            'email' => '$..bindings[*].email.value',
+        ]]);
+
+        $iterator = $extractor->extract(__DIR__.'/../data/json2.json');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 }

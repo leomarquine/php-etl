@@ -2,55 +2,47 @@
 
 namespace Marquine\Etl\Extractors;
 
-class Csv implements ExtractorInterface
+class Csv extends Extractor
 {
     /**
      * Extractor columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * The delimiter string.
      *
      * @var string
      */
-    public $delimiter = ',';
+    protected $delimiter = ',';
 
     /**
      * The enclosure string.
      *
      * @var string
      */
-    public $enclosure = '';
+    protected $enclosure = '';
 
     /**
-     * Path to the file.
+     * Properties that can be set via the options method.
      *
-     * @var string
+     * @var array
      */
-    protected $file;
+    protected $availableOptions = [
+        'columns', 'delimiter', 'enclosure'
+    ];
 
     /**
-     * Set the extractor source.
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
+    public function extract($source)
     {
-        $this->file = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        $handle = fopen($this->file, 'r');
+        $handle = fopen($source, 'r');
 
         $columns = $this->makeColumns($handle);
 

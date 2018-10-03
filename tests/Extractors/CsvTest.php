@@ -10,87 +10,86 @@ class CsvTest extends TestCase
     /** @test */
     public function default_options()
     {
-        $extractor = new Csv;
-
-        $extractor->source(__DIR__ . '/../data/csv1.csv');
-
         $expected = [
             ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
             ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $extractor = new Csv;
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
     public function custom_delimiter_and_enclosure()
     {
-        $extractor = new Csv;
-
-        $extractor->delimiter = ';';
-        $extractor->enclosure = '"';
-
-        $extractor->source(__DIR__ . '/../data/csv2.csv');
-
         $expected = [
             ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
             ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $extractor = new Csv;
+
+        $extractor->options([
+            'delimiter' => ';',
+            'enclosure' => '"',
+        ]);
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/csv2.csv');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function columns_filter()
+    public function filtering_columns()
     {
-        $extractor = new Csv;
-
-        $extractor->columns = ['id', 'email'];
-
-        $extractor->source(__DIR__ . '/../data/csv1.csv');
-
         $expected = [
             ['id' => 1, 'email' => 'johndoe@email.com'],
             ['id' => 2, 'email' => 'janedoe@email.com'],
         ];
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $extractor = new Csv;
+
+        $extractor->options(['columns' => ['id', 'email']]);
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function columns_map()
+    public function mapping_columns()
     {
-        $extractor = new Csv;
-
-        $extractor->columns = [
-            'id' => 'id',
-            'email' => 'email_address',
-        ];
-
-        $extractor->source(__DIR__ . '/../data/csv1.csv');
-
         $expected = [
             ['id' => 1, 'email_address' => 'johndoe@email.com'],
             ['id' => 2, 'email_address' => 'janedoe@email.com'],
         ];
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $extractor = new Csv;
+
+        $extractor->options(['columns' => ['id' => 'id', 'email' => 'email_address']]);
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function columns_configuration_when_header_is_missing()
+    public function custom_columns_indexes_when_there_is_no_header()
     {
-        $extractor = new Csv;
-
-        $extractor->columns = ['id' => 1, 'name' => 2, 'email' => 3];
-
-        $extractor->source(__DIR__ . '/../data/csv3.csv');
-
         $expected = [
             ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
             ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
         ];
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $extractor = new Csv;
+
+        $extractor->options(['columns' => ['id' => 1, 'name' => 2, 'email' => 3]]);
+
+        $iterator = $extractor->extract(__DIR__ . '/../data/csv3.csv');
+
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 }

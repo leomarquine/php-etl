@@ -50,6 +50,7 @@ class InsertUpdateTest extends TestCase
         $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
         $this->loader = new InsertUpdate($this->manager);
+        $this->loader->pipeline($this->pipeline);
 
         $this->data = ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
     }
@@ -57,7 +58,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function loader_handler_must_return_the_row()
     {
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         $this->assertEquals($this->data, call_user_func($handler, $this->data, 'meta'));
     }
@@ -80,7 +81,7 @@ class InsertUpdateTest extends TestCase
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -104,7 +105,7 @@ class InsertUpdateTest extends TestCase
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -128,7 +129,7 @@ class InsertUpdateTest extends TestCase
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -141,9 +142,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name']);
         $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
 
-        $this->loader->columns = ['id', 'name'];
+        $this->loader->options(['columns' => ['id', 'name']]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -156,9 +157,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['name']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
 
-        $this->loader->columns = ['id', 'name'];
+        $this->loader->options(['columns' => ['id', 'name']]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -171,12 +172,12 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name']);
         $this->insert->expects($this->once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->columns = [
+        $this->loader->options(['columns' => [
             'id' => 'user_id',
             'name' => 'full_name',
-        ];
+        ]]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -189,12 +190,12 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['full_name']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->columns = [
+        $this->loader->options(['columns' => [
             'id' => 'id',
             'name' => 'full_name',
-        ];
+        ]]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -207,9 +208,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email', 'created_at', 'updated_at']);
         $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
 
-        $this->loader->timestamps = true;
+        $this->loader->options(['timestamps' => true]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -222,9 +223,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email', 'updated_at']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'updated_at' => date('Y-m-d G:i:s')]);
 
-        $this->loader->timestamps = true;
+        $this->loader->options(['timestamps' => true]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -239,9 +240,9 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(false);
         $this->insert->expects($this->once())->method('execute');
 
-        $this->loader->transaction = false;
+        $this->loader->options(['transaction' => false]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
@@ -256,9 +257,9 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
         $this->update->expects($this->once())->method('execute');
 
-        $this->loader->transaction = false;
+        $this->loader->options(['transaction' => false]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }

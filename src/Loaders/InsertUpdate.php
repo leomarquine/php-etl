@@ -2,52 +2,51 @@
 
 namespace Marquine\Etl\Loaders;
 
-use Marquine\Etl\Pipeline;
 use Marquine\Etl\Database\Manager;
 
-class InsertUpdate implements LoaderInterface
+class InsertUpdate extends Loader
 {
     /**
      * The connection name.
      *
      * @var string
      */
-    public $connection = 'default';
+    protected $connection = 'default';
 
     /**
      * The primary key.
      *
      * @var mixed
      */
-    public $key = ['id'];
+    protected $key = ['id'];
 
     /**
      * The columns to insert/update.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * Indicates if the table has timestamps columns.
      *
      * @var bool
      */
-    public $timestamps = false;
+    protected $timestamps = false;
 
     /**
      * Indicates if the loader will perform transactions.
      *
      * @var bool
      */
-    public $transaction = true;
+    protected $transaction = true;
 
     /**
      * Transaction commit size.
      *
      * @var int
      */
-    public $commitSize = 100;
+    protected $commitSize = 100;
 
     /**
      * Time for timestamps columns.
@@ -85,6 +84,15 @@ class InsertUpdate implements LoaderInterface
     protected $db;
 
     /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize'
+    ];
+
+    /**
      * Create a new InsertUpdate Loader instance.
      *
      * @param  \Marquine\Etl\Database\Manager  $manager
@@ -98,11 +106,10 @@ class InsertUpdate implements LoaderInterface
     /**
      * Get the loader handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
-     * @param  string  $destination
+     * @param  mixed  $destination
      * @return callable
      */
-    public function handler(Pipeline $pipeline, $destination)
+    public function load($destination)
     {
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');
@@ -112,7 +119,7 @@ class InsertUpdate implements LoaderInterface
             $this->columns = array_combine($this->columns, $this->columns);
         }
 
-        $this->prepareStatements($destination, $pipeline->sample());
+        $this->prepareStatements($destination, $this->pipeline->sample());
 
         $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
 

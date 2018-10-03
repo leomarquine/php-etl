@@ -36,5 +36,5 @@ class FakeStep extends \Marquine\Etl\Step
 {
     protected $option1;
     protected $option2;
-    protected $configurableOptions = ['option1'];
+    protected $availableOptions = ['option1'];
 }

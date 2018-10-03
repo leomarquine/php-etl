@@ -16,7 +16,7 @@ abstract class Step
      *
      * @var array
      */
-    protected $configurableOptions = [];
+    protected $availableOptions = [];
 
     /**
      * Set the step pipeline.
@@ -42,7 +42,7 @@ abstract class Step
         foreach ($options as $option => $value) {
             $option = lcfirst(implode('', array_map('ucfirst', explode('_', $option))));
 
-            if (in_array($option, $this->configurableOptions)) {
+            if (in_array($option, $this->availableOptions)) {
                 $this->$option = $value;
             }
         }

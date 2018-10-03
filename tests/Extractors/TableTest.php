@@ -8,7 +8,7 @@ use Marquine\Etl\Extractors\Table;
 class TableTest extends TestCase
 {
     /** @test */
-    public function extract_from_a_database_table_with_default_options()
+    public function default_options()
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
@@ -22,13 +22,14 @@ class TableTest extends TestCase
         $manager->expects($this->once())->method('query')->with('default')->willReturn($query);
 
         $extractor = new Table($manager);
-        $extractor->source('table');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $iterator = $extractor->extract('table');
+
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
     }
 
     /** @test */
-    public function extract_from_a_database_table_with_custom_options()
+    public function custom_connection_columns_and_where_clause()
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
@@ -42,12 +43,15 @@ class TableTest extends TestCase
         $manager->expects($this->once())->method('query')->with('connection')->willReturn($query);
 
         $extractor = new Table($manager);
-        $extractor->connection = 'connection';
-        $extractor->columns = 'columns';
-        $extractor->where = 'where';
 
-        $extractor->source('table');
+        $extractor->options([
+            'connection' => 'connection',
+            'columns' => 'columns',
+            'where' => 'where',
+        ]);
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $iterator = $extractor->extract('table');
+
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
     }
 }

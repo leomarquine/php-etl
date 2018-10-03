@@ -4,35 +4,28 @@ namespace Marquine\Etl\Extractors;
 
 use Marquine\Etl\Database\Manager;
 
-class Table implements ExtractorInterface
+class Table extends Extractor
 {
     /**
      * The connection name.
      *
      * @var string
      */
-    public $connection = 'default';
+    protected $connection = 'default';
 
     /**
      * Extractor columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * The array of where clause.
      *
      * @var array
      */
-    public $where = [];
-
-    /**
-     * The database table.
-     *
-     * @var string
-     */
-    protected $table;
+    protected $where = [];
 
     /**
      * The database manager.
@@ -40,6 +33,15 @@ class Table implements ExtractorInterface
      * @var \Marquine\Etl\Database\Manager
      */
     protected $db;
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'connection', 'where'
+    ];
 
     /**
      * Create a new Table Extractor instance.
@@ -52,22 +54,12 @@ class Table implements ExtractorInterface
     }
 
     /**
-     * Set the extractor source.
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
-    {
-        $this->table = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
+    public function extract($source)
     {
         if (empty($this->columns)) {
             $this->columns = ['*'];
@@ -75,7 +67,7 @@ class Table implements ExtractorInterface
 
         $statement = $this->db
             ->query($this->connection)
-            ->select($this->table, $this->columns)
+            ->select($source, $this->columns)
             ->where($this->where)
             ->execute();
 

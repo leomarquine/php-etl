@@ -2,41 +2,33 @@
 
 namespace Marquine\Etl\Extractors;
 
-class Collection implements ExtractorInterface
+class Collection extends Extractor
 {
     /**
      * Extractor columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
-     * The extractor data.
+     * Properties that can be set via the options method.
      *
      * @var array
      */
-    protected $data;
+    protected $availableOptions = [
+        'columns'
+    ];
 
     /**
-     * Set the extractor source.
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
+    public function extract($source)
     {
-        $this->data = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        foreach ($this->data as $row) {
+        foreach ($source as $row) {
             if ($this->columns) {
                 yield array_intersect_key($row, array_flip($this->columns));
             } else {

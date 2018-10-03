@@ -7,23 +7,28 @@ use Marquine\Etl\Extractors\Collection;
 
 class CollectionTest extends TestCase
 {
-    protected $items = [
+    protected $source = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
     /** @test */
-    public function extracts_data_from_an_iterable_collection_with_default_options()
+    public function default_options()
     {
+        $expected = [
+            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
+            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+        ];
+
         $extractor = new Collection;
 
-        $extractor->source($this->items);
+        $iterator = $extractor->extract($this->source);
 
-        $this->assertEquals($this->items, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 
     /** @test */
-    public function extracts_data_from_an_iterable_collection_with_custom_options()
+    public function custom_columns()
     {
         $expected = [
             ['id' => 1, 'name' => 'John Doe'],
@@ -32,10 +37,10 @@ class CollectionTest extends TestCase
 
         $extractor = new Collection;
 
-        $extractor->columns = ['id', 'name'];
+        $extractor->options(['columns' => ['id', 'name']]);
 
-        $extractor->source($this->items);
+        $iterator = $extractor->extract($this->source);
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($iterator));
     }
 }

@@ -10,56 +10,67 @@ class EtlTest extends TestCase
     /** @test */
     public function extract_step()
     {
-        $extractor = $this->createMock('Marquine\Etl\Extractors\ExtractorInterface');
-        $extractor->expects($this->once())->method('source')->with('source');
-
-        $container = $this->createMOck('Marquine\Etl\Container');
-        $container->expects($this->once())->method('make')->with('extractor.step_name')->willReturn($extractor);
-
+        $container = $this->createMock('Marquine\Etl\Container');
         $pipeline = $this->createMock('Marquine\Etl\Pipeline');
-        $pipeline->expects($this->once())->method('flow')->with($extractor);
+        $extractor = $this->createMock('Marquine\Etl\Extractors\Extractor');
+        $flow = $this->createMock('Marquine\Etl\Flow');
+
+        $container->expects($this->once())->method('step')->with('step_name', 'Marquine\Etl\Extractors\Extractor')->willReturn($extractor);
+        $container->expects($this->once())->method('make')->with('Marquine\Etl\Flow', [])->willReturn($flow);
+
+        $pipeline->expects($this->once())->method('flow')->with($flow);
+
+        $extractor->expects($this->once())->method('pipeline')->with($pipeline)->willReturnSelf();
+        $extractor->expects($this->once())->method('options')->with(['options'])->willReturnSelf();
+        $extractor->expects($this->once())->method('extract')->with('source')->willReturn([]);
 
         $etl = new Etl($container, $pipeline);
 
-        $etl->extract('step_name', 'source', ['options']);
+        $this->assertInstanceOf(Etl::class, $etl->extract('step_name', 'source', ['options']));
     }
 
     /** @test */
     public function transform_step()
     {
+        $container = $this->createMock('Marquine\Etl\Container');
         $pipeline = $this->createMock('Marquine\Etl\Pipeline');
-        $transformer = $this->createMock('Marquine\Etl\Transformers\TransformerInterface');
+        $transformer = $this->createMock('Marquine\Etl\Transformers\Transformer');
+
+        $container->expects($this->once())->method('step')->with('step_name', 'Marquine\Etl\Transformers\Transformer')->willReturn($transformer);
 
         $pipeline->expects($this->once())->method('pipe')->with(function () {});
-        $transformer->expects($this->once())->method('handler')->with($pipeline)->willReturn(function () {});
 
-        $container = $this->createMOck('Marquine\Etl\Container');
-        $container->expects($this->once())->method('make')->with('transformer.step_name')->willReturn($transformer);
+        $transformer->expects($this->once())->method('pipeline')->with($pipeline)->willReturnSelf();
+        $transformer->expects($this->once())->method('options')->with(['options'])->willReturnSelf();
+        $transformer->expects($this->once())->method('transform')->with()->willReturn(function () {});
 
         $etl = new Etl($container, $pipeline);
 
-        $etl->transform('step_name', ['options']);
+        $this->assertInstanceOf(Etl::class, $etl->transform('step_name', ['options']));
     }
 
     /** @test */
     public function load_step()
     {
+        $container = $this->createMock('Marquine\Etl\Container');
         $pipeline = $this->createMock('Marquine\Etl\Pipeline');
-        $loader = $this->createMock('Marquine\Etl\Loaders\LoaderInterface');
+        $loader = $this->createMock('Marquine\Etl\Loaders\Loader');
+
+        $container->expects($this->once())->method('step')->with('step_name', 'Marquine\Etl\Loaders\Loader')->willReturn($loader);
 
         $pipeline->expects($this->once())->method('pipe')->with(function () {});
-        $loader->expects($this->once())->method('handler')->with($pipeline, 'destination')->willReturn(function () {});
 
-        $container = $this->createMOck('Marquine\Etl\Container');
-        $container->expects($this->once())->method('make')->with('loader.step_name')->willReturn($loader);
+        $loader->expects($this->once())->method('pipeline')->with($pipeline)->willReturnSelf();
+        $loader->expects($this->once())->method('options')->with(['options'])->willReturnSelf();
+        $loader->expects($this->once())->method('load')->with('destination')->willReturn(function () {});
 
         $etl = new Etl($container, $pipeline);
 
-        $etl->load('step_name', 'destination', ['options']);
+        $this->assertInstanceOf(Etl::class, $etl->load('step_name', 'destination', ['options']));
     }
 
     /** @test */
-    public function execute_the_etl()
+    public function run_the_etl()
     {
         $generator = $this->createMock('Iterator');
         $generator->expects($this->exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);

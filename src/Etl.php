@@ -2,7 +2,9 @@
 
 namespace Marquine\Etl;
 
-use ReflectionClass;
+use Marquine\Etl\Loaders\Loader;
+use Marquine\Etl\Extractors\Extractor;
+use Marquine\Etl\Transformers\Transformer;
 
 class Etl
 {
@@ -54,11 +56,13 @@ class Etl
      */
     public function extract($extractor, $source, $options = [])
     {
-        $extractor = $this->make('extractor', $extractor, $options);
+        $extractor = $this->container->step($extractor, Extractor::class);
 
-        $extractor->source($source);
+        $extractor->pipeline($this->pipeline)->options($options);
 
-        $this->pipeline->flow($extractor);
+        $flow = $this->container->make(Flow::class, $extractor->extract($source));
+
+        $this->pipeline->flow($flow);
 
         return $this;
     }
@@ -72,9 +76,11 @@ class Etl
      */
     public function transform($transformer, $options = [])
     {
-        $transformer = $this->make('transformer', $transformer, $options);
+        $transformer = $this->container->step($transformer, Transformer::class);
 
-        $this->pipeline->pipe($transformer->handler($this->pipeline));
+        $transformer->pipeline($this->pipeline)->options($options);
+
+        $this->pipeline->pipe($transformer->transform());
 
         return $this;
     }
@@ -89,9 +95,11 @@ class Etl
      */
     public function load($loader, $destination, $options = [])
     {
-        $loader = $this->make('loader', $loader, $options);
+        $loader = $this->container->step($loader, Loader::class);
 
-        $this->pipeline->pipe($loader->handler($this->pipeline, $destination));
+        $loader->pipeline($this->pipeline)->options($options);
+
+        $this->pipeline->pipe($loader->load($destination));
 
         return $this;
     }
@@ -118,33 +126,6 @@ class Etl
     public function toArray()
     {
         return iterator_to_array($this->pipeline->get());
-    }
-
-    /**
-     * Make a new step instance.
-     *
-     * @param  string  $type
-     * @param  string  $step
-     * @param  array  $options
-     * @return object
-     */
-    protected function make($type, $step, $options)
-    {
-        $step = $this->container->make("$type.$step");
-
-        if (!empty($options)) {
-            $reflector = new ReflectionClass($step);
-
-            foreach ($options as $property => $value) {
-                $property = lcfirst(implode('', array_map('ucfirst', explode('_', $property))));
-
-                if ($reflector->hasProperty($property) && $reflector->getProperty($property)->isPublic()) {
-                    $step->$property = $value;
-                }
-            }
-        }
-
-        return $step;
     }
 
     /**

@@ -32,6 +32,7 @@ class InsertTest extends TestCase
         $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
         $this->loader = new Insert($this->manager);
+        $this->loader->pipeline($this->pipeline);
 
         $this->data = ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
     }
@@ -39,13 +40,13 @@ class InsertTest extends TestCase
     /** @test */
     public function loader_handler_must_return_the_row()
     {
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         $this->assertEquals($this->data, call_user_func($handler, $this->data, 'meta'));
     }
 
     /** @test */
-    public function insert_data_into_the_database_with_default_options()
+    public function default_options()
     {
         $this->manager->expects($this->once())->method('statement')->with('default')->willReturn($this->builder);
         $this->manager->expects($this->once())->method('transaction')->with('default')->willReturn($this->transaction);
@@ -54,42 +55,42 @@ class InsertTest extends TestCase
         $this->transaction->expects($this->once())->method('size')->with(100)->willReturnSelf();
         $this->transaction->expects($this->once())->method('run');
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
-    public function insert_data_into_the_database_filtering_columns()
+    public function filtering_columns()
     {
         $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
         $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name'])->willReturnSelf();
 
-        $this->loader->columns = ['id', 'name'];
+        $this->loader->options(['columns' => ['id', 'name']]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
-    public function insert_data_into_the_database_mapping_columns()
+    public function mapping_columns()
     {
         $this->statement->expects($this->once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
         $this->builder->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name'])->willReturnSelf();
 
-        $this->loader->columns = [
+        $this->loader->options(['columns' => [
             'id' => 'user_id',
             'name' => 'full_name',
-        ];
+        ]]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
-    public function insert_data_into_the_database_without_transactions()
+    public function without_transactions()
     {
         $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
         $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email'])->willReturnSelf();
@@ -97,34 +98,34 @@ class InsertTest extends TestCase
         $this->transaction->expects($this->never())->method('run');
         $this->manager->expects($this->never())->method('transaction');
 
-        $this->loader->transaction = false;
+        $this->loader->options(['transaction' => false]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
-    public function insert_data_into_the_database_with_timestamps()
+    public function with_timestamps()
     {
         $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
         $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email', 'created_at', 'updated_at'])->willReturnSelf();
 
-        $this->loader->timestamps = true;
+        $this->loader->options(['timestamps' => true]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }
 
     /** @test */
-    public function insert_data_into_the_database_with_custom_commit_size()
+    public function custom_commit_size()
     {
         $this->transaction->expects($this->once())->method('size')->with(50)->willReturnSelf();
 
-        $this->loader->commitSize = 50;
+        $this->loader->options(['commit_size' => 50]);
 
-        $handler = $this->loader->handler($this->pipeline, 'table');
+        $handler = $this->loader->load('table');
 
         call_user_func($handler, $this->data, 'meta');
     }

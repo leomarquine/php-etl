@@ -2,45 +2,44 @@
 
 namespace Marquine\Etl\Loaders;
 
-use Marquine\Etl\Pipeline;
 use Marquine\Etl\Database\Manager;
 
-class Insert implements LoaderInterface
+class Insert extends Loader
 {
     /**
      * The connection name.
      *
      * @var string
      */
-    public $connection = 'default';
+    protected $connection = 'default';
 
     /**
      * The columns to insert.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * Indicates if the table has timestamps columns.
      *
      * @var bool
      */
-    public $timestamps = false;
+    protected $timestamps = false;
 
     /**
      * Indicates if the loader will perform transactions.
      *
      * @var bool
      */
-    public $transaction = true;
+    protected $transaction = true;
 
     /**
      * Transaction commit size.
      *
      * @var int
      */
-    public $commitSize = 100;
+    protected $commitSize = 100;
 
     /**
      * Time for timestamps columns.
@@ -64,6 +63,15 @@ class Insert implements LoaderInterface
     protected $db;
 
     /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'connection', 'timestamps', 'transaction', 'commitSize'
+    ];
+
+    /**
      * Create a new Insert Loader instance.
      *
      * @param  \Marquine\Etl\Database\Manager  $manager
@@ -77,13 +85,12 @@ class Insert implements LoaderInterface
     /**
      * Get the loader handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
-     * @param  string  $destination
+     * @param  mixed  $destination
      * @return callable
      */
-    public function handler(Pipeline $pipeline, $destination)
+    public function load($destination)
     {
-        $this->prepareInsert($destination, $pipeline->sample());
+        $this->prepareInsert($destination, $this->pipeline->sample());
 
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');

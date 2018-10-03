@@ -2,41 +2,33 @@
 
 namespace Marquine\Etl\Extractors;
 
-class FixedWidth implements ExtractorInterface
+class FixedWidth extends Extractor
 {
     /**
      * Extractor columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
-     * Path to the file.
+     * Properties that can be set via the options method.
      *
-     * @var string
+     * @var array
      */
-    protected $file;
+    protected $availableOptions = [
+        'columns'
+    ];
 
     /**
-     * Set the extractor source.
+     * Extract data from the given source.
      *
      * @param  mixed  $source
-     * @return void
+     * @return iterable
      */
-    public function source($source)
+    public function extract($source)
     {
-        $this->file = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        $handle = fopen($this->file, 'r');
+        $handle = fopen($source, 'r');
 
         while ($row = fgets($handle)) {
             yield $this->makeRow($row);

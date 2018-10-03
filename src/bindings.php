@@ -9,21 +9,21 @@ $container->singleton(Marquine\Etl\Database\Manager::class);
 $container->alias(Marquine\Etl\Database\Manager::class, 'db');
 
 // Extractors
-$container->bind('extractor.collection', Marquine\Etl\Extractors\Collection::class);
-$container->bind('extractor.csv', Marquine\Etl\Extractors\Csv::class);
-$container->bind('extractor.fixed_width', Marquine\Etl\Extractors\FixedWidth::class);
-$container->bind('extractor.json', Marquine\Etl\Extractors\Json::class);
-$container->bind('extractor.query', Marquine\Etl\Extractors\Query::class);
-$container->bind('extractor.table', Marquine\Etl\Extractors\Table::class);
-$container->bind('extractor.xml', Marquine\Etl\Extractors\Xml::class);
+$container->bind('collection_extractor', Marquine\Etl\Extractors\Collection::class);
+$container->bind('csv_extractor', Marquine\Etl\Extractors\Csv::class);
+$container->bind('fixed_width_extractor', Marquine\Etl\Extractors\FixedWidth::class);
+$container->bind('json_extractor', Marquine\Etl\Extractors\Json::class);
+$container->bind('query_extractor', Marquine\Etl\Extractors\Query::class);
+$container->bind('table_extractor', Marquine\Etl\Extractors\Table::class);
+$container->bind('xml_extractor', Marquine\Etl\Extractors\Xml::class);
 
 // Transformers
-$container->bind('transformer.convert_case', Marquine\Etl\Transformers\ConvertCase::class);
-$container->bind('transformer.json_decode', Marquine\Etl\Transformers\JsonDecode::class);
-$container->bind('transformer.json_encode', Marquine\Etl\Transformers\JsonEncode::class);
-$container->bind('transformer.rename_columns', Marquine\Etl\Transformers\RenameColumns::class);
-$container->bind('transformer.trim', Marquine\Etl\Transformers\Trim::class);
+$container->bind('convert_case_transformer', Marquine\Etl\Transformers\ConvertCase::class);
+$container->bind('json_decode_transformer', Marquine\Etl\Transformers\JsonDecode::class);
+$container->bind('json_encode_transformer', Marquine\Etl\Transformers\JsonEncode::class);
+$container->bind('rename_columns_transformer', Marquine\Etl\Transformers\RenameColumns::class);
+$container->bind('trim_transformer', Marquine\Etl\Transformers\Trim::class);
 
 // Loaders
-$container->bind('loader.insert', Marquine\Etl\Loaders\Insert::class);
-$container->bind('loader.insert_update', Marquine\Etl\Loaders\InsertUpdate::class);
+$container->bind('insert_loader', Marquine\Etl\Loaders\Insert::class);
+$container->bind('insert_update_loader', Marquine\Etl\Loaders\InsertUpdate::class);

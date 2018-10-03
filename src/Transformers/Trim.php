@@ -2,39 +2,46 @@
 
 namespace Marquine\Etl\Transformers;
 
-use Marquine\Etl\Pipeline;
 use InvalidArgumentException;
 
-class Trim implements TransformerInterface
+class Trim extends Transformer
 {
     /**
      * Transformer columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * The trim type.
      *
      * @var string
      */
-    public $type = 'both';
+    protected $type = 'both';
 
     /**
      * The trim mask.
      *
      * @var string
      */
-    public $mask = " \t\n\r\0\x0B";
+    protected $mask = " \t\n\r\0\x0B";
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'type', 'mask'
+    ];
 
     /**
      * Get the transformer handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
      * @return callable
      */
-    public function handler(Pipeline $pipeline)
+    public function transform()
     {
         $type = $this->getTrimFunction();
 

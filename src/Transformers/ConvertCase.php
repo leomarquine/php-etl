@@ -2,39 +2,46 @@
 
 namespace Marquine\Etl\Transformers;
 
-use Marquine\Etl\Pipeline;
 use InvalidArgumentException;
 
-class ConvertCase implements TransformerInterface
+class ConvertCase extends Transformer
 {
     /**
      * Transformer columns.
      *
      * @var array
      */
-    public $columns;
+    protected $columns;
 
     /**
      * The mode of the conversion.
      *
      * @var string
      */
-    public $mode = 'lower';
+    protected $mode = 'lower';
 
     /**
      * The character encoding.
      *
      * @var string
      */
-    public $encoding = 'utf-8';
+    protected $encoding = 'utf-8';
+
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        'columns', 'encoding', 'mode'
+    ];
 
     /**
      * Get the transformer handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
      * @return callable
      */
-    public function handler(Pipeline $pipeline)
+    public function transform()
     {
         $mode = $this->getConversionMode();
 

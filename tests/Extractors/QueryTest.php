@@ -22,9 +22,9 @@ class QueryTest extends TestCase
 
         $extractor = new Query($manager);
 
-        $iterator = $extractor->extract('select query');
+        $extractor->extract('select query');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 
     /** @test */
@@ -47,8 +47,8 @@ class QueryTest extends TestCase
             'bindings' => 'bindings',
         ]);
 
-        $iterator = $extractor->extract('select query');
+        $extractor->extract('select query');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 }

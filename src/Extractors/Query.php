@@ -21,6 +21,13 @@ class Query extends Extractor
     protected $bindings = [];
 
     /**
+     * The prepared statement.
+     *
+     * @var \PDOStatement
+     */
+    protected $statement;
+
+    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager
@@ -48,18 +55,26 @@ class Query extends Extractor
     }
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
-        $statement = $this->db->pdo($this->connection)->prepare($source);
+        $this->statement = $this->db->pdo($this->connection)->prepare($source);
+    }
 
-        $statement->execute($this->bindings);
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        $this->statement->execute($this->bindings);
 
-        while ($row = $statement->fetch()) {
+        while ($row = $this->statement->fetch()) {
             yield $row;
         }
     }

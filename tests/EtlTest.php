@@ -13,16 +13,14 @@ class EtlTest extends TestCase
         $container = $this->createMock('Marquine\Etl\Container');
         $pipeline = $this->createMock('Marquine\Etl\Pipeline');
         $extractor = $this->createMock('Marquine\Etl\Extractors\Extractor');
-        $flow = $this->createMock('Marquine\Etl\Flow');
 
         $container->expects($this->once())->method('step')->with('step_name', 'Marquine\Etl\Extractors\Extractor')->willReturn($extractor);
-        $container->expects($this->once())->method('make')->with('Marquine\Etl\Flow', [])->willReturn($flow);
 
-        $pipeline->expects($this->once())->method('flow')->with($flow);
+        $pipeline->expects($this->once())->method('flow')->with($extractor);
 
         $extractor->expects($this->once())->method('pipeline')->with($pipeline)->willReturnSelf();
         $extractor->expects($this->once())->method('options')->with(['options'])->willReturnSelf();
-        $extractor->expects($this->once())->method('extract')->with('source')->willReturn([]);
+        $extractor->expects($this->once())->method('extract')->with('source');
 
         $etl = new Etl($container, $pipeline);
 

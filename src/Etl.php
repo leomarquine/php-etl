@@ -58,11 +58,9 @@ class Etl
     {
         $extractor = $this->container->step($extractor, Extractor::class);
 
-        $extractor->pipeline($this->pipeline)->options($options);
+        $extractor->pipeline($this->pipeline)->options($options)->extract($source);
 
-        $flow = $this->container->make(Flow::class, $extractor->extract($source));
-
-        $this->pipeline->flow($flow);
+        $this->pipeline->flow($extractor);
 
         return $this;
     }

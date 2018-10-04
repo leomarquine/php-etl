@@ -19,8 +19,8 @@ class FixedWidthTest extends TestCase
 
         $extractor->options(['columns' => ['id' => [0, 1], 'name' => [1, 8], 'email' => [9, 17]]]);
 
-        $iterator = $extractor->extract(__DIR__.'/../data/fixed-width.txt');
+        $extractor->extract(__DIR__.'/../data/fixed-width.txt');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 }

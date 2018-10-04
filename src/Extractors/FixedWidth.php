@@ -12,6 +12,13 @@ class FixedWidth extends Extractor
     protected $columns;
 
     /**
+     * The source file.
+     *
+     * @var string
+     */
+    protected $file;
+
+    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -21,14 +28,24 @@ class FixedWidth extends Extractor
     ];
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
-        $handle = fopen($source, 'r');
+        $this->file = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        $handle = fopen($this->file, 'r');
 
         while ($row = fgets($handle)) {
             yield $this->makeRow($row);

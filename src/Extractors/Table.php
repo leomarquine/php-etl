@@ -28,6 +28,13 @@ class Table extends Extractor
     protected $where = [];
 
     /**
+     * The table name.
+     *
+     * @var string
+     */
+    protected $table;
+
+    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager
@@ -46,7 +53,8 @@ class Table extends Extractor
     /**
      * Create a new Table Extractor instance.
      *
-     * @param \Marquine\Etl\Database\Manager $manager
+     * @param  \Marquine\Etl\Database\Manager  $manager
+     * @return void
      */
     public function __construct(Manager $manager)
     {
@@ -54,10 +62,10 @@ class Table extends Extractor
     }
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
@@ -65,9 +73,19 @@ class Table extends Extractor
             $this->columns = ['*'];
         }
 
+        $this->table = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
         $statement = $this->db
             ->query($this->connection)
-            ->select($source, $this->columns)
+            ->select($this->table, $this->columns)
             ->where($this->where)
             ->execute();
 

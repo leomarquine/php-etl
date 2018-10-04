@@ -23,9 +23,9 @@ class TableTest extends TestCase
 
         $extractor = new Table($manager);
 
-        $iterator = $extractor->extract('table');
+        $extractor->extract('table');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 
     /** @test */
@@ -50,8 +50,8 @@ class TableTest extends TestCase
             'where' => 'where',
         ]);
 
-        $iterator = $extractor->extract('table');
+        $extractor->extract('table');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($iterator));
+        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
     }
 }

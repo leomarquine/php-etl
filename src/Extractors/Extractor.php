@@ -2,15 +2,16 @@
 
 namespace Marquine\Etl\Extractors;
 
+use IteratorAggregate;
 use Marquine\Etl\Step;
 
-abstract class Extractor extends Step
+abstract class Extractor extends Step implements IteratorAggregate
 {
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     abstract public function extract($source);
 };

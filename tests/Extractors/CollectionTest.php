@@ -22,9 +22,9 @@ class CollectionTest extends TestCase
 
         $extractor = new Collection;
 
-        $iterator = $extractor->extract($this->source);
+        $extractor->extract($this->source);
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -39,8 +39,8 @@ class CollectionTest extends TestCase
 
         $extractor->options(['columns' => ['id', 'name']]);
 
-        $iterator = $extractor->extract($this->source);
+        $extractor->extract($this->source);
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 }

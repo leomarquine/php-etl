@@ -12,6 +12,13 @@ class Collection extends Extractor
     protected $columns;
 
     /**
+     * The extractor data collection.
+     *
+     * @var mixed
+     */
+    protected $data;
+
+    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -21,14 +28,24 @@ class Collection extends Extractor
     ];
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
-        foreach ($source as $row) {
+        $this->data = $source;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        foreach ($this->data as $row) {
             if ($this->columns) {
                 yield array_intersect_key($row, array_flip($this->columns));
             } else {

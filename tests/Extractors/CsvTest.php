@@ -17,9 +17,9 @@ class CsvTest extends TestCase
 
         $extractor = new Csv;
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+        $extractor->extract(__DIR__ . '/../data/csv1.csv');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -37,9 +37,9 @@ class CsvTest extends TestCase
             'enclosure' => '"',
         ]);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/csv2.csv');
+        $extractor->extract(__DIR__ . '/../data/csv2.csv');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -54,9 +54,9 @@ class CsvTest extends TestCase
 
         $extractor->options(['columns' => ['id', 'email']]);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+        $extractor->extract(__DIR__ . '/../data/csv1.csv');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -71,9 +71,9 @@ class CsvTest extends TestCase
 
         $extractor->options(['columns' => ['id' => 'id', 'email' => 'email_address']]);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/csv1.csv');
+        $extractor->extract(__DIR__ . '/../data/csv1.csv');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -88,8 +88,8 @@ class CsvTest extends TestCase
 
         $extractor->options(['columns' => ['id' => 1, 'name' => 2, 'email' => 3]]);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/csv3.csv');
+        $extractor->extract(__DIR__ . '/../data/csv3.csv');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 }

@@ -19,9 +19,9 @@ class XmlTest extends TestCase
 
         $extractor->options(['loop' => '/users/user']);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/xml1.xml');
+        $extractor->extract(__DIR__ . '/../data/xml1.xml');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 
     /** @test */
@@ -43,8 +43,8 @@ class XmlTest extends TestCase
             ],
         ]);
 
-        $iterator = $extractor->extract(__DIR__ . '/../data/xml2.xml');
+        $extractor->extract(__DIR__ . '/../data/xml2.xml');
 
-        $this->assertEquals($expected, iterator_to_array($iterator));
+        $this->assertEquals($expected, iterator_to_array($extractor));
     }
 }

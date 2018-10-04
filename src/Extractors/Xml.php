@@ -21,6 +21,13 @@ class Xml extends Extractor
     protected $loop = '/';
 
     /**
+     * The source file.
+     *
+     * @var string
+     */
+    protected $file;
+
+    /**
      * XML Reader.
      *
      * @var \XMLReader
@@ -51,10 +58,10 @@ class Xml extends Extractor
     ];
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
@@ -64,9 +71,19 @@ class Xml extends Extractor
             }
         }
 
-        $this->reader = new XMLReader;
+        $this->file = $source;
 
-        $this->reader->open($source);
+        $this->reader = new XMLReader;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        $this->reader->open($this->file);
 
         while ($this->reader->read()) {
             $this->addElementToPath();

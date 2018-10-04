@@ -14,6 +14,13 @@ class Json extends Extractor
     protected $columns;
 
     /**
+     * The extractor data.
+     *
+     * @var array
+     */
+    protected $data;
+
+    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -23,26 +30,38 @@ class Json extends Extractor
     ];
 
     /**
-     * Extract data from the given source.
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
-     * @return iterable
+     * @return void
      */
     public function extract($source)
     {
-        $items = json_decode(file_get_contents($source), true);
+        $data = json_decode(file_get_contents($source), true);
 
         if ($this->columns) {
-            $jsonPath = new JSONPath($items);
+            $jsonPath = new JSONPath($data);
 
             foreach ($this->columns as $key => $path) {
                 $this->columns[$key] = $jsonPath->find($path)->data();
             }
 
-            $items = $this->transpose($this->columns);
+            $data = $this->transpose($this->columns);
         }
 
-        return (new Collection)->extract($items);;
+        $this->data = $data;
+    }
+
+    /**
+     * Get the extractor iterator.
+     *
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        foreach ($this->data as $row) {
+            yield $row;
+        }
     }
 
     /**

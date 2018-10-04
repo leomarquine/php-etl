@@ -5,7 +5,6 @@ namespace Tests;
 use Generator;
 use IteratorAggregate;
 use Marquine\Etl\Pipeline;
-use Marquine\Etl\Flow;
 
 class PipelineTest extends TestCase
 {
@@ -13,16 +12,22 @@ class PipelineTest extends TestCase
     {
         parent::setUp();
 
-        $this->flow = new Flow(['row1', 'row2', 'row3']);
+        $this->pipeline = new Pipeline;
+        $this->pipeline->flow(new class implements IteratorAggregate
+        {
+            public function getIterator()
+            {
+                yield 'row1';
+                yield 'row2';
+                yield 'row3';
+            }
+        });
     }
 
     /** @test */
     public function pipeline_flow_and_metadata()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->pipe(function ($row, $meta) {
+        $generator = $this->pipeline->pipe(function ($row, $meta) {
             $this->assertEquals($meta, (object) ['total' => 3, 'current' => substr($row, -1)]);
 
             return "*{$row}*";
@@ -42,10 +47,7 @@ class PipelineTest extends TestCase
             $control = true;
         };
 
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->before($callback)->get();
+        $generator = $this->pipeline->before($callback)->get();
 
         $generator->rewind();
 
@@ -61,10 +63,7 @@ class PipelineTest extends TestCase
             $control = true;
         };
 
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->after($callback)->get();
+        $generator = $this->pipeline->after($callback)->get();
 
         while ($generator->valid()) {
             $this->assertFalse($control);
@@ -77,10 +76,7 @@ class PipelineTest extends TestCase
     /** @test */
     public function maximum_number_of_rows_can_be_limited()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->limit(1)->get();
+        $generator = $this->pipeline->limit(1)->get();
 
         $this->assertEquals(['row1'], iterator_to_array($generator));
     }
@@ -88,10 +84,7 @@ class PipelineTest extends TestCase
     /** @test */
     public function initial_rows_can_be_skipped()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->skip(1)->get();
+        $generator = $this->pipeline->skip(1)->get();
 
         $this->assertEquals(['row2', 'row3'], iterator_to_array($generator));
     }
@@ -99,10 +92,7 @@ class PipelineTest extends TestCase
     /** @test */
     public function maximum_number_of_rows_should_not_count_skipped_rows()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->skip(1)->limit(1)->get();
+        $generator = $this->pipeline->skip(1)->limit(1)->get();
 
         $this->assertEquals(['row2'], iterator_to_array($generator));
     }
@@ -110,10 +100,7 @@ class PipelineTest extends TestCase
     /** @test */
     public function total_rows_and_current_row_must_not_count_skipped_rows()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->skip(2)->pipe(function ($row, $meta) {
+        $generator = $this->pipeline->skip(2)->pipe(function ($row, $meta) {
             $this->assertEquals(1, $meta->total);
             $this->assertEquals(1, $meta->current);
         })->get();
@@ -124,10 +111,7 @@ class PipelineTest extends TestCase
     /** @test */
     public function total_rows_must_not_be_greater_then_row_limit()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $generator = $pipeline->limit(1)->pipe(function ($row, $meta) {
+        $generator = $this->pipeline->limit(1)->pipe(function ($row, $meta) {
             $this->assertEquals(1, $meta->total);
             $this->assertEquals(1, $meta->current);
         })->get();
@@ -138,9 +122,6 @@ class PipelineTest extends TestCase
     /** @test */
     public function provides_the_first_row_as_sample()
     {
-        $pipeline = new Pipeline;
-        $pipeline->flow($this->flow);
-
-        $this->assertEquals('row1', $pipeline->sample());
+        $this->assertEquals('row1', $this->pipeline->sample());
     }
 }

@@ -6,6 +6,7 @@ Loaders are the data outputs of etl. They can be used multiple times in the same
 $etl->load('type', $destination, $options);
 ```
 
+
 ## Available loaders types
 
 * [Insert](Insert.md)
@@ -14,52 +15,42 @@ $etl->load('type', $destination, $options);
 
 ## Custom loader
 
-If you want to make your own custom loader, you need to create a class that implements the `LoaderInterface`.
-```php
-use Marquine\Etl\Loaders\LoaderInterface;
+To make a custom loader, you need to create a class that extends the base loader `Marquine\Etl\Loaders\Loader`.
 
-class CustomLoader implements LoaderInterface
+The `load` method must return a callback that will handle the data load when the ETL process run. For each iteration, the callback will receive the current row to perform the load process and then return the row.
+
+Properties that can be configured as options must be in the `availableOptions` array.
+
+```php
+use Marquine\Etl\Loaders\Loader;
+
+class CustomLoader extends Loader
 {
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        //
+    ];
+
     /**
      * Get the loader handler.
      *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
-     * @param  string  $destination
+     * @param  mixed  $destination
      * @return callable
      */
-    public function handler(Pipeline $pipeline, $destination);
+    public function load($destination)
+    {
+        //
+    }
 }
-```
-
-### Loader handler
-The `handler` method will receive the `Pipeline` instance and the `destination`. The method must return a callback that will receive a `$row` and a `$metadata` variable. This callback will execute the load process for each row at a time.
-```php
-/**
- * Get the loader handler.
- *
- * @param  \Marquine\Etl\Pipeline  $pipeline
- * @param  string  $destination
- * @return callable
- */
-public function handler(Pipeline $pipeline, $destination)
-{
-    // ...
-
-    return function ($row, $metada) {
-        // load data to destination
-    };
-}
-```
-
-### Setting options
-Any pulic property can be set by the options argument of the step. For example, to set the `columns` public property of the loader to `['name', 'email']`:
-```php
-$options = ['columns' => ['name', 'email']];
 ```
 
 ### Using the loader
-You can create a new instance of the loader or provide its class string and we will try to resolve any possible dependency:
+You can make a new instance of the loader or provide its class string and we will try to resolve any possible dependency:
 ```php
-$etl->load(new CustomLoader, 'destination', $options);
-$etl->load(CustomLoader::class, 'destination', $options);
+$etl->transform(new CustomLoader, $options);
+$etl->transform(CustomLoader::class, $options);
 ```

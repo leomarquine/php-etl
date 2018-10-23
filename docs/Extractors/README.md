@@ -6,6 +6,7 @@ Extractors are the entry point of any process. To start a process, you must set 
 $etl->extract('type', $source, $options);
 ```
 
+
 ## Available extractors types
 
 * [Collection](Collection.md)
@@ -16,21 +17,38 @@ $etl->extract('type', $source, $options);
 * [Table](Table.md)
 * [XML](Xml.md)
 
+
 ## Custom extractor
 
-If you want to make your own custom extractor, you need to create a class that implements the `ExtractorInterface`.
-```php
-use Marquine\Etl\Extractors\ExtractorInterface;
+To make a custom extractor, you need to create a class that extends the base extractor `Marquine\Etl\Extractors\Extractor`.
 
-class CustomExtractor implements ExtractorInterface
+The `extract` method will receive the data source as a parameter. In this method, you must perform all the necessary tasks to prepare the extractor iteration to run.
+
+The `getIterator` method must return a `Traversable` object. Each iteration item (row) must be an associative array, where `key` is the column name and `value` is the column value.
+
+Properties that can be configured as options must be in the `availableOptions` array.
+
+```php
+use Marquine\Etl\Extractors\Extractor;
+
+class CustomExtractor extends Extractor
 {
     /**
-     * Set the extractor source.
+     * Properties that can be set via the options method.
+     *
+     * @var array
+     */
+    protected $availableOptions = [
+        //
+    ];
+
+    /**
+     * Set up the extraction from the given source.
      *
      * @param  mixed  $source
      * @return void
      */
-    public function source($source)
+    public function extract($source)
     {
         //
     }
@@ -47,46 +65,8 @@ class CustomExtractor implements ExtractorInterface
 }
 ```
 
-### Setting the source
-The `source` method will register the source of your custom extractor. It will receive the source from the `extract` step in the etl.
-
-```php
-/**
- * Set the extractor source.
- *
- * @param  mixed  $source
- * @return void
- */
-public function source($source)
-{
-    $this->source = $source;
-}
-```
-
-### Data generator
-The `getIterator` method must return a `Generator`. Each item of the iteration must be an associative array.
-
-```php
-/**
- * Get the extractor iterator.
- *
- * @return \Generator
- */
-public function getIterator()
-{
-    yield ['id' => '1', 'key', 'value'];
-    yield ['id' => '2', 'key', 'value'];
-}
-```
-
-### Setting options
-Any pulic property can be set by the options argument of the step. For example, to set the `columns` public property of the extractor to `['name', 'email']`:
-```php
-$options = ['columns' => ['name', 'email']];
-```
-
 ### Using the extractor
-You can create a new instance of the extractor or provide its class string and we will try to resolve any possible dependency:
+You can make a new instance of the extractor or provide its class string and we will try to resolve any possible dependency:
 ```php
 $etl->extract(new CustomExtractor, 'source', $options);
 $etl->extract(CustomExtractor::class, 'source', $options);

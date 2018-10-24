@@ -110,7 +110,11 @@ class Pipeline
                 break;
             }
 
-            yield $this->runTasks($row);
+            $row = $this->runTasks($row);
+
+            if (!empty($row)) {
+                yield $row;
+            }
         }
 
         foreach ($this->postExecutionCallbacks as $callback) {

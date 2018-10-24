@@ -124,4 +124,14 @@ class PipelineTest extends TestCase
     {
         $this->assertEquals('row1', $this->pipeline->sample());
     }
+
+    /** @test */
+    public function empty_rows_will_be_skipped()
+    {
+        $generator = $this->pipeline->pipe(function ($row, $meta) {
+            return $row == 'row2' ? null : $row;
+        })->get();
+
+        $this->assertEquals(['row1', 'row3'], iterator_to_array($generator));
+    }
 }

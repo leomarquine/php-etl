@@ -13,6 +13,7 @@ class InsertTest extends TestCase
 
         $this->pipeline = $this->createMock('Marquine\Etl\Pipeline');
         $this->pipeline->expects($this->any())->method('sample')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->pipeline->expects($this->any())->method('metadata')->willReturn('meta');
 
         $this->statement = $this->createMock('PDOStatement');
         $this->statement->expects($this->any())->method('execute');

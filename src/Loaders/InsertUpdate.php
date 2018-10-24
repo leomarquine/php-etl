@@ -123,9 +123,9 @@ class InsertUpdate extends Loader
 
         $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
 
-        return function ($row, $metadata) use ($transaction) {
+        return function ($row) use ($transaction) {
             if ($transaction) {
-                $transaction->run($metadata, function () use ($row) {
+                $transaction->run($this->pipeline->metadata(), function () use ($row) {
                     $this->execute($row);
                 });
             } else {

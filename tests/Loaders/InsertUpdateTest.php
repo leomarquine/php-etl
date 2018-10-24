@@ -13,6 +13,7 @@ class InsertUpdateTest extends TestCase
 
         $this->pipeline = $this->createMock('Marquine\Etl\Pipeline');
         $this->pipeline->expects($this->any())->method('sample')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->pipeline->expects($this->any())->method('metadata')->willReturn('meta');
 
         $this->transaction = $this->createMock('Marquine\Etl\Database\Transaction');
         $this->transaction->expects($this->any())->method('size')->willReturnSelf();

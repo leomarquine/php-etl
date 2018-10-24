@@ -104,11 +104,11 @@ class Pipeline
                 continue;
             }
 
-            $this->current++;
-
-            if ($this->limit && $this->current > $this->limit) {
+            if ($this->limit && $this->current == $this->limit) {
                 break;
             }
+
+            $this->current++;
 
             $row = $this->runTasks($row);
 
@@ -141,7 +141,7 @@ class Pipeline
     protected function runTasks($row)
     {
         foreach ($this->tasks as $task) {
-            $row = $task($row, $this->metadata());
+            $row = $task($row);
         }
 
         return $row;
@@ -172,12 +172,14 @@ class Pipeline
      *
      * @return array
      */
-    protected function metadata()
+    public function metadata($attribute = null)
     {
-        return (object) [
+        $metadata = [
             'current' => $this->current,
             'total' => $this->total,
         ];
+
+        return $metadata[$attribute] ?? (object) $metadata;
     }
 
     /**

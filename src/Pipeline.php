@@ -142,6 +142,10 @@ class Pipeline
     {
         foreach ($this->tasks as $task) {
             $row = $task($row);
+
+            if (empty($row)) {
+                break;
+            }
         }
 
         return $row;

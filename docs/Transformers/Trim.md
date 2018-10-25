@@ -31,7 +31,7 @@ The options `trim` &#124; `all` &#124; `both` will trim both sides, `ltrim` &#12
 $options = ['type' => 'right'];
 ```
 
-### Type
+### Mask
 The stripped characters. Simply list all characters that you want to be stripped. With .. you can specify a range of characters.
 
 | Type | Default value |

@@ -62,6 +62,18 @@ class RowTest extends TestCase
     }
 
     /** @test */
+    public function discard_row()
+    {
+        $row = new Row([]);
+
+        $this->assertFalse($row->discarded());
+
+        $row->discard();
+
+        $this->assertTrue($row->discarded());
+    }
+
+    /** @test */
     public function array_access()
     {
         $row = new Row(['name' => 'Jane Doe']);

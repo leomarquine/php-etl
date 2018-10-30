@@ -14,6 +14,13 @@ class Row implements ArrayAccess
     protected $attributes;
 
     /**
+     * Determine if the row will be discarded.
+     *
+     * @var bool
+     */
+    protected $discarded = false;
+
+    /**
      * Create a new Row instance.
      *
      * @param  array  $attributes
@@ -83,6 +90,26 @@ class Row implements ArrayAccess
     public function toArray()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Discard the row.
+     *
+     * @return void
+     */
+    public function discard()
+    {
+        $this->discarded = true;
+    }
+
+    /**
+     * Check if the row was discarded.
+     *
+     * @return bool
+     */
+    public function discarded()
+    {
+        return $this->discarded;
     }
 
     /**

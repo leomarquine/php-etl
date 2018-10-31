@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Extractors;
 
+use Marquine\Etl\Row;
 use Flow\JSONPath\JSONPath;
 
 class Json extends Extractor
@@ -14,13 +15,6 @@ class Json extends Extractor
     protected $columns;
 
     /**
-     * The extractor data.
-     *
-     * @var array
-     */
-    protected $data;
-
-    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -30,14 +24,13 @@ class Json extends Extractor
     ];
 
     /**
-     * Set up the extraction from the given source.
+     * Extract data from the input.
      *
-     * @param  mixed  $source
-     * @return void
+     * @return \Generator
      */
-    public function extract($source)
+    public function extract()
     {
-        $data = json_decode(file_get_contents($source), true);
+        $data = json_decode(file_get_contents($this->input), true);
 
         if ($this->columns) {
             $jsonPath = new JSONPath($data);
@@ -49,18 +42,8 @@ class Json extends Extractor
             $data = $this->transpose($this->columns);
         }
 
-        $this->data = $data;
-    }
-
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        foreach ($this->data as $row) {
-            yield $row;
+        foreach ($data as $row) {
+            yield new Row($row);
         }
     }
 

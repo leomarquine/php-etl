@@ -7,7 +7,27 @@ use Marquine\Etl\Step;
 abstract class Extractor extends Step
 {
     /**
-     * Extract data from an input.
+     * The extractor input.
+     *
+     * @var mixed
+     */
+    protected $input;
+
+    /**
+     * Set the extractor input.
+     *
+     * @param  mixed  $input
+     * @return $this
+     */
+    public function input($input)
+    {
+        $this->input = $input;
+
+        return $this;
+    }
+
+    /**
+     * Extract data from the input.
      *
      * @return \Generator
      */

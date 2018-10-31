@@ -58,9 +58,7 @@ class Etl
     {
         $extractor = $this->container->step($extractor, Extractor::class);
 
-        $options['input'] = $input;
-
-        $extractor->options($options);
+        $extractor->input($input)->options($options);
 
         $this->pipeline->extractor($extractor);
 
@@ -97,9 +95,7 @@ class Etl
     {
         $loader = $this->container->step($loader, Loader::class);
 
-        $options['output'] = $output;
-
-        $loader->options($options);
+        $loader->output($output)->options($options);
 
         $this->pipeline->pipe($loader);
 

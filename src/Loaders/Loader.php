@@ -7,10 +7,10 @@ use Marquine\Etl\Step;
 abstract class Loader extends Step
 {
     /**
-     * Get the loader handler.
+     * Load the given row.
      *
-     * @param  mixed  $destination
-     * @return callable
+     * @param  \Marquine\Etl\Row  $row
+     * @return void
      */
-    abstract public function load($destination);
+    abstract public function load($row);
 }

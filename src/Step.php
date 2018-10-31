@@ -5,31 +5,11 @@ namespace Marquine\Etl;
 abstract class Step
 {
     /**
-     * The step pipeline.
-     *
-     * @var \Marquine\Etl\Pipeline
-     */
-    protected $pipeline;
-
-    /**
      * Properties that can be set via the options method.
      *
      * @var array
      */
     protected $availableOptions = [];
-
-    /**
-     * Set the step pipeline.
-     *
-     * @param  \Marquine\Etl\Pipeline  $pipeline
-     * @return $this
-     */
-    public function pipeline(Pipeline $pipeline)
-    {
-        $this->pipeline = $pipeline;
-
-        return $this;
-    }
 
     /**
      * Set the step options.
@@ -48,5 +28,25 @@ abstract class Step
         }
 
         return $this;
+    }
+
+    /**
+     * Initialize the step.
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        //
+    }
+
+    /**
+     * Finalize the step.
+     *
+     * @return void
+     */
+    public function finalize()
+    {
+        //
     }
 }

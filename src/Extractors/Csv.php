@@ -2,6 +2,8 @@
 
 namespace Marquine\Etl\Extractors;
 
+use Marquine\Etl\Row;
+
 class Csv extends Extractor
 {
     /**
@@ -26,13 +28,6 @@ class Csv extends Extractor
     protected $enclosure = '';
 
     /**
-     * The source file.
-     *
-     * @var string
-     */
-    protected $file;
-
-    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -42,29 +37,18 @@ class Csv extends Extractor
     ];
 
     /**
-     * Set up the extraction from the given source.
-     *
-     * @param  mixed  $source
-     * @return void
-     */
-    public function extract($source)
-    {
-        $this->file = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
+     * Extract data from the input.
      *
      * @return \Generator
      */
-    public function getIterator()
+    public function extract()
     {
-        $handle = fopen($this->file, 'r');
+        $handle = fopen($this->input, 'r');
 
         $columns = $this->makeColumns($handle);
 
         while ($row = fgets($handle)) {
-            yield $this->makeRow($row, $columns);
+            yield new Row($this->makeRow($row, $columns));
         }
 
         fclose($handle);

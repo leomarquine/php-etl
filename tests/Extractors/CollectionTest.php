@@ -3,11 +3,12 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Marquine\Etl\Row;
 use Marquine\Etl\Extractors\Collection;
 
 class CollectionTest extends TestCase
 {
-    protected $source = [
+    protected $input = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
@@ -16,31 +17,29 @@ class CollectionTest extends TestCase
     public function default_options()
     {
         $expected = [
-            ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
-            ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
+            new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
+            new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
         $extractor = new Collection;
 
-        $extractor->extract($this->source);
+        $extractor->input($this->input);
 
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
     public function custom_columns()
     {
         $expected = [
-            ['id' => 1, 'name' => 'John Doe'],
-            ['id' => 2, 'name' => 'Jane Doe'],
+            new Row(['id' => 1, 'name' => 'John Doe']),
+            new Row(['id' => 2, 'name' => 'Jane Doe']),
         ];
 
         $extractor = new Collection;
 
-        $extractor->options(['columns' => ['id', 'name']]);
+        $extractor->input($this->input)->options(['columns' => ['id', 'name']]);
 
-        $extractor->extract($this->source);
-
-        $this->assertEquals($expected, iterator_to_array($extractor));
+        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Marquine\Etl\Extractors;
 
+use Marquine\Etl\Row;
+
 class Collection extends Extractor
 {
     /**
@@ -10,13 +12,6 @@ class Collection extends Extractor
      * @var array
      */
     protected $columns;
-
-    /**
-     * The extractor data collection.
-     *
-     * @var mixed
-     */
-    protected $data;
 
     /**
      * Properties that can be set via the options method.
@@ -28,29 +23,18 @@ class Collection extends Extractor
     ];
 
     /**
-     * Set up the extraction from the given source.
-     *
-     * @param  mixed  $source
-     * @return void
-     */
-    public function extract($source)
-    {
-        $this->data = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
+     * Extract data from the input.
      *
      * @return \Generator
      */
-    public function getIterator()
+    public function extract()
     {
-        foreach ($this->data as $row) {
+        foreach ($this->input as $row) {
             if ($this->columns) {
-                yield array_intersect_key($row, array_flip($this->columns));
-            } else {
-                yield $row;
+                $row = array_intersect_key($row, array_flip($this->columns));
             }
+
+            yield new Row($row);
         }
     }
 }

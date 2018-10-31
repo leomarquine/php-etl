@@ -2,239 +2,225 @@
 
 namespace Marquine\Etl;
 
-use IteratorAggregate;
+use Iterator;
+use Marquine\Etl\Loaders\Loader;
+use Marquine\Etl\Extractors\Extractor;
+use Marquine\Etl\Transformers\Transformer;
 
-class Pipeline
+class Pipeline implements Iterator
 {
     /**
      * The pipeline data flow.
      *
-     * @var \IteratorAggregate
+     * @var \Generator
      */
     protected $flow;
 
     /**
-     * The array of tasks.
-     *
-     * @var array
-     */
-    protected $tasks = [];
-
-    /**
-     * Current row.
-     *
-     * @var int
-     */
-    protected $current = 0;
-
-    /**
-     * Total rows.
-     *
-     * @var int
-     */
-    protected $total = 0;
-
-    /**
-     * Maximum number of rows.
+     * The maximum number of rows.
      *
      * @var int
      */
     protected $limit;
 
     /**
-     * Number of rows to skip.
+     * The number of rows to skip.
      *
      * @var int
      */
     protected $skip;
 
     /**
-     * Pre execution callbacks.
+     * The iteration key.
+     *
+     * @var int
+     */
+    protected $key;
+
+    /**
+     * The current iteration row.
+     *
+     * @var \Marquine\Etl\Row
+     */
+    protected $current;
+
+    /**
+     * The etl extractor.
+     *
+     * @var \Marquine\Etl\Extractors\Extractor
+     */
+    protected $extractor;
+
+    /**
+     * The array of steps for the pipeline.
      *
      * @var array
      */
-    protected $preExecutionCallbacks = [];
+    protected $steps = [];
 
     /**
-     * Post execution callbacks.
+     * Set the pipeline extractor.
      *
-     * @var array
-     */
-    protected $postExecutionCallbacks = [];
-
-    /**
-     * Set the pipeline flow.
-     *
-     * @param  \IteratorAggregate  $flow
+     * @param  \Marquine\Etl\Extractors\Extractor  $extractor
      * @return void
      */
-    public function flow(IteratorAggregate $flow)
+    public function extractor(Extractor $extractor)
     {
-        $this->flow = $flow;
+        $this->extractor = $extractor;
     }
 
     /**
-     * Pipe a task.
+     * Add a step to the pipeline.
      *
-     * @param  callable  $task
-     * @return $this
+     * @param  \Marquine\EtlStep  $step
+     * @return void
      */
-    public function pipe(callable $task)
+    public function pipe(Step $step)
     {
-        $this->tasks[] = $task;
-
-        return $this;
+        $this->steps[] = $step;
     }
 
     /**
-     * Get the pipeline data generator.
+     * Set the row limit.
      *
-     * @return \Generator
+     * @param  int  $limit
+     * @return void
      */
-    public function get()
+    public function limit($limit)
     {
-        $this->total = $this->getRowsCount();
-
-        foreach ($this->preExecutionCallbacks as $callback) {
-            $callback();
-        }
-
-        foreach ($this->flow as $index => $row) {
-            if ($this->skip && $index < $this->skip) {
-                continue;
-            }
-
-            if ($this->limit && $this->current == $this->limit) {
-                break;
-            }
-
-            $this->current++;
-
-            $row = $this->runTasks($row);
-
-            if (!empty($row)) {
-                yield $row;
-            }
-        }
-
-        foreach ($this->postExecutionCallbacks as $callback) {
-            $callback();
-        }
-    }
-
-    /**
-     * Get a sample row of the flow.
-     *
-     * @return array
-     */
-    public function sample()
-    {
-        return $this->flow->getIterator()->current();
-    }
-
-    /**
-     * Run tasks for the given row.
-     *
-     * @param  array  $row
-     * @return array
-     */
-    protected function runTasks($row)
-    {
-        foreach ($this->tasks as $task) {
-            $row = $task($row);
-
-            if (empty($row)) {
-                break;
-            }
-        }
-
-        return $row;
-    }
-
-    /**
-     * Get the total rows count.
-     *
-     * @return int
-     */
-    protected function getRowsCount()
-    {
-        $count = iterator_count($this->flow);
-
-        if ($this->skip) {
-            $count -= $this->skip;
-        }
-
-        if ($this->limit && $count > $this->limit) {
-            $count = $this->limit;
-        }
-
-        return $count;
-    }
-
-    /**
-     * Get the metadata.
-     *
-     * @return array
-     */
-    public function metadata($attribute = null)
-    {
-        $metadata = [
-            'current' => $this->current,
-            'total' => $this->total,
-        ];
-
-        return $metadata[$attribute] ?? (object) $metadata;
-    }
-
-    /**
-     * Set the maximum number of rows.
-     *
-     * @param  int  $value
-     * @return $this
-     */
-    public function limit($value)
-    {
-        $this->limit = $value;
-
-        return $this;
+        $this->limit = $limit;
     }
 
     /**
      * Set the number of rows to skip.
      *
-     * @param  int  $value
-     * @return $this
+     * @param  int  $skip
+     * @return void
      */
-    public function skip($value)
+    public function skip($skip)
     {
-        $this->skip = $value;
-
-        return $this;
+        $this->skip = $skip;
     }
 
     /**
-     * Register pre execution callback.
+     * Get the current element.
      *
-     * @param  callable  $callback
-     * @return $this
+     * @return void
      */
-    public function before(callable $callback)
+    public function current()
     {
-        $this->preExecutionCallbacks[] = $callback;
-
-        return $this;
+        return $this->current->toArray();
     }
 
     /**
-     * Register post execution callback.
+     * Move forward to next element.
      *
-     * @param  callable  $callback
-     * @return $this
+     * @return void
      */
-    public function after(callable $callback)
+    public function next()
     {
-        $this->postExecutionCallbacks[] = $callback;
+        $this->key++;
+        $this->flow->next();
+    }
 
-        return $this;
+    /**
+     * Get the key of the current element.
+     *
+     * @return int
+     */
+    public function key()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Checks if current position is valid.
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        if (! $this->flow->valid() || $this->limitReached()) {
+            $this->finalize();
+
+            return false;
+        }
+
+        $this->current = $this->flow->current();
+
+
+        foreach ($this->steps as $step) {
+            if ($this->current->discarded()) {
+                $this->key--;
+                $this->next();
+
+                return $this->valid();
+            }
+
+            if ($step instanceof Transformer) {
+                $step->transform($this->current);
+            }
+
+            if ($step instanceof Loader) {
+                $step->load($this->current);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Rewind the Iterator to the first element.
+     *
+     * @return void
+     */
+    public function rewind()
+    {
+        $this->initialize();
+
+        $this->key = 0;
+        $this->flow = $this->extractor->extract();
+
+        while ($this->flow->key() < $this->skip && $this->flow->valid()) {
+            $this->flow->next();
+        }
+    }
+
+    /**
+     * Check if the row limit was reached.
+     *
+     * @return bool
+     */
+    protected function limitReached()
+    {
+        return $this->limit && $this->key() === $this->limit;
+    }
+
+    /**
+     * Initialize the steps.
+     *
+     * @return void
+     */
+    protected function initialize()
+    {
+        $this->extractor->initialize();
+
+        foreach ($this->steps as $step) {
+            $step->initialize();
+        }
+    }
+
+    /**
+     * Finalize the steps.
+     *
+     * @return void
+     */
+    protected function finalize()
+    {
+        $this->extractor->finalize();
+
+        foreach ($this->steps as $step) {
+            $step->finalize();
+        }
     }
 }

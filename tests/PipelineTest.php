@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Generator;
-use IteratorAggregate;
 use Marquine\Etl\Pipeline;
 
 class PipelineTest extends TestCase
@@ -12,129 +10,100 @@ class PipelineTest extends TestCase
     {
         parent::setUp();
 
+        $this->row1 = $this->createMock('Marquine\Etl\Row');
+        $this->row1->expects($this->any())->method('toArray')->willReturn('row1');
+
+        $this->row2 = $this->createMock('Marquine\Etl\Row');
+        $this->row2->expects($this->any())->method('toArray')->willReturn('row2');
+
+        $this->row3 = $this->createMock('Marquine\Etl\Row');
+        $this->row3->expects($this->any())->method('toArray')->willReturn('row3');
+
+        $generator = function () {
+            yield $this->row1;
+            yield $this->row2;
+            yield $this->row3;
+        };
+
+        $this->extractor = $this->createMock('Marquine\Etl\Extractors\Extractor');
+        $this->extractor->expects($this->any())->method('extract')->willReturn($generator());
+
+        $this->transformer = $this->createMock('Marquine\Etl\Transformers\Transformer');
+        $this->transformer->expects($this->any())->method('transform')->withConsecutive($this->row1, $this->row2, $this->row3);
+
+        $this->loader = $this->createMock('Marquine\Etl\Loaders\Loader');
+        $this->loader->expects($this->any())->method('load')->withConsecutive($this->row1, $this->row2, $this->row3);
+
         $this->pipeline = new Pipeline;
-        $this->pipeline->flow(new class implements IteratorAggregate
-        {
-            public function getIterator()
-            {
-                yield 'row1';
-                yield 'row2';
-                yield 'row3';
-            }
-        });
+        $this->pipeline->extractor($this->extractor);
     }
 
     /** @test */
-    public function pipeline_flow_and_metadata()
+    public function pipeline_flow()
     {
-        $generator = $this->pipeline->pipe(function ($row) {
-            $this->assertEquals($this->pipeline->metadata('current'), substr($row, -1));
+        $this->row1->expects($this->once())->method('toArray');
+        $this->row2->expects($this->once())->method('toArray');
+        $this->row3->expects($this->once())->method('toArray');
 
-            return "*{$row}*";
-        })->get();
+        $this->extractor->expects($this->once())->method('extract');
+        $this->extractor->expects($this->once())->method('initialize');
+        $this->extractor->expects($this->once())->method('finalize');
 
-        $this->assertInstanceOf(Generator::class, $generator);
+        $this->transformer->expects($this->exactly(3))->method('transform');
+        $this->transformer->expects($this->once())->method('initialize');
+        $this->transformer->expects($this->once())->method('finalize');
 
-        $this->assertEquals(['*row1*', '*row2*', '*row3*'], iterator_to_array($generator));
+        $this->loader->expects($this->exactly(3))->method('load');
+        $this->loader->expects($this->once())->method('initialize');
+        $this->loader->expects($this->once())->method('finalize');
 
-        $this->assertEquals($this->pipeline->metadata('total'), 3);
-        $this->assertTrue(is_object($this->pipeline->metadata()));
+
+        $this->pipeline->pipe($this->transformer);
+        $this->pipeline->pipe($this->loader);
+
+        $this->assertEquals(['row1', 'row2', 'row3'], iterator_to_array($this->pipeline));
     }
 
     /** @test */
-    public function tasks_can_be_run_before_the_pipeline_flow_starts()
+    public function limit_the_number_of_rows()
     {
-        $control = false;
+        $this->pipeline->limit(1);
 
-        $callback = function () use (&$control) {
-            $control = true;
-        };
-
-        $generator = $this->pipeline->before($callback)->get();
-
-        $generator->rewind();
-
-        $this->assertTrue($control);
+        $this->assertEquals(['row1'], iterator_to_array($this->pipeline));
     }
 
     /** @test */
-    public function tasks_can_be_run_after_the_pipeline_flow_ends()
+    public function skip_initial_rows()
     {
-        $control = false;
+        $this->pipeline->skip(2);
 
-        $callback = function () use (&$control) {
-            $control = true;
-        };
+        $this->assertEquals(['row3'], iterator_to_array($this->pipeline));
 
-        $generator = $this->pipeline->after($callback)->get();
+        $this->pipeline->skip(3);
 
-        while ($generator->valid()) {
-            $this->assertFalse($control);
-            $generator->next();
-        }
-
-        $this->assertTrue($control);
+        $this->assertEquals([], iterator_to_array($this->pipeline));
     }
 
     /** @test */
-    public function maximum_number_of_rows_can_be_limited()
+    public function limit_after_skipping_rows()
     {
-        $generator = $this->pipeline->limit(1)->get();
+        $this->pipeline->skip(1);
+        $this->pipeline->limit(1);
 
-        $this->assertEquals(['row1'], iterator_to_array($generator));
+        $this->assertEquals(['row2'], iterator_to_array($this->pipeline));
     }
 
     /** @test */
-    public function initial_rows_can_be_skipped()
+    public function discard_rows()
     {
-        $generator = $this->pipeline->skip(1)->get();
+        $this->row2->expects($this->once())->method('discarded')->willReturn(true);
 
-        $this->assertEquals(['row2', 'row3'], iterator_to_array($generator));
-    }
+        $this->pipeline->pipe($this->transformer);
+        $this->pipeline->pipe($this->loader);
 
-    /** @test */
-    public function maximum_number_of_rows_should_not_count_skipped_rows()
-    {
-        $generator = $this->pipeline->skip(1)->limit(1)->get();
+        $this->transformer->expects($this->exactly(2))->method('transform');
+        $this->loader->expects($this->exactly(2))->method('load');
 
-        $this->assertEquals(['row2'], iterator_to_array($generator));
-    }
-
-    /** @test */
-    public function total_rows_and_current_row_must_not_count_skipped_rows()
-    {
-        $generator = $this->pipeline->skip(2)->get();
-
-        $this->assertEquals(['row3'], iterator_to_array($generator));
-
-        $this->assertEquals(1, $this->pipeline->metadata('total'));
-        $this->assertEquals(1, $this->pipeline->metadata('current'));
-    }
-
-    /** @test */
-    public function total_rows_must_not_be_greater_then_row_limit()
-    {
-        $generator = $this->pipeline->limit(1)->get();
-
-        $this->assertEquals(['row1'], iterator_to_array($generator));
-
-        $this->assertEquals(1, $this->pipeline->metadata('total'));
-        $this->assertEquals(1, $this->pipeline->metadata('current'));
-    }
-
-    /** @test */
-    public function provides_the_first_row_as_sample()
-    {
-        $this->assertEquals('row1', $this->pipeline->sample());
-    }
-
-    /** @test */
-    public function empty_rows_will_be_skipped()
-    {
-        $generator = $this->pipeline->pipe(function ($row) {
-            return $row == 'row2' ? null : $row;
-        })->get();
-
-        $this->assertEquals(['row1', 'row3'], iterator_to_array($generator));
+        $this->assertEquals(['row1', 'row3'], iterator_to_array($this->pipeline));
     }
 }

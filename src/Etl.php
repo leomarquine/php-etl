@@ -50,17 +50,19 @@ class Etl
      * Extract.
      *
      * @param  string  $extractor
-     * @param  string  $source
+     * @param  string  $input
      * @param  array  $options
      * @return $this
      */
-    public function extract($extractor, $source, $options = [])
+    public function extract($extractor, $input, $options = [])
     {
         $extractor = $this->container->step($extractor, Extractor::class);
 
-        $extractor->pipeline($this->pipeline)->options($options)->extract($source);
+        $options['input'] = $input;
 
-        $this->pipeline->flow($extractor);
+        $extractor->options($options);
+
+        $this->pipeline->extractor($extractor);
 
         return $this;
     }
@@ -76,9 +78,9 @@ class Etl
     {
         $transformer = $this->container->step($transformer, Transformer::class);
 
-        $transformer->pipeline($this->pipeline)->options($options);
+        $transformer->options($options);
 
-        $this->pipeline->pipe($transformer->transform());
+        $this->pipeline->pipe($transformer);
 
         return $this;
     }
@@ -87,17 +89,19 @@ class Etl
      * Load.
      *
      * @param  string  $loader
-     * @param  string  $destination
+     * @param  string  $output
      * @param  array  $options
      * @return $this
      */
-    public function load($loader, $destination, $options = [])
+    public function load($loader, $output, $options = [])
     {
         $loader = $this->container->step($loader, Loader::class);
 
-        $loader->pipeline($this->pipeline)->options($options);
+        $options['output'] = $output;
 
-        $this->pipeline->pipe($loader->load($destination));
+        $loader->options($options);
+
+        $this->pipeline->pipe($loader);
 
         return $this;
     }
@@ -109,10 +113,10 @@ class Etl
      */
     public function run()
     {
-        $generator = $this->pipeline->get();
+        $this->pipeline->rewind();
 
-        while($generator->valid()) {
-            $generator->next();
+        while ($this->pipeline->valid()) {
+            $this->pipeline->next();
         }
     }
 
@@ -123,7 +127,7 @@ class Etl
      */
     public function toArray()
     {
-        return iterator_to_array($this->pipeline->get());
+        return iterator_to_array($this->pipeline);
     }
 
     /**

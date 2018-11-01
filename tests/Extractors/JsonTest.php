@@ -19,7 +19,6 @@ class JsonTest extends TestCase
         $extractor = new Json;
 
         $extractor->input(__DIR__.'/../data/json1.json');
-        $extractor->initialize();
 
         $this->assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -40,7 +39,6 @@ class JsonTest extends TestCase
             'name' => '$..bindings[*].name.value',
             'email' => '$..bindings[*].email.value',
         ]]);
-        $extractor->initialize();
 
         $this->assertEquals($expected, iterator_to_array($extractor->extract()));
     }

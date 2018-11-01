@@ -2,17 +2,11 @@
 
 namespace Marquine\Etl\Extractors;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Database\Manager;
 
 class Query extends Extractor
 {
-    /**
-     * The connection name.
-     *
-     * @var string
-     */
-    protected $connection = 'default';
-
     /**
      * Query bindings.
      *
@@ -21,11 +15,11 @@ class Query extends Extractor
     protected $bindings = [];
 
     /**
-     * The prepared statement.
+     * The connection name.
      *
-     * @var \PDOStatement
+     * @var string
      */
-    protected $statement;
+    protected $connection = 'default';
 
     /**
      * The database manager.
@@ -55,27 +49,18 @@ class Query extends Extractor
     }
 
     /**
-     * Set up the extraction from the given source.
-     *
-     * @param  mixed  $source
-     * @return void
-     */
-    public function extract($source)
-    {
-        $this->statement = $this->db->pdo($this->connection)->prepare($source);
-    }
-
-    /**
-     * Get the extractor iterator.
+     * Extract data from the input.
      *
      * @return \Generator
      */
-    public function getIterator()
+    public function extract()
     {
-        $this->statement->execute($this->bindings);
+        $statement = $this->db->pdo($this->connection)->prepare($this->input);
 
-        while ($row = $this->statement->fetch()) {
-            yield $row;
+        $statement->execute($this->bindings);
+
+        while ($row = $statement->fetch()) {
+            yield new Row($row);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Marquine\Etl\Row;
 use Marquine\Etl\Extractors\Query;
 
 class QueryTest extends TestCase
@@ -12,7 +13,7 @@ class QueryTest extends TestCase
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->once())->method('execute')->with([]);
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $connection = $this->createMock('PDO');
         $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
@@ -22,9 +23,9 @@ class QueryTest extends TestCase
 
         $extractor = new Query($manager);
 
-        $extractor->extract('select query');
+        $extractor->input('select query');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));
     }
 
     /** @test */
@@ -32,7 +33,7 @@ class QueryTest extends TestCase
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->once())->method('execute')->with('bindings');
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $connection = $this->createMock('PDO');
         $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
@@ -42,13 +43,12 @@ class QueryTest extends TestCase
 
         $extractor = new Query($manager);
 
+        $extractor->input('select query');
         $extractor->options([
             'connection' => 'connection',
             'bindings' => 'bindings',
         ]);
 
-        $extractor->extract('select query');
-
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));
     }
 }

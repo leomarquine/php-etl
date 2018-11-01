@@ -2,10 +2,18 @@
 
 namespace Marquine\Etl\Extractors;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Database\Manager;
 
 class Table extends Extractor
 {
+    /**
+     * Extractor columns.
+     *
+     * @var array
+     */
+    protected $columns = ['*'];
+
     /**
      * The connection name.
      *
@@ -14,25 +22,11 @@ class Table extends Extractor
     protected $connection = 'default';
 
     /**
-     * Extractor columns.
-     *
-     * @var array
-     */
-    protected $columns;
-
-    /**
      * The array of where clause.
      *
      * @var array
      */
     protected $where = [];
-
-    /**
-     * The table name.
-     *
-     * @var string
-     */
-    protected $table;
 
     /**
      * The database manager.
@@ -62,35 +56,20 @@ class Table extends Extractor
     }
 
     /**
-     * Set up the extraction from the given source.
-     *
-     * @param  mixed  $source
-     * @return void
-     */
-    public function extract($source)
-    {
-        if (empty($this->columns)) {
-            $this->columns = ['*'];
-        }
-
-        $this->table = $source;
-    }
-
-    /**
-     * Get the extractor iterator.
+     * Extract data from the input.
      *
      * @return \Generator
      */
-    public function getIterator()
+    public function extract()
     {
         $statement = $this->db
             ->query($this->connection)
-            ->select($this->table, $this->columns)
+            ->select($this->input, $this->columns)
             ->where($this->where)
             ->execute();
 
         while ($row = $statement->fetch()) {
-            yield $row;
+            yield new Row($row);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Marquine\Etl\Row;
 use Marquine\Etl\Extractors\Table;
 
 class TableTest extends TestCase
@@ -11,7 +12,7 @@ class TableTest extends TestCase
     public function default_options()
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Marquine\Etl\Database\Query');
         $query->expects($this->once())->method('select')->with('table', ['*'])->will($this->returnSelf());
@@ -23,16 +24,16 @@ class TableTest extends TestCase
 
         $extractor = new Table($manager);
 
-        $extractor->extract('table');
+        $extractor->input('table');
 
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));
     }
 
     /** @test */
     public function custom_connection_columns_and_where_clause()
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls('row1', 'row2', null));
+        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Marquine\Etl\Database\Query');
         $query->expects($this->once())->method('select')->with('table', 'columns')->will($this->returnSelf());
@@ -44,14 +45,13 @@ class TableTest extends TestCase
 
         $extractor = new Table($manager);
 
+        $extractor->input('table');
         $extractor->options([
             'connection' => 'connection',
             'columns' => 'columns',
             'where' => 'where',
         ]);
 
-        $extractor->extract('table');
-
-        $this->assertEquals(['row1', 'row2'], iterator_to_array($extractor));
+        $this->assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));
     }
 }

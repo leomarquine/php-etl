@@ -3,6 +3,7 @@
 namespace Marquine\Etl\Extractors;
 
 use XMLReader;
+use Marquine\Etl\Row;
 
 class Xml extends Extractor
 {
@@ -19,13 +20,6 @@ class Xml extends Extractor
      * @var string
      */
     protected $loop = '/';
-
-    /**
-     * The source file.
-     *
-     * @var string
-     */
-    protected $file;
 
     /**
      * XML Reader.
@@ -58,12 +52,11 @@ class Xml extends Extractor
     ];
 
     /**
-     * Set up the extraction from the given source.
+     * Extract data from the input.
      *
-     * @param  mixed  $source
-     * @return void
+     * @return \Generator
      */
-    public function extract($source)
+    public function extract()
     {
         if ($this->columns) {
             foreach ($this->columns as &$value) {
@@ -71,19 +64,9 @@ class Xml extends Extractor
             }
         }
 
-        $this->file = $source;
-
         $this->reader = new XMLReader;
-    }
 
-    /**
-     * Get the extractor iterator.
-     *
-     * @return \Generator
-     */
-    public function getIterator()
-    {
-        $this->reader->open($this->file);
+        $this->reader->open($this->input);
 
         while ($this->reader->read()) {
             $this->addElementToPath();
@@ -110,7 +93,7 @@ class Xml extends Extractor
 
         $this->row = [];
 
-        return $row;
+        return new Row($row);
     }
 
     /**

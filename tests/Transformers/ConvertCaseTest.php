@@ -30,9 +30,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer->options(['mode' => 'lower']);
 
-        $transformer->initialize();
-
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -49,9 +47,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer->options(['mode' => 'upper']);
 
-        $transformer->initialize();
-
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -68,9 +64,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer->options(['mode' => 'title']);
 
-        $transformer->initialize();
-
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -87,9 +81,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer->options(['columns' => ['name']]);
 
-        $transformer->initialize();
-
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }

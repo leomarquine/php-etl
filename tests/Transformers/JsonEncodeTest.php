@@ -28,7 +28,7 @@ class JsonEncodeTest extends TestCase
 
         $transformer = new JsonEncode;
 
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -45,7 +45,7 @@ class JsonEncodeTest extends TestCase
 
         $transformer->options(['columns' => ['data']]);
 
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }

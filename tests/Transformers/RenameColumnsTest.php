@@ -25,7 +25,7 @@ class RenameColumnsTest extends TestCase
 
         $transformer->options(['columns' => ['email_address' => 'email']]);
 
-        array_map([$transformer, 'transform'], $data);
+        $this->execute($transformer, $data);
 
         $this->assertEquals($expected, $data);
     }

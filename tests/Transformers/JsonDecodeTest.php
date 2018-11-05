@@ -28,7 +28,7 @@ class JsonDecodeTest extends TestCase
 
         $transformer = new JsonDecode;
 
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -45,7 +45,7 @@ class JsonDecodeTest extends TestCase
 
         $transformer->options(['assoc' => true]);
 
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }
@@ -62,7 +62,7 @@ class JsonDecodeTest extends TestCase
 
         $transformer->options(['columns' => ['data']]);
 
-        array_map([$transformer, 'transform'], $this->data);
+        $this->execute($transformer, $this->data);
 
         $this->assertEquals($expected, $this->data);
     }

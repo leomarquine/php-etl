@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Transformers;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Step;
 
 abstract class Transformer extends Step
@@ -12,5 +13,5 @@ abstract class Transformer extends Step
      * @param  \Marquine\Etl\Row  $row
      * @return void
      */
-    abstract public function transform($row);
+    abstract public function transform(Row $row);
 }

@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Loaders;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Step;
 
 abstract class Loader extends Step
@@ -32,5 +33,5 @@ abstract class Loader extends Step
      * @param  \Marquine\Etl\Row  $row
      * @return void
      */
-    abstract public function load($row);
+    abstract public function load(Row $row);
 }

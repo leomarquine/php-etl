@@ -2,6 +2,8 @@
 
 namespace Marquine\Etl\Transformers;
 
+use Marquine\Etl\Row;
+
 class RenameColumns extends Transformer
 {
     /**
@@ -21,19 +23,17 @@ class RenameColumns extends Transformer
     ];
 
     /**
-     * Get the transformer handler.
+     * Transform the given row.
      *
-     * @return callable
+     * @param  \Marquine\Etl\Row  $row
+     * @return void
      */
-    public function transform()
+    public function transform(Row $row)
     {
-        return function ($row) {
-            foreach ($this->columns as $old => $new) {
-                $row[$new] = $row[$old];
-                unset($row[$old]);
-            }
-
-            return $row;
-        };
+        foreach ($this->columns as $old => $new) {
+            $value = $row->get($old);
+            $row->remove($old);
+            $row->set($new, $value);
+        }
     }
 }

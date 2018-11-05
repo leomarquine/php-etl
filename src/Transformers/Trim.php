@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Transformers;
 
+use Marquine\Etl\Row;
 use InvalidArgumentException;
 
 class Trim extends Transformer
@@ -11,7 +12,7 @@ class Trim extends Transformer
      *
      * @var array
      */
-    protected $columns;
+    protected $columns = [];
 
     /**
      * The trim type.
@@ -28,6 +29,13 @@ class Trim extends Transformer
     protected $mask = " \t\n\r\0\x0B";
 
     /**
+     * The trim function.
+     *
+     * @var string
+     */
+    protected $function;
+
+    /**
      * Properties that can be set via the options method.
      *
      * @var array
@@ -37,27 +45,26 @@ class Trim extends Transformer
     ];
 
     /**
-     * Get the transformer handler.
+     * Initialize the step.
      *
-     * @return callable
+     * @return void
      */
-    public function transform()
+    public function initialize()
     {
-        $type = $this->getTrimFunction();
+        $this->function = $this->getTrimFunction();
+    }
 
-        return function ($row) use ($type) {
-            if ($this->columns) {
-                foreach ($this->columns as $column) {
-                    $row[$column] = call_user_func($type, $row[$column], $this->mask);
-                }
-            } else {
-                foreach ($row as $column => $value) {
-                    $row[$column] = call_user_func($type, $value, $this->mask);
-                }
-            }
-
-            return $row;
-        };
+    /**
+     * Transform the given row.
+     *
+     * @param  \Marquine\Etl\Row  $row
+     * @return void
+     */
+    public function transform(Row $row)
+    {
+        $row->transform($this->columns, function ($column) {
+            return call_user_func($this->function, $column, $this->mask);
+        });
     }
 
     /**
@@ -84,6 +91,6 @@ class Trim extends Transformer
                 return 'trim';
         }
 
-        throw new InvalidArgumentException('The provided trim type is not supported.');
+        throw new InvalidArgumentException("The trim type [{$this->type}] is invalid.");
     }
 }

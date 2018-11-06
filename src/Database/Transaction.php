@@ -15,6 +15,20 @@ class Transaction
     protected $pdo;
 
     /**
+     * Current transaction count.
+     *
+     * @var int
+     */
+    protected $count = 0;
+
+    /**
+     * Indicates if a transaction is open.
+     *
+     * @var bool
+     */
+    protected $open = false;
+
+    /**
      * Commit size.
      *
      * @var int
@@ -46,16 +60,17 @@ class Transaction
     }
 
     /**
-     * Run the given callback.
+     * Run the given callback inside a transaction.
      *
-     * @param  \stdClass  $metadata
      * @param  callbale  $callback
      * @return void
      */
-    public function run($metadata, $callback)
+    public function run($callback)
     {
-        if ($this->shouldBeginTransaction($metadata)) {
-            $this->pdo->beginTransaction();
+        $this->count++;
+
+        if ($this->shouldBeginTransaction()) {
+            $this->beginTransaction();
         }
 
         try {
@@ -66,46 +81,65 @@ class Transaction
             throw $exception;
         }
 
-        if ($this->shouldCommit($metadata)) {
-            $this->pdo->commit();
+        if ($this->shouldCommit()) {
+            $this->commit();
         }
     }
 
     /**
      * Check if it should begin a new transaction.
      *
-     * @param  \stdClass  $metadata
      * @return bool
      */
-    protected function shouldBeginTransaction($metadata)
+    protected function shouldBeginTransaction()
     {
-        if (empty($this->size) && $metadata->current == 1) {
-            return true;
-        }
-
-        if (!empty($this->size) && ($metadata->current - 1) % $this->size == 0) {
-            return true;
-        }
-
-        return false;
+        return ! $this->open && (empty($this->size) || $this->count === 1);
     }
 
     /**
      * Check if it should commit a transaction.
      *
-     * @param  \stdClass  $metadata
      * @return bool
      */
-    protected function shouldCommit($metadata)
+    protected function shouldCommit()
     {
-        if (empty($this->size) && $metadata->current == $metadata->total) {
-            return true;
-        }
+        return $this->open && ($this->count === $this->size);
+    }
 
-        if (!empty($this->size) && (($metadata->current - 1) % $this->size == $this->size - 1 || $metadata->current == $metadata->total)) {
-            return true;
-        }
+    /**
+     * Begin a database transaction.
+     *
+     * @return void
+     */
+    protected function beginTransaction()
+    {
+        $this->open = true;
 
-        return false;
+        $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Commit a database transaction.
+     *
+     * @return void
+     */
+    protected function commit()
+    {
+        $this->open = false;
+        $this->count = 0;
+
+        $this->pdo->commit();
+    }
+
+    /**
+     * Commit an open transaction.
+     *
+     * @return void
+     */
+    public function close()
+    {
+        if ($this->open) {
+            $this->commit();
+        }
     }
 }

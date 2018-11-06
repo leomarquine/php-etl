@@ -18,6 +18,15 @@ class TransactionTest extends TestCase
         $this->transaction = new Transaction($this->connection);
     }
 
+    protected function transaction($range)
+    {
+        foreach ($range as $current) {
+            $this->transaction->run([$this->callback, 'callback']);
+        }
+
+        $this->transaction->close();
+    }
+
     /** @test */
     public function runs_a_single_transaction_if_size_is_empty()
     {
@@ -27,9 +36,7 @@ class TransactionTest extends TestCase
         $this->connection->expects($this->exactly(0))->method('rollBack');
         $this->connection->expects($this->exactly(1))->method('commit');
 
-        foreach (range(1, 4) as $current) {
-            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
-        }
+        $this->transaction(range(1, 4));
     }
 
     /** @test */
@@ -43,9 +50,7 @@ class TransactionTest extends TestCase
 
         $this->transaction->size(2);
 
-        foreach (range(1, 4) as $current) {
-            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
-        }
+        $this->transaction(range(1, 4));
     }
 
     /** @test */
@@ -59,9 +64,7 @@ class TransactionTest extends TestCase
 
         $this->transaction->size(2);
 
-        foreach (range(1, 3) as $current) {
-            $this->transaction->run((object) ['total' => 3, 'current' => $current], [$this->callback, 'callback']);
-        }
+        $this->transaction(range(1, 3));
     }
 
     /** @test */
@@ -79,8 +82,6 @@ class TransactionTest extends TestCase
 
         $this->expectException('Exception');
 
-        foreach (range(1, 4) as $current) {
-            $this->transaction->run((object) ['total' => 4, 'current' => $current], [$this->callback, 'callback']);
-        }
+        $this->transaction(range(1, 4));
     }
 }

@@ -74,6 +74,16 @@ class RowTest extends TestCase
     }
 
     /** @test */
+    public function create_a_hash_of_the_row()
+    {
+        $row = new Row(['data']);
+
+        $hash = md5(serialize(['data']));
+
+        $this->assertEquals($hash, $row->hash());
+    }
+
+    /** @test */
     public function array_access()
     {
         $row = new Row(['name' => 'Jane Doe']);

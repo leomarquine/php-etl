@@ -113,6 +113,16 @@ class Row implements ArrayAccess
     }
 
     /**
+     * Create a hash of the row.
+     *
+     * @return string
+     */
+    public function hash()
+    {
+        return md5(serialize($this->attributes));
+    }
+
+    /**
      * Dynamically retrieve attributes on the row.
      *
      * @param  string  $key

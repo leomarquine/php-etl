@@ -15,18 +15,3 @@ To limit the maximum number of output rows of the process, you may use the `limi
 ```php
 $etl->limit(100);
 ```
-
-## Execution hooks
-Sometimes you may need to run tasks right before and/or after a process. You may do so using the `before` and `after` methods:
-
-```php
-$etl->before(function () {
-    //
-});
-```
-
-```php
-$etl->after(function () {
-    //
-});
-```

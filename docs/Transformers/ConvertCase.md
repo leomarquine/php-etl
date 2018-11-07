@@ -10,11 +10,11 @@ $etl->transform('convert_case', $options);
 ## Options
 
 ### Columns
-Columns that will be transformed. If `null`, the transformation is applied to all columns.
+Columns that will be transformed. If `empty`, the transformation is applied to all columns.
 
 | Type | Default value |
 |----- | ------------- |
-| array | `null` |
+| array | `[]` |
 
 ```php
 $options = ['columns' => ['name', 'email']];

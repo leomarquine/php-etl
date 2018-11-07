@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Loaders;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Database\Manager;
 
 class InsertUpdate extends Loader
@@ -77,6 +78,13 @@ class InsertUpdate extends Loader
     protected $update;
 
     /**
+     * The database transaction manager.
+     *
+     * @var \Marquine\Etl\Database\Transaction
+     */
+    protected $transactionManager;
+
+    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager
@@ -104,50 +112,54 @@ class InsertUpdate extends Loader
     }
 
     /**
-     * Get the loader handler.
+     * Initialize the step.
      *
-     * @param  mixed  $destination
-     * @return callable
+     * @return void
      */
-    public function load($destination)
+    public function initialize()
     {
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');
         }
 
-        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
-            $this->columns = array_combine($this->columns, $this->columns);
+        if ($this->transaction) {
+            $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        $this->prepareStatements($destination, $this->pipeline->sample());
-
-        $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
-
-        return function ($row) use ($transaction) {
-            if ($transaction) {
-                $transaction->run($this->pipeline->metadata(), function () use ($row) {
-                    $this->execute($row);
-                });
-            } else {
-                $this->execute($row);
-            }
-
-            return $row;
-        };
+        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+            $this->columns = array_combine($this->columns, $this->columns);
+        }
     }
 
     /**
-     * Prepare the loader statements.
+     * Load the given row.
      *
-     * @param  string  $table
-     * @param  array   $sample
+     * @param  \Marquine\Etl\Row  $row
      * @return void
      */
-    protected function prepareStatements($table, $sample)
+    public function load(Row $row)
     {
-        $this->prepareSelect($table);
-        $this->prepareInsert($table, $sample);
-        $this->prepareUpdate($table, $sample);
+        $row = $row->toArray();
+
+        if ($this->transaction) {
+            $this->transactionManager->run(function () use ($row) {
+                $this->execute($row);
+            });
+        } else {
+            $this->execute($row);
+        }
+    }
+
+    /**
+     * Finalize the step.
+     *
+     * @return void
+     */
+    public function finalize()
+    {
+        if ($this->transaction) {
+            $this->transactionManager->close();
+        }
     }
 
     /**
@@ -156,9 +168,9 @@ class InsertUpdate extends Loader
      * @param  string  $table
      * @return void
      */
-    protected function prepareSelect($table)
+    protected function prepareSelect()
     {
-        $this->select = $this->db->statement($this->connection)->select($table)->where($this->key)->prepare();
+        $this->select = $this->db->statement($this->connection)->select($this->output)->where($this->key)->prepare();
     }
 
     /**
@@ -168,7 +180,7 @@ class InsertUpdate extends Loader
      * @param  array   $sample
      * @return void
      */
-    protected function prepareInsert($table, $sample)
+    protected function prepareInsert($sample)
     {
         if ($this->columns) {
             $columns = array_values($this->columns);
@@ -180,7 +192,7 @@ class InsertUpdate extends Loader
             array_push($columns, 'created_at', 'updated_at');
         }
 
-        $this->insert = $this->db->statement($this->connection)->insert($table, $columns)->prepare();
+        $this->insert = $this->db->statement($this->connection)->insert($this->output, $columns)->prepare();
     }
 
     /**
@@ -190,7 +202,7 @@ class InsertUpdate extends Loader
      * @param  array   $sample
      * @return void
      */
-    protected function prepareUpdate($table, $sample)
+    protected function prepareUpdate($sample)
     {
         if ($this->columns) {
             $columns = array_values(array_diff($this->columns, $this->key));
@@ -202,7 +214,7 @@ class InsertUpdate extends Loader
             array_push($columns, 'updated_at');
         }
 
-        $this->update = $this->db->statement($this->connection)->update($table, $columns)->where($this->key)->prepare();
+        $this->update = $this->db->statement($this->connection)->update($this->output, $columns)->where($this->key)->prepare();
     }
 
     /**
@@ -213,6 +225,10 @@ class InsertUpdate extends Loader
      */
     protected function execute($row)
     {
+        if (! $this->select) {
+            $this->prepareSelect();
+        }
+
         $this->select->execute(array_intersect_key($row, array_flip($this->key)));
 
         if ($this->columns) {
@@ -240,6 +256,10 @@ class InsertUpdate extends Loader
      */
     protected function insert($row)
     {
+        if (! $this->insert) {
+            $this->prepareInsert($row);
+        }
+
         if ($this->timestamps) {
             $row['created_at'] = $this->time;
             $row['updated_at'] = $this->time;
@@ -257,6 +277,10 @@ class InsertUpdate extends Loader
      */
     protected function update($row, $current)
     {
+        if (! $this->update) {
+            $this->prepareUpdate($row);
+        }
+
         if ($row == array_intersect_key($current, $row)) {
             return;
         }

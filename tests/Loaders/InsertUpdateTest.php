@@ -11,26 +11,23 @@ class InsertUpdateTest extends TestCase
     {
         parent::setUp();
 
-        $this->pipeline = $this->createMock('Marquine\Etl\Pipeline');
-        $this->pipeline->expects($this->any())->method('sample')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
-        $this->pipeline->expects($this->any())->method('metadata')->willReturn('meta');
-
         $this->transaction = $this->createMock('Marquine\Etl\Database\Transaction');
         $this->transaction->expects($this->any())->method('size')->willReturnSelf();
-        $this->transaction->expects($this->any())->method('run')->with('meta', $this->isType('callable'))->willReturnCallback(function ($metadata, $callback) {
-            call_user_func($callback);
-        });
+        $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) { call_user_func($callback); });
+        $this->transaction->expects($this->any())->method('close');
 
         $this->insert = $this->createMock('PDOStatement');
         $this->insert->expects($this->any())->method('execute');
 
         $this->insertStatement = $this->createMock('Marquine\Etl\Database\Statement');
+        $this->insertStatement->expects($this->any())->method('insert')->willReturnSelf();
         $this->insertStatement->expects($this->any())->method('prepare')->willReturn($this->insert);
 
         $this->select = $this->createMock('PDOStatement');
         $this->select->expects($this->any())->method('execute');
 
         $this->selectStatement = $this->createMock('Marquine\Etl\Database\Statement');
+        $this->selectStatement->expects($this->any())->method('select')->willReturnSelf();
         $this->selectStatement->expects($this->any())->method('where')->willReturnSelf();
         $this->selectStatement->expects($this->any())->method('prepare')->willReturn($this->select);
 
@@ -38,6 +35,7 @@ class InsertUpdateTest extends TestCase
         $this->update->expects($this->any())->method('execute');
 
         $this->updateStatement = $this->createMock('Marquine\Etl\Database\Statement');
+        $this->updateStatement->expects($this->any())->method('update')->willReturnSelf();
         $this->updateStatement->expects($this->any())->method('where')->willReturnSelf();
         $this->updateStatement->expects($this->any())->method('prepare')->willReturn($this->update);
 
@@ -50,18 +48,11 @@ class InsertUpdateTest extends TestCase
         $this->manager->expects($this->any())->method('statement')->willReturn($this->statement);
         $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
+        $this->row = $this->createMock('Marquine\Etl\Row');
+        $this->row->expects($this->any())->method('toArray')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+
         $this->loader = new InsertUpdate($this->manager);
-        $this->loader->pipeline($this->pipeline);
-
-        $this->data = ['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com'];
-    }
-
-    /** @test */
-    public function loader_handler_must_return_the_row()
-    {
-        $handler = $this->loader->load('table');
-
-        $this->assertEquals($this->data, call_user_func($handler, $this->data, 'meta'));
+        $this->loader->output('table');
     }
 
     /** @test */
@@ -81,10 +72,9 @@ class InsertUpdateTest extends TestCase
 
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
+        $this->transaction->expects($this->once())->method('close');
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -105,10 +95,9 @@ class InsertUpdateTest extends TestCase
 
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
+        $this->transaction->expects($this->once())->method('close');
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -130,9 +119,7 @@ class InsertUpdateTest extends TestCase
         $this->transaction->expects($this->once())->method('size')->with(100);
         $this->transaction->expects($this->once())->method('run');
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -145,9 +132,7 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['columns' => ['id', 'name']]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -160,9 +145,7 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['columns' => ['id', 'name']]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -173,14 +156,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name']);
         $this->insert->expects($this->once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => [
-            'id' => 'user_id',
-            'name' => 'full_name',
-        ]]);
+        $this->loader->options(['columns' => ['id' => 'user_id', 'name' => 'full_name']]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -191,14 +169,9 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['full_name']);
         $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => [
-            'id' => 'id',
-            'name' => 'full_name',
-        ]]);
+        $this->loader->options(['columns' => ['id' => 'id', 'name' => 'full_name']]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -211,9 +184,7 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['timestamps' => true]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -226,9 +197,7 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['timestamps' => true]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -243,9 +212,7 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['transaction' => false]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
@@ -260,8 +227,6 @@ class InsertUpdateTest extends TestCase
 
         $this->loader->options(['transaction' => false]);
 
-        $handler = $this->loader->load('table');
-
-        call_user_func($handler, $this->data, 'meta');
+        $this->execute($this->loader, [$this->row]);
     }
 }

@@ -14,3 +14,4 @@ $etl->transform('type', $options);
 * [JSON Encode](JsonEncode.md)
 * [Rename Columns](RenameColumns.md)
 * [Trim](Trim.md)
+* [Unique Rows](UniqueRows.md)

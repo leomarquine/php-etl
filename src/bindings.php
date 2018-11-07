@@ -23,6 +23,7 @@ $container->bind('json_decode_transformer', Marquine\Etl\Transformers\JsonDecode
 $container->bind('json_encode_transformer', Marquine\Etl\Transformers\JsonEncode::class);
 $container->bind('rename_columns_transformer', Marquine\Etl\Transformers\RenameColumns::class);
 $container->bind('trim_transformer', Marquine\Etl\Transformers\Trim::class);
+$container->bind('unique_rows_transformer', Marquine\Etl\Transformers\UniqueRows::class);
 
 // Loaders
 $container->bind('insert_loader', Marquine\Etl\Loaders\Insert::class);

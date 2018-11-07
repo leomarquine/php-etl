@@ -14,6 +14,7 @@
     * [JSON Encode](Transformers/JsonEncode.md)
     * [Rename Columns](Transformers/RenameColumns.md)
     * [Trim](Transformers/Trim.md)
+    * [Unique Rows](Transformers/UniqueRows.md)
 * [Loaders](Loaders/README.md)
     * [Insert](Loaders/Insert.md)
     * [Insert/Update](Loaders/InsertUpdate.md)

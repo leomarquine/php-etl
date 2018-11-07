@@ -2,6 +2,7 @@
 
 namespace Marquine\Etl\Loaders;
 
+use Marquine\Etl\Row;
 use Marquine\Etl\Database\Manager;
 
 class Insert extends Loader
@@ -56,6 +57,13 @@ class Insert extends Loader
     protected $insert;
 
     /**
+     * The database transaction manager.
+     *
+     * @var \Marquine\Etl\Database\Transaction
+     */
+    protected $transactionManager;
+
+    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager
@@ -83,46 +91,63 @@ class Insert extends Loader
     }
 
     /**
-     * Get the loader handler.
+     * Initialize the step.
      *
-     * @param  mixed  $destination
-     * @return callable
+     * @return void
      */
-    public function load($destination)
+    public function initialize()
     {
-        $this->prepareInsert($destination, $this->pipeline->sample());
-
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');
         }
 
-        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) -1)) {
-            $this->columns = array_combine($this->columns, $this->columns);
+        if ($this->transaction) {
+            $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        $transaction = $this->transaction ? $this->db->transaction($this->connection)->size($this->commitSize) : null;
+        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+            $this->columns = array_combine($this->columns, $this->columns);
+        }
+    }
 
-        return function ($row) use ($transaction) {
-            if ($transaction) {
-                $transaction->run($this->pipeline->metadata(), function () use ($row) {
-                    $this->insert($row);
-                });
-            } else {
+    /**
+     * Load the given row.
+     *
+     * @param  \Marquine\Etl\Row  $row
+     * @return void
+     */
+    public function load(Row $row)
+    {
+        $row = $row->toArray();
+
+        if ($this->transaction) {
+            $this->transactionManager->run(function () use ($row) {
                 $this->insert($row);
-            }
+            });
+        } else {
+            $this->insert($row);
+        }
+    }
 
-            return $row;
-        };
+    /**
+     * Finalize the step.
+     *
+     * @return void
+     */
+    public function finalize()
+    {
+        if ($this->transaction) {
+            $this->transactionManager->close();
+        }
     }
 
     /**
      * Prepare the insert statement.
      *
-     * @param  string  $table
      * @param  array  $sample
      * @return void
      */
-    protected function prepareInsert($table, $sample)
+    protected function prepareInsert($sample)
     {
         if ($this->columns) {
             $columns = array_values($this->columns);
@@ -134,7 +159,7 @@ class Insert extends Loader
             array_push($columns, 'created_at', 'updated_at');
         }
 
-        $this->insert = $this->db->statement($this->connection)->insert($table, $columns)->prepare();
+        $this->insert = $this->db->statement($this->connection)->insert($this->output, $columns)->prepare();
     }
 
     /**
@@ -145,6 +170,10 @@ class Insert extends Loader
      */
     protected function insert($row)
     {
+        if (! $this->insert) {
+            $this->prepareInsert($row);
+        }
+
         if ($this->columns) {
             $result = [];
 

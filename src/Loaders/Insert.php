@@ -178,8 +178,8 @@ class Insert extends Loader
             $result = [];
 
             foreach ($this->columns as $key => $column) {
-                $result[$column] = $row[$key];
-            }
+		isset($row[$key]) ? $result[$column] = $row[$key] : $result[$column] = NULL;            
+	    }
 
             $row = $result;
         }

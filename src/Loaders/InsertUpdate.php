@@ -229,13 +229,23 @@ class InsertUpdate extends Loader
             $this->prepareSelect();
         }
 
-        $this->select->execute(array_intersect_key($row, array_flip($this->key)));
+	if ($this->columns) {
+            $mapped_columns_arr = array();
+            $key_columns = array_intersect($this->columns, $this->key);
+
+            foreach ($key_columns as $key => $column) {
+                $mapped_columns_arr[$column] = array_intersect_key($row, $key_columns)[$key];
+            };
+            $this->select->execute($mapped_columns_arr);
+        } else {        
+	    $this->select->execute(array_intersect_key($row, array_flip($this->key)));
+        }
 
         if ($this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {
-                $result[$column] = $row[$key];
+                isset($row[$key]) ? $result[$column] = $row[$key] : $result[$column] = NULL;
             }
 
             $row = $result;

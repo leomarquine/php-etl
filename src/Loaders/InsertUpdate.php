@@ -235,7 +235,7 @@ class InsertUpdate extends Loader
             $result = [];
 
             foreach ($this->columns as $key => $column) {
-                isset($row[$key]) ? $result[$column] = $row[$key] : $result[$column] = NULL;
+                isset($row[$key]) ? $result[$column] = $row[$key] : $result[$column] = null;
             }
 
             $row = $result;

@@ -150,7 +150,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function throws_an_exception_for_unsupported_str_type()
+    public function throws_an_exception_for_unsupported_replace_type()
     {
         $transformer = new Replace;
 

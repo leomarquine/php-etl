@@ -102,7 +102,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function execute()
+    public function execute_query()
     {
         $statement = $this->createMock('PDOStatement');
         $statement->expects($this->once())->method('execute')->with([]);

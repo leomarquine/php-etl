@@ -10,8 +10,7 @@
         }
     ],
     "require": {
-        "flow/jsonpath": "^0.3.1",
-        "illuminate/container": "^5.0|^6.0"
+        "flow/jsonpath": "^0.3.1"
     },
     "autoload": {
         "psr-4": {
@@ -24,13 +23,6 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Marquine\\Etl\\EtlServiceProvider"
-            ]
         }
     },
     "minimum-stability": "dev",

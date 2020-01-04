@@ -59,29 +59,3 @@ $config = [
     'database' => '/path/to/database.sqlite',
 ];
 ```
-
-### Adding connections
-
-Adding the default connection:
-```php
-use Marquine\Etl\Etl;
-
-Etl::service('db')->addConnection($config); // connection name: 'default'
-```
-
-You can add more connections passing a name as the second argument to the `addConnection` method:
-```php
-use Marquine\Etl\Etl;
-
-Etl::service('db')->addConnection($config, 'name');
-```
-
-
-## Laravel Integration
-
-If you are using Laravel 5.5 or greater, the package will automatically register all database connections.
-
-For other versions, you need to add the ServiceProvider to the `providers` array in the `config/app.php` file:
-```php
-Marquine\Etl\EtlServiceProvider::class,
-```

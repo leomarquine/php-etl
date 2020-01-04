@@ -9,13 +9,6 @@ use Marquine\Etl\Transformers\Transformer;
 class Etl
 {
     /**
-     * The etl container.
-     *
-     * @var \Marquine\Etl\Container
-     */
-    protected $container;
-
-    /**
      * The etl pipeline.
      *
      * @var \Marquine\Etl\Pipeline
@@ -25,39 +18,24 @@ class Etl
     /**
      * Create a new Etl instance.
      *
-     * @param  Container  $container
      * @param  Pipeline  $pipeline
      * @return void
      */
-    public function __construct(Container $container = null, Pipeline $pipeline = null)
+    public function __construct(Pipeline $pipeline = null)
     {
-        $this->container = $container ?? Container::getInstance();
         $this->pipeline = $pipeline ?? new Pipeline;
-    }
-
-    /**
-     * Get a service from the container.
-     *
-     * @param  string  $name
-     * @return mixed
-     */
-    public static function service($name)
-    {
-        return Container::getInstance()->make($name);
     }
 
     /**
      * Extract.
      *
-     * @param  string  $extractor
+     * @param  Extractor  $extractor
      * @param  string  $input
      * @param  array  $options
      * @return $this
      */
-    public function extract($extractor, $input, $options = [])
+    public function extract(Extractor $extractor, $input, $options = [])
     {
-        $extractor = $this->container->step($extractor, Extractor::class);
-
         $extractor->input($input)->options($options);
 
         $this->pipeline->extractor($extractor);
@@ -68,14 +46,12 @@ class Etl
     /**
      * Transform.
      *
-     * @param  string  $transformer
+     * @param  Transformer  $transformer
      * @param  array  $options
      * @return $this
      */
-    public function transform($transformer, $options = [])
+    public function transform(Transformer $transformer, $options = [])
     {
-        $transformer = $this->container->step($transformer, Transformer::class);
-
         $transformer->options($options);
 
         $this->pipeline->pipe($transformer);
@@ -86,15 +62,13 @@ class Etl
     /**
      * Load.
      *
-     * @param  string  $loader
+     * @param  Loader  $loader
      * @param  string  $output
      * @param  array  $options
      * @return $this
      */
-    public function load($loader, $output, $options = [])
+    public function load(Loader $loader, $output, $options = [])
     {
-        $loader = $this->container->step($loader, Loader::class);
-
         $loader->output($output)->options($options);
 
         $this->pipeline->pipe($loader);

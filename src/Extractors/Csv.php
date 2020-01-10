@@ -77,7 +77,7 @@ class Csv extends Extractor
     /**
      * Make columns based on csv header.
      *
-     * @param  array  $handle
+     * @param  resource $handle
      * @return array
      */
     protected function makeColumns($handle)

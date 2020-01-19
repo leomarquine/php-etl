@@ -102,4 +102,34 @@ class RowTest extends TestCase
 
         $this->assertEquals('John Doe', $row->name);
     }
+
+    /** @test */
+    public function set_attributes_without_merge()
+    {
+        $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
+        $newAttributes =['name' => 'Pocahontas', 'Sex' => 'Female'];
+        $row->setAttributes($newAttributes);
+        $this->assertEquals($newAttributes, $row->toArray());
+    }
+
+    /** @test */
+    public function set_attributes_with_merge()
+    {
+        $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
+        $newAttributes =['name' => 'Marie Curie', 'Job' => 'Scientist'];
+        $row->setAttributes($newAttributes, true);
+        $this->assertEquals([
+            'name' => 'Marie Curie',
+            'Sex' => 'Female',
+            'Job' => 'Scientist'
+        ], $row->toArray());
+    }
+
+    /** @test */
+    public function clear_attributes()
+    {
+        $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
+        $row->clearAttributes();
+        $this->assertEmpty($row->toArray());
+    }
 }

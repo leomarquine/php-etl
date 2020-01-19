@@ -179,4 +179,28 @@ class Row implements ArrayAccess
     {
         unset($this->attributes[$offset]);
     }
+
+    /**
+     * Override all the attributes of the row or merge
+     * them with the given ones.
+     *
+     * @param array $newAttributes
+     * @param bool  $merge
+     */
+    public function setAttributes(array $newAttributes, $merge = false)
+    {
+        if ($merge) {
+            $this->attributes = array_merge($this->attributes, $newAttributes);
+        } else {
+            $this->attributes = $newAttributes;
+        }
+    }
+
+    /**
+     * Clear all the attributes of the row
+     */
+    public function clearAttributes()
+    {
+        $this->attributes = [];
+    }
 }

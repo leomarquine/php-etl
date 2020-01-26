@@ -1,5 +1,5 @@
 {
-    "name": "marquine/php-etl",
+    "name": "wizaplace/php-etl",
     "description": "Extract, Transform and Load data using PHP.",
     "keywords": ["etl", "extract", "transform", "load", "extraction", "transformation", "seed", "data", "laravel"],
     "license": "MIT",

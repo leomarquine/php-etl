@@ -3,7 +3,8 @@
 Convert string case.
 
 ```php
-$etl->transform('convert_case', $options);
+/** @var \Wizaplace\Etl\Transformers\ConvertCase $transformer */
+$etl->transform($transformer, $options);
 ```
 
 

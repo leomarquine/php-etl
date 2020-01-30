@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Extractors\Xml;
+use Wizaplace\Etl\Extractors\Xml;
+use Wizaplace\Etl\Row;
 
 class XmlTest extends TestCase
 {
@@ -16,13 +25,12 @@ class XmlTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $extractor = new Xml;
+        $extractor = new Xml();
 
         $extractor->input(__DIR__ . '/../data/xml1.xml');
         $extractor->options(['loop' => '/users/user']);
 
-
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
@@ -33,7 +41,7 @@ class XmlTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $extractor = new Xml;
+        $extractor = new Xml();
 
         $extractor->input(__DIR__ . '/../data/xml2.xml');
         $extractor->options([
@@ -45,6 +53,6 @@ class XmlTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 }

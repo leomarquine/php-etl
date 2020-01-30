@@ -1,9 +1,18 @@
 <?php
 
-namespace Marquine\Etl\Extractors;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Extractors;
+
 use Flow\JSONPath\JSONPath;
+use Wizaplace\Etl\Row;
 
 class Json extends Extractor
 {
@@ -20,15 +29,13 @@ class Json extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns'
+        'columns',
     ];
 
     /**
      * Extract data from the input.
-     *
-     * @return \Generator
      */
-    public function extract()
+    public function extract(): \Generator
     {
         $data = json_decode(file_get_contents($this->input), true);
 
@@ -49,11 +56,8 @@ class Json extends Extractor
 
     /**
      * Swap columns and rows.
-     *
-     * @param  array  $columns
-     * @return array
      */
-    protected function transpose($columns)
+    protected function transpose(array $columns): array
     {
         $data = [];
 

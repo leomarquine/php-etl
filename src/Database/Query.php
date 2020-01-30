@@ -1,8 +1,15 @@
 <?php
 
-namespace Marquine\Etl\Database;
+declare(strict_types=1);
 
-use PDO;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Database;
 
 class Query
 {
@@ -37,20 +44,17 @@ class Query
     /**
      * Create a new Query instance.
      *
-     * @param  \PDO  $pdo
      * @return void
      */
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
     /**
      * Execute the query.
-     *
-     * @return \PDOStatement
      */
-    public function execute()
+    public function execute(): \PDOStatement
     {
         $statement = $this->pdo->prepare($this->toSql());
 
@@ -61,10 +65,8 @@ class Query
 
     /**
      * Get the sql query string.
-     *
-     * @return string
      */
-    public function toSql()
+    public function toSql(): string
     {
         $this->compileWheres();
 
@@ -73,10 +75,8 @@ class Query
 
     /**
      * Get the query bindings.
-     *
-     * @return array
      */
-    public function getBindings()
+    public function getBindings(): array
     {
         return $this->bindings;
     }
@@ -84,11 +84,9 @@ class Query
     /**
      * Select statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function select($table, $columns = ['*'])
+    public function select(string $table, array $columns = ['*']): Query
     {
         $columns = $this->implode($columns);
 
@@ -100,11 +98,9 @@ class Query
     /**
      * Insert statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function insert($table, $columns)
+    public function insert(string $table, array $columns): Query
     {
         $this->bindings = array_merge($this->bindings, array_values($columns));
 
@@ -120,11 +116,9 @@ class Query
     /**
      * Update statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function update($table, $columns)
+    public function update(string $table, array $columns): Query
     {
         $this->bindings = array_merge($this->bindings, array_values($columns));
 
@@ -138,10 +132,9 @@ class Query
     /**
      * Delete statement.
      *
-     * @param  string  $table
      * @return $this
      */
-    public function delete($table)
+    public function delete(string $table): Query
     {
         $this->query[] = "delete from {$table}";
 
@@ -151,10 +144,9 @@ class Query
     /**
      * Where statement.
      *
-     * @param  array  $columns
      * @return $this
      */
-    public function where($columns)
+    public function where(array $columns): Query
     {
         foreach ($columns as $column => $value) {
             $this->wheres[] = [
@@ -168,12 +160,11 @@ class Query
     /**
      * Where In statement.
      *
-     * @param  array|string  $column
-     * @param  array  $values
-     * @param  string  $operator
+     * @param array|string $column
+     *
      * @return $this
      */
-    public function whereIn($column, $values, $operator = 'in')
+    public function whereIn($column, array $values, string $operator = 'in'): Query
     {
         if (is_string($column)) {
             $this->wheres[] = ['type' => 'WhereIn', 'column' => $column, 'values' => $values, 'operator' => $operator, 'boolean' => 'and'];
@@ -187,21 +178,19 @@ class Query
     /**
      * Where Not In statement.
      *
-     * @param  array|string  $column
-     * @param  array  $values
+     * @param array|string $column
+     *
      * @return $this
      */
-    public function whereNotIn($column, $values)
+    public function whereNotIn($column, array $values): Query
     {
         return $this->whereIn($column, $values, 'not in');
     }
 
     /**
      * Compile all where statements.
-     *
-     * @return void
      */
-    protected function compileWheres()
+    protected function compileWheres(): void
     {
         if (empty($this->wheres)) {
             return;
@@ -210,9 +199,9 @@ class Query
         $this->query[] = 'where';
 
         foreach ($this->wheres as $index => $condition) {
-            $method = 'compile'.$condition['type'];
+            $method = 'compile' . $condition['type'];
 
-            if ($index == 0) {
+            if (0 == $index) {
                 $condition['boolean'] = '';
             }
 
@@ -223,12 +212,13 @@ class Query
     /**
      * Compile the basic where statement.
      *
-     * @param  array  $where
      * @return string
      */
-    protected function compileWhere($where)
+    protected function compileWhere(array $where)
     {
         extract($where);
+
+        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
 
         $this->bindings[] = $value;
 
@@ -238,12 +228,13 @@ class Query
     /**
      * Compile the where in statement.
      *
-     * @param  array  $where
      * @return string
      */
-    protected function compileWhereIn($where)
+    protected function compileWhereIn(array $where)
     {
         extract($where);
+
+        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
 
         $this->bindings = array_merge($this->bindings, $values);
 
@@ -255,12 +246,13 @@ class Query
     /**
      * Compile the composite where in statement.
      *
-     * @param  array  $where
      * @return string
      */
-    protected function compileCompositeWhereIn($where)
+    protected function compileCompositeWhereIn(array $where)
     {
         extract($where);
+
+        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
 
         sort($columns);
 
@@ -283,12 +275,8 @@ class Query
 
     /**
      * Join array elements using a string mask.
-     *
-     * @param  array  $columns
-     * @param  string  $mask
-     * @return string
      */
-    protected function implode($columns, $mask = '{column}')
+    protected function implode(array $columns, string $mask = '{column}'): string
     {
         $columns = array_map(function ($column) use ($mask) {
             return str_replace('{column}', $column, $mask);

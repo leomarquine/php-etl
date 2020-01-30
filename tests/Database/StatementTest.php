@@ -1,9 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Database;
 
 use Tests\TestCase;
-use Marquine\Etl\Database\Statement;
+use Wizaplace\Etl\Database\Statement;
 
 class StatementTest extends TestCase
 {
@@ -13,12 +22,12 @@ class StatementTest extends TestCase
         $statement = new Statement($this->createMock('PDO'));
         $statement->select('users');
 
-        $this->assertEquals('select * from users', $statement->toSql());
+        static::assertEquals('select * from users', $statement->toSql());
 
         $statement = new Statement($this->createMock('PDO'));
         $statement->select('users', ['name', 'email']);
 
-        $this->assertEquals('select name, email from users', $statement->toSql());
+        static::assertEquals('select name, email from users', $statement->toSql());
     }
 
     /** @test */
@@ -27,7 +36,7 @@ class StatementTest extends TestCase
         $statement = new Statement($this->createMock('PDO'));
         $statement->insert('users', ['name', 'email']);
 
-        $this->assertEquals('insert into users (name, email) values (:name, :email)', $statement->toSql());
+        static::assertEquals('insert into users (name, email) values (:name, :email)', $statement->toSql());
     }
 
     /** @test */
@@ -36,7 +45,7 @@ class StatementTest extends TestCase
         $statement = new Statement($this->createMock('PDO'));
         $statement->update('users', ['name', 'email']);
 
-        $this->assertEquals('update users set name = :name, email = :email', $statement->toSql());
+        static::assertEquals('update users set name = :name, email = :email', $statement->toSql());
     }
 
     /** @test */
@@ -45,7 +54,7 @@ class StatementTest extends TestCase
         $statement = new Statement($this->createMock('PDO'));
         $statement->delete('users');
 
-        $this->assertEquals('delete from users', $statement->toSql());
+        static::assertEquals('delete from users', $statement->toSql());
     }
 
     /** @test */
@@ -54,7 +63,7 @@ class StatementTest extends TestCase
         $statement = new Statement($this->createMock('PDO'));
         $statement->where(['name', 'email']);
 
-        $this->assertEquals('where name = :name and email = :email', $statement->toSql());
+        static::assertEquals('where name = :name and email = :email', $statement->toSql());
     }
 
     /** @test */
@@ -67,6 +76,6 @@ class StatementTest extends TestCase
 
         $statement = new Statement($pdo);
 
-        $this->assertInstanceOf('PDOStatement', $statement->prepare());
+        static::assertInstanceOf('PDOStatement', $statement->prepare());
     }
 }

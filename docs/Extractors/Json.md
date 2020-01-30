@@ -3,7 +3,8 @@
 Extracts data from a JavaScript Object Notation file.
 
 ```php
-$etl->extract('json', 'path/to/file.json', $options);
+/** @var \Wizaplace\Etl\Extractors\Json $json */
+$etl->extract($json, 'path/to/file.json', $options);
 ```
 
 

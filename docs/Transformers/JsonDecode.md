@@ -3,7 +3,8 @@
 Decodes a JSON string.
 
 ```php
-$etl->transform('json_decode', $options);
+/** @var \Wizaplace\Etl\Transformers\JsonDecode $transformer */
+$etl->transform($transformer, $options);
 ```
 
 

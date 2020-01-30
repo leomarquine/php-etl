@@ -1,8 +1,17 @@
 <?php
 
-namespace Marquine\Etl\Extractors;
+declare(strict_types=1);
 
-use Marquine\Etl\Step;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Extractors;
+
+use Wizaplace\Etl\Step;
 
 abstract class Extractor extends Step
 {
@@ -16,7 +25,8 @@ abstract class Extractor extends Step
     /**
      * Set the extractor input.
      *
-     * @param  mixed  $input
+     * @param mixed $input
+     *
      * @return $this
      */
     public function input($input)
@@ -28,8 +38,6 @@ abstract class Extractor extends Step
 
     /**
      * Extract data from the input.
-     *
-     * @return \Generator
      */
-    abstract public function extract();
-};
+    abstract public function extract(): \Generator;
+}

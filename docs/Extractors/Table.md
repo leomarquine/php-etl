@@ -3,7 +3,8 @@
 Extracts data from a database table.
 
 ```php
-$etl->extract('table', 'table_name', $options);
+/** @var \Wizaplace\Etl\Extractors\Table $table */
+$etl->extract($table, 'table_name', $options);
 ```
 
 

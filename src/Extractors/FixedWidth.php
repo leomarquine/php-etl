@@ -1,8 +1,17 @@
 <?php
 
-namespace Marquine\Etl\Extractors;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Extractors;
+
+use Wizaplace\Etl\Row;
 
 class FixedWidth extends Extractor
 {
@@ -19,15 +28,13 @@ class FixedWidth extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns'
+        'columns',
     ];
 
     /**
      * Extract data from the input.
-     *
-     * @return \Generator
      */
-    public function extract()
+    public function extract(): \Generator
     {
         $handle = fopen($this->input, 'r');
 
@@ -40,11 +47,8 @@ class FixedWidth extends Extractor
 
     /**
      * Converts a row string into array.
-     *
-     * @param  string  $row
-     * @return array
      */
-    public function makeRow($row)
+    public function makeRow(string $row): array
     {
         $result = [];
 

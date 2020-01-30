@@ -1,9 +1,18 @@
 <?php
 
-namespace Marquine\Etl\Loaders;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
-use Marquine\Etl\Step;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Loaders;
+
+use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Step;
 
 abstract class Loader extends Step
 {
@@ -17,10 +26,11 @@ abstract class Loader extends Step
     /**
      * Set the loader output.
      *
-     * @param  mixed  $output
+     * @param mixed $output
+     *
      * @return $this
      */
-    public function output($output)
+    public function output($output): Loader
     {
         $this->output = $output;
 
@@ -29,9 +39,6 @@ abstract class Loader extends Step
 
     /**
      * Load the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    abstract public function load(Row $row);
+    abstract public function load(Row $row): void;
 }

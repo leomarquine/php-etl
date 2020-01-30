@@ -1,9 +1,17 @@
 <?php
 
-namespace Marquine\Etl\Database;
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Database;
 
 use PDO;
-use Exception;
 
 class Transaction
 {
@@ -38,7 +46,6 @@ class Transaction
     /**
      * Create a new Transaction instance.
      *
-     * @param  \PDO  $pdo
      * @return void
      */
     public function __construct(PDO $pdo)
@@ -49,10 +56,11 @@ class Transaction
     /**
      * Set the commit size.
      *
-     * @param  int  $size
+     * @param int $size
+     *
      * @return $this
      */
-    public function size($size)
+    public function size($size): Transaction
     {
         $this->size = $size;
 
@@ -61,11 +69,8 @@ class Transaction
 
     /**
      * Run the given callback inside a transaction.
-     *
-     * @param  callbale  $callback
-     * @return void
      */
-    public function run($callback)
+    public function run(callable $callback): void
     {
         $this->count++;
 
@@ -75,7 +80,7 @@ class Transaction
 
         try {
             call_user_func($callback);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->pdo->rollBack();
 
             throw $exception;
@@ -88,30 +93,24 @@ class Transaction
 
     /**
      * Check if it should begin a new transaction.
-     *
-     * @return bool
      */
-    protected function shouldBeginTransaction()
+    protected function shouldBeginTransaction(): bool
     {
-        return ! $this->open && (empty($this->size) || $this->count === 1);
+        return !$this->open && (empty($this->size) || 1 === $this->count);
     }
 
     /**
      * Check if it should commit a transaction.
-     *
-     * @return bool
      */
-    protected function shouldCommit()
+    protected function shouldCommit(): bool
     {
         return $this->open && ($this->count === $this->size);
     }
 
     /**
      * Begin a database transaction.
-     *
-     * @return void
      */
-    protected function beginTransaction()
+    protected function beginTransaction(): void
     {
         $this->open = true;
 
@@ -120,10 +119,8 @@ class Transaction
 
     /**
      * Commit a database transaction.
-     *
-     * @return void
      */
-    protected function commit()
+    protected function commit(): void
     {
         $this->open = false;
         $this->count = 0;
@@ -133,10 +130,8 @@ class Transaction
 
     /**
      * Commit an open transaction.
-     *
-     * @return void
      */
-    public function close()
+    public function close(): void
     {
         if ($this->open) {
             $this->commit();

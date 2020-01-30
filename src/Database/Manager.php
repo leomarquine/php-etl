@@ -1,15 +1,22 @@
 <?php
 
-namespace Marquine\Etl\Database;
+declare(strict_types=1);
 
-use InvalidArgumentException;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Database;
 
 class Manager
 {
     /**
      * The Connection Factory.
      *
-     * @var \Marquine\Etl\Database\ConnectionFactory
+     * @var \Wizaplace\Etl\Database\ConnectionFactory
      */
     protected $factory;
 
@@ -30,7 +37,8 @@ class Manager
     /**
      * Create a new database manager instance.
      *
-     * @param  \Marquine\Etl\Database\ConnectionFactory  $factory
+     * @param \Wizaplace\Etl\Database\ConnectionFactory $factory
+     *
      * @return void
      */
     public function __construct(ConnectionFactory $factory)
@@ -40,25 +48,23 @@ class Manager
 
     /**
      * Register a connection.
-     *
-     * @param  array  $config
-     * @param  string  $name
-     * @return void
      */
-    public function addConnection($config, $name = 'default')
+    public function addConnection(array $config, string $name = 'default'): void
     {
         $this->config[$name] = $config;
     }
 
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
     /**
      * Get a connection instance.
-     *
-     * @param  string  $name
-     * @return \Marquine\Etl\Database\Connection
      */
-    protected function getConnection($name)
+    protected function getConnection(string $name): \PDO
     {
-        if (! isset($this->connections[$name])) {
+        if (!isset($this->connections[$name])) {
             $this->connections[$name] = $this->makeConnection($name);
         }
 
@@ -68,27 +74,23 @@ class Manager
     /**
      * Make a connection instance.
      *
-     * @param  string  $name
-     * @return \Marquine\Etl\Database\Connection
-     *
      * @throws \InvalidArgumentException
      */
-    protected function makeConnection($name)
+    protected function makeConnection(string $name): \PDO
     {
         if (isset($this->config[$name])) {
             return $this->factory->make($this->config[$name]);
         }
 
-        throw new InvalidArgumentException("Database [{$name}] not configured.");
+        throw new \InvalidArgumentException("Database [{$name}] not configured.");
     }
 
     /**
      * Get a new query builder instance.
      *
-     * @param  string  $connection
-     * @return \Marquine\Etl\Database\Query
+     * @return \Wizaplace\Etl\Database\Query
      */
-    public function query($connection)
+    public function query(string $connection): Query
     {
         return new Query($this->getConnection($connection));
     }
@@ -96,10 +98,9 @@ class Manager
     /**
      * Get a new statement builder instance.
      *
-     * @param  string  $connection
-     * @return \Marquine\Etl\Database\Statement
+     * @return \Wizaplace\Etl\Database\Statement
      */
-    public function statement($connection)
+    public function statement(string $connection): Statement
     {
         return new Statement($this->getConnection($connection));
     }
@@ -107,21 +108,19 @@ class Manager
     /**
      * Get a new transaction instance.
      *
-     * @param  string  $connection
-     * @return \Marquine\Etl\Database\Transaction
+     * @param string $connection
+     *
+     * @return \Wizaplace\Etl\Database\Transaction
      */
-    public function transaction($connection)
+    public function transaction($connection): Transaction
     {
         return new Transaction($this->getConnection($connection));
     }
 
     /**
      * Get the pdo connection instance.
-     *
-     * @param  string  $connection
-     * @return \PDO
      */
-    public function pdo($connection)
+    public function pdo(string $connection): \PDO
     {
         return $this->getConnection($connection);
     }

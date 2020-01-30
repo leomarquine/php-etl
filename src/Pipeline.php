@@ -1,18 +1,26 @@
 <?php
 
-namespace Marquine\Etl;
+declare(strict_types=1);
 
-use Iterator;
-use Marquine\Etl\Loaders\Loader;
-use Marquine\Etl\Extractors\Extractor;
-use Marquine\Etl\Transformers\Transformer;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
 
-class Pipeline implements Iterator
+namespace Wizaplace\Etl;
+
+use Wizaplace\Etl\Extractors\Extractor;
+use Wizaplace\Etl\Loaders\Loader;
+use Wizaplace\Etl\Transformers\Transformer;
+
+class Pipeline implements \Iterator
 {
     /**
      * The pipeline data flow.
      *
-     * @var \Generator
+     * @var \Generator<Row>
      */
     protected $flow;
 
@@ -40,31 +48,28 @@ class Pipeline implements Iterator
     /**
      * The current iteration row.
      *
-     * @var \Marquine\Etl\Row
+     * @var \Wizaplace\Etl\Row
      */
     protected $current;
 
     /**
      * The etl extractor.
      *
-     * @var \Marquine\Etl\Extractors\Extractor
+     * @var \Wizaplace\Etl\Extractors\Extractor
      */
     protected $extractor;
 
     /**
      * The array of steps for the pipeline.
      *
-     * @var array
+     * @var Step[]
      */
     protected $steps = [];
 
     /**
      * Set the pipeline extractor.
-     *
-     * @param  \Marquine\Etl\Extractors\Extractor  $extractor
-     * @return void
      */
-    public function extractor(Extractor $extractor)
+    public function extractor(Extractor $extractor): void
     {
         $this->extractor = $extractor;
     }
@@ -72,32 +77,25 @@ class Pipeline implements Iterator
     /**
      * Add a step to the pipeline.
      *
-     * @param  \Marquine\EtlStep  $step
-     * @return void
+     * @param \Wizaplace\Etl\Step $step
      */
-    public function pipe(Step $step)
+    public function pipe(Step $step): void
     {
         $this->steps[] = $step;
     }
 
     /**
      * Set the row limit.
-     *
-     * @param  int  $limit
-     * @return void
      */
-    public function limit($limit)
+    public function limit(int $limit): void
     {
         $this->limit = $limit;
     }
 
     /**
      * Set the number of rows to skip.
-     *
-     * @param  int  $skip
-     * @return void
      */
-    public function skip($skip)
+    public function skip(int $skip): void
     {
         $this->skip = $skip;
     }
@@ -105,19 +103,17 @@ class Pipeline implements Iterator
     /**
      * Get the current element.
      *
-     * @return void
+     * @return string[]|int[]
      */
-    public function current()
+    public function current(): array
     {
         return $this->current->toArray();
     }
 
     /**
      * Move forward to next element.
-     *
-     * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->key++;
         $this->flow->next();
@@ -125,29 +121,24 @@ class Pipeline implements Iterator
 
     /**
      * Get the key of the current element.
-     *
-     * @return int
      */
-    public function key()
+    public function key(): int
     {
         return $this->key;
     }
 
     /**
      * Checks if current position is valid.
-     *
-     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
-        if (! $this->flow->valid() || $this->limitReached()) {
+        if (false === $this->flow->valid() || true === $this->limitReached()) {
             $this->finalize();
 
             return false;
         }
 
         $this->current = $this->flow->current();
-
 
         foreach ($this->steps as $step) {
             if ($this->current->discarded()) {
@@ -171,10 +162,8 @@ class Pipeline implements Iterator
 
     /**
      * Rewind the Iterator to the first element.
-     *
-     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->initialize();
 
@@ -188,20 +177,16 @@ class Pipeline implements Iterator
 
     /**
      * Check if the row limit was reached.
-     *
-     * @return bool
      */
-    protected function limitReached()
+    protected function limitReached(): bool
     {
         return $this->limit && $this->key() === $this->limit;
     }
 
     /**
      * Initialize the steps.
-     *
-     * @return void
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->extractor->initialize();
 
@@ -212,10 +197,8 @@ class Pipeline implements Iterator
 
     /**
      * Finalize the steps.
-     *
-     * @return void
      */
-    protected function finalize()
+    protected function finalize(): void
     {
         $this->extractor->finalize();
 

@@ -1,9 +1,18 @@
 <?php
 
-namespace Marquine\Etl\Loaders;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
-use Marquine\Etl\Database\Manager;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Loaders;
+
+use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Row;
 
 class Insert extends Loader
 {
@@ -59,14 +68,14 @@ class Insert extends Loader
     /**
      * The database transaction manager.
      *
-     * @var \Marquine\Etl\Database\Transaction
+     * @var \Wizaplace\Etl\Database\Transaction
      */
     protected $transactionManager;
 
     /**
      * The database manager.
      *
-     * @var \Marquine\Etl\Database\Manager
+     * @var \Wizaplace\Etl\Database\Manager
      */
     protected $db;
 
@@ -76,13 +85,12 @@ class Insert extends Loader
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'connection', 'timestamps', 'transaction', 'commitSize'
+        'columns', 'connection', 'timestamps', 'transaction', 'commitSize',
     ];
 
     /**
      * Create a new Insert Loader instance.
      *
-     * @param  \Marquine\Etl\Database\Manager  $manager
      * @return void
      */
     public function __construct(Manager $manager)
@@ -92,10 +100,8 @@ class Insert extends Loader
 
     /**
      * Initialize the step.
-     *
-     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');
@@ -105,18 +111,15 @@ class Insert extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
 
     /**
      * Load the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    public function load(Row $row)
+    public function load(Row $row): void
     {
         $row = $row->toArray();
 
@@ -131,10 +134,8 @@ class Insert extends Loader
 
     /**
      * Finalize the step.
-     *
-     * @return void
      */
-    public function finalize()
+    public function finalize(): void
     {
         if ($this->transaction) {
             $this->transactionManager->close();
@@ -143,11 +144,8 @@ class Insert extends Loader
 
     /**
      * Prepare the insert statement.
-     *
-     * @param  array  $sample
-     * @return void
      */
-    protected function prepareInsert($sample)
+    protected function prepareInsert(array $sample): void
     {
         if ($this->columns) {
             $columns = array_values($this->columns);
@@ -164,13 +162,10 @@ class Insert extends Loader
 
     /**
      * Execute the insert query.
-     *
-     * @param  array  $row
-     * @return void
      */
-    protected function insert($row)
+    protected function insert(array $row): void
     {
-        if (! $this->insert) {
+        if (null === $this->insert) {
             $this->prepareInsert($row);
         }
 

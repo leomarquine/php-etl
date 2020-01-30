@@ -1,6 +1,15 @@
 <?php
 
-namespace Marquine\Etl\Database;
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Database;
 
 use PDO;
 
@@ -30,7 +39,6 @@ class Statement
     /**
      * Create a new Statement instance.
      *
-     * @param  \PDO  $pdo
      * @return void
      */
     public function __construct(PDO $pdo)
@@ -40,20 +48,16 @@ class Statement
 
     /**
      * Prepare the statement for execution.
-     *
-     * @return \PDOStatement
      */
-    public function prepare()
+    public function prepare(): \PDOStatement
     {
         return $this->pdo->prepare($this->toSql());
     }
 
     /**
      * Get the sql query string.
-     *
-     * @return string
      */
-    public function toSql()
+    public function toSql(): string
     {
         $this->compileWheres();
 
@@ -63,11 +67,9 @@ class Statement
     /**
      * Select statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function select($table, $columns = ['*'])
+    public function select(string $table, array $columns = ['*']): Statement
     {
         $columns = $this->implode($columns);
 
@@ -79,11 +81,9 @@ class Statement
     /**
      * Insert statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function insert($table, $columns)
+    public function insert(string $table, array $columns): Statement
     {
         $values = $this->implode($columns, ':{column}');
 
@@ -97,11 +97,9 @@ class Statement
     /**
      * Update statement.
      *
-     * @param  string  $table
-     * @param  array  $columns
      * @return $this
      */
-    public function update($table, $columns)
+    public function update(string $table, array $columns): Statement
     {
         $columns = $this->implode($columns, '{column} = :{column}');
 
@@ -113,10 +111,9 @@ class Statement
     /**
      * Delete statement.
      *
-     * @param  string  $table
      * @return $this
      */
-    public function delete($table)
+    public function delete(string $table): Statement
     {
         $this->query[] = "delete from $table";
 
@@ -126,10 +123,9 @@ class Statement
     /**
      * Where statement.
      *
-     * @param  array  $columns
      * @return $this
      */
-    public function where($columns)
+    public function where(array $columns): Statement
     {
         foreach ($columns as $column) {
             $this->wheres[] = [
@@ -142,10 +138,8 @@ class Statement
 
     /**
      * Compile all where statements.
-     *
-     * @return void
      */
-    protected function compileWheres()
+    protected function compileWheres(): void
     {
         if (empty($this->wheres)) {
             return;
@@ -154,9 +148,9 @@ class Statement
         $this->query[] = 'where';
 
         foreach ($this->wheres as $index => $condition) {
-            $method = 'compile'.$condition['type'];
+            $method = 'compile' . $condition['type'];
 
-            if ($index == 0) {
+            if (0 == $index) {
                 $condition['boolean'] = '';
             }
 
@@ -167,10 +161,9 @@ class Statement
     /**
      * Compile the basic where statement.
      *
-     * @param  array  $where
      * @return string
      */
-    protected function compileWhere($where)
+    protected function compileWhere(array $where)
     {
         extract($where);
 
@@ -179,12 +172,8 @@ class Statement
 
     /**
      * Join array elements using a string mask.
-     *
-     * @param  array  $columns
-     * @param  string  $mask
-     * @return string
      */
-    protected function implode($columns, $mask = '{column}')
+    protected function implode(array $columns, string $mask = '{column}'): string
     {
         $columns = array_map(function ($column) use ($mask) {
             return str_replace('{column}', $column, $mask);

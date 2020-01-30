@@ -1,23 +1,33 @@
 <?php
 
-namespace Marquine\Etl;
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl;
 
 abstract class Step
 {
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
     protected $availableOptions = [];
 
     /**
      * Set the step options.
      *
-     * @param  array  $options
+     * @param string[]|int[] $options
+     *
      * @return $this
      */
-    public function options(array $options)
+    public function options(array $options): Step
     {
         foreach ($options as $option => $value) {
             $option = lcfirst(implode('', array_map('ucfirst', explode('_', $option))));
@@ -32,21 +42,15 @@ abstract class Step
 
     /**
      * Initialize the step.
-     *
-     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
-        //
     }
 
     /**
      * Finalize the step.
-     *
-     * @return void
      */
-    public function finalize()
+    public function finalize(): void
     {
-        //
     }
 }

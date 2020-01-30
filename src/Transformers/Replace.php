@@ -1,17 +1,24 @@
 <?php
 
-namespace Marquine\Etl\Transformers;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
-use Marquine\Etl\Transformers\Transformer;
-use InvalidArgumentException;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Transformers;
+
+use Wizaplace\Etl\Row;
 
 class Replace extends Transformer
 {
     /**
      * Transformer columns.
      *
-     * @var array
+     * @var string[]
      */
     protected $columns = [];
 
@@ -27,14 +34,14 @@ class Replace extends Transformer
      *
      * @var string
      */
-    protected $search = "";
+    protected $search = '';
 
     /**
      * The value to replace.
      *
      * @var string
      */
-    protected $replace = "";
+    protected $replace = '';
 
     /**
      * The replace function.
@@ -46,29 +53,24 @@ class Replace extends Transformer
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
     protected $availableOptions = [
-        'columns', 'type', 'search', 'replace'
+        'columns', 'type', 'search', 'replace',
     ];
 
     /**
      * Initialize the step.
-     *
-     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->function = $this->getReplaceFunction();
     }
 
     /**
      * Transform the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    public function transform(Row $row)
+    public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {
             return call_user_func($this->function, $this->search, $this->replace, $column);
@@ -77,10 +79,8 @@ class Replace extends Transformer
 
     /**
      * Get the replace function name.
-     *
-     * @return string
      */
-    protected function getReplaceFunction()
+    protected function getReplaceFunction(): string
     {
         switch ($this->type) {
             case 'str':
@@ -90,6 +90,6 @@ class Replace extends Transformer
                 return 'preg_replace';
         }
 
-        throw new InvalidArgumentException("The replace type [{$this->type}] is invalid.");
+        throw new \InvalidArgumentException("The replace type [{$this->type}] is invalid.");
     }
 }

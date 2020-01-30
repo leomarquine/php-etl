@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Transformers;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Transformers\RenameColumns;
+use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Transformers\RenameColumns;
 
 class RenameColumnsTest extends TestCase
 {
@@ -21,12 +30,12 @@ class RenameColumnsTest extends TestCase
             new Row(['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $transformer = new RenameColumns;
+        $transformer = new RenameColumns();
 
         $transformer->options(['columns' => ['email_address' => 'email']]);
 
         $this->execute($transformer, $data);
 
-        $this->assertEquals($expected, $data);
+        static::assertEquals($expected, $data);
     }
 }

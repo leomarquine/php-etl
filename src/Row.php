@@ -1,10 +1,17 @@
 <?php
 
-namespace Marquine\Etl;
+declare(strict_types=1);
 
-use ArrayAccess;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
 
-class Row implements ArrayAccess
+namespace Wizaplace\Etl;
+
+class Row implements \ArrayAccess
 {
     /**
      * Row attributes.
@@ -23,7 +30,7 @@ class Row implements ArrayAccess
     /**
      * Create a new Row instance.
      *
-     * @param  array  $attributes
+     * @param string[] $attributes
      */
     public function __construct(array $attributes)
     {
@@ -33,11 +40,10 @@ class Row implements ArrayAccess
     /**
      * Set a row attribute
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
+     * @param string $key
+     * @param mixed  $value
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->attributes[$key] = $value;
     }
@@ -45,7 +51,8 @@ class Row implements ArrayAccess
     /**
      * Get a row attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function get($key)
@@ -56,10 +63,9 @@ class Row implements ArrayAccess
     /**
      * Remove a row attribute.
      *
-     * @param  string  $key
-     * @return void
+     * @param string $key
      */
-    public function remove($key)
+    public function remove($key): void
     {
         unset($this->attributes[$key]);
     }
@@ -67,11 +73,9 @@ class Row implements ArrayAccess
     /**
      * Transform the given columns using a callback.
      *
-     * @param  array  $columns
-     * @param  callable  $callback
-     * @return void
+     * @param string[] $columns
      */
-    public function transform(array $columns, callable $callback)
+    public function transform(array $columns, callable $callback): void
     {
         if (empty($columns)) {
             $columns = array_keys($this->attributes);
@@ -85,29 +89,25 @@ class Row implements ArrayAccess
     /**
      * Get the array representation of the row.
      *
-     * @return array
+     * @return string[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->attributes;
     }
 
     /**
      * Discard the row.
-     *
-     * @return void
      */
-    public function discard()
+    public function discard(): void
     {
         $this->discarded = true;
     }
 
     /**
      * Check if the row was discarded.
-     *
-     * @return bool
      */
-    public function discarded()
+    public function discarded(): bool
     {
         return $this->discarded;
     }
@@ -115,7 +115,8 @@ class Row implements ArrayAccess
     /**
      * Dynamically retrieve attributes on the row.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -126,11 +127,10 @@ class Row implements ArrayAccess
     /**
      * Dynamically set attributes on the row.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
+     * @param string $key
+     * @param mixed  $value
      */
-    public function __set($key, $value)
+    public function __set($key, $value): void
     {
         $this->attributes[$key] = $value;
     }
@@ -138,10 +138,9 @@ class Row implements ArrayAccess
     /**
      * Determine if the given attribute exists.
      *
-     * @param  mixed  $offset
-     * @return bool
+     * @param mixed $offset
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->attributes[$offset]);
     }
@@ -149,7 +148,8 @@ class Row implements ArrayAccess
     /**
      * Get the value for a given offset.
      *
-     * @param  mixed  $offset
+     * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -160,11 +160,10 @@ class Row implements ArrayAccess
     /**
      * Set the value for a given offset.
      *
-     * @param  mixed  $offset
-     * @param  mixed  $value
-     * @return void
+     * @param mixed $offset
+     * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->attributes[$offset] = $value;
     }
@@ -172,11 +171,33 @@ class Row implements ArrayAccess
     /**
      * Unset the value for a given offset.
      *
-     * @param  mixed  $offset
-     * @return void
+     * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->attributes[$offset]);
+    }
+
+    /**
+     * Override all the attributes of the row or merge
+     * them with the given ones.
+     *
+     * @param bool $merge
+     */
+    public function setAttributes(array $newAttributes, $merge = false): void
+    {
+        if ($merge) {
+            $this->attributes = array_merge($this->attributes, $newAttributes);
+        } else {
+            $this->attributes = $newAttributes;
+        }
+    }
+
+    /**
+     * Clear all the attributes of the row
+     */
+    public function clearAttributes(): void
+    {
+        $this->attributes = [];
     }
 }

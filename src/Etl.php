@@ -1,63 +1,51 @@
 <?php
 
-namespace Marquine\Etl;
+declare(strict_types=1);
 
-use Marquine\Etl\Loaders\Loader;
-use Marquine\Etl\Extractors\Extractor;
-use Marquine\Etl\Transformers\Transformer;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl;
+
+use Wizaplace\Etl\Extractors\Extractor;
+use Wizaplace\Etl\Loaders\Loader;
+use Wizaplace\Etl\Transformers\Transformer;
 
 class Etl
 {
     /**
-     * The etl container.
-     *
-     * @var \Marquine\Etl\Container
-     */
-    protected $container;
-
-    /**
      * The etl pipeline.
      *
-     * @var \Marquine\Etl\Pipeline
+     * @var \Wizaplace\Etl\Pipeline
      */
     protected $pipeline;
 
     /**
      * Create a new Etl instance.
      *
-     * @param  Container  $container
-     * @param  Pipeline  $pipeline
+     * @param Pipeline $pipeline
+     *
      * @return void
      */
-    public function __construct(Container $container = null, Pipeline $pipeline = null)
+    public function __construct(Pipeline $pipeline = null)
     {
-        $this->container = $container ?? Container::getInstance();
-        $this->pipeline = $pipeline ?? new Pipeline;
-    }
-
-    /**
-     * Get a service from the container.
-     *
-     * @param  string  $name
-     * @return mixed
-     */
-    public static function service($name)
-    {
-        return Container::getInstance()->make($name);
+        $this->pipeline = $pipeline ?? new Pipeline();
     }
 
     /**
      * Extract.
      *
-     * @param  string  $extractor
-     * @param  string  $input
-     * @param  array  $options
+     * @param string $input
+     * @param array  $options
+     *
      * @return $this
      */
-    public function extract($extractor, $input, $options = [])
+    public function extract(Extractor $extractor, $input, $options = []): Etl
     {
-        $extractor = $this->container->step($extractor, Extractor::class);
-
         $extractor->input($input)->options($options);
 
         $this->pipeline->extractor($extractor);
@@ -68,14 +56,12 @@ class Etl
     /**
      * Transform.
      *
-     * @param  string  $transformer
-     * @param  array  $options
+     * @param array $options
+     *
      * @return $this
      */
-    public function transform($transformer, $options = [])
+    public function transform(Transformer $transformer, $options = []): Etl
     {
-        $transformer = $this->container->step($transformer, Transformer::class);
-
         $transformer->options($options);
 
         $this->pipeline->pipe($transformer);
@@ -86,15 +72,13 @@ class Etl
     /**
      * Load.
      *
-     * @param  string  $loader
-     * @param  string  $output
-     * @param  array  $options
+     * @param string $output
+     * @param array  $options
+     *
      * @return $this
      */
-    public function load($loader, $output, $options = [])
+    public function load(Loader $loader, $output, $options = []): Etl
     {
-        $loader = $this->container->step($loader, Loader::class);
-
         $loader->output($output)->options($options);
 
         $this->pipeline->pipe($loader);
@@ -104,10 +88,8 @@ class Etl
 
     /**
      * Execute the ETL.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->pipeline->rewind();
 
@@ -118,10 +100,8 @@ class Etl
 
     /**
      * Get an array of the resulting ETL data.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return iterator_to_array($this->pipeline);
     }
@@ -129,12 +109,10 @@ class Etl
     /**
      * Handle dynamic method calls.
      *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     *
+     * @param string $method
+     * @param array  $parameters
      */
-    public function __call($method, $parameters)
+    public function __call($method, $parameters): Etl
     {
         $this->pipeline->$method(...$parameters);
 

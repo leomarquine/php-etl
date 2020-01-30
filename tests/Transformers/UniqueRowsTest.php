@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Transformers;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Transformers\UniqueRows;
+use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Transformers\UniqueRows;
 
 class UniqueRowsTest extends TestCase
 {
@@ -22,11 +31,11 @@ class UniqueRowsTest extends TestCase
         $expected[1]->discard();
         $expected[3]->discard();
 
-        $transformer = new UniqueRows;
+        $transformer = new UniqueRows();
 
         $this->execute($transformer, $data);
 
-        $this->assertEquals($expected, $data);
+        static::assertEquals($expected, $data);
     }
 
     /** @test */
@@ -43,13 +52,13 @@ class UniqueRowsTest extends TestCase
         $expected[1]->discard();
         $expected[3]->discard();
 
-        $transformer = new UniqueRows;
+        $transformer = new UniqueRows();
 
         $transformer->options(['columns' => ['id', 'name']]);
 
         $this->execute($transformer, $data);
 
-        $this->assertEquals($expected, $data);
+        static::assertEquals($expected, $data);
     }
 
     /** @test */
@@ -69,13 +78,13 @@ class UniqueRowsTest extends TestCase
         $expected[2]->discard();
         $expected[4]->discard();
 
-        $transformer = new UniqueRows;
+        $transformer = new UniqueRows();
 
         $transformer->options(['consecutive' => true]);
 
         $this->execute($transformer, $data);
 
-        $this->assertEquals($expected, $data);
+        static::assertEquals($expected, $data);
     }
 
     /** @test */
@@ -95,12 +104,12 @@ class UniqueRowsTest extends TestCase
         $expected[2]->discard();
         $expected[4]->discard();
 
-        $transformer = new UniqueRows;
+        $transformer = new UniqueRows();
 
         $transformer->options(['consecutive' => true, 'columns' => ['id', 'name']]);
 
         $this->execute($transformer, $data);
 
-        $this->assertEquals($expected, $data);
+        static::assertEquals($expected, $data);
     }
 }

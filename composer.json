@@ -1,36 +1,35 @@
 {
     "name": "wizaplace/php-etl",
-    "description": "Extract, Transform and Load data using PHP.",
-    "keywords": ["etl", "extract", "transform", "load", "extraction", "transformation", "seed", "data", "laravel"],
+    "description": "Extract, Transform and Load data using this PHP written migration library.",
+    "keywords": ["etl", "extract", "transform", "load", "extraction", "transformation", "data", "symfony"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Leonardo Marquine",
-            "email": "leonardomarquine@gmail.com"
+            "name": "Wizaplace DevTeam ",
+            "email": "dev@wizacha.com"
         }
     ],
+    "config": {
+        "sort-packages": true
+    },
     "require": {
-        "flow/jsonpath": "^0.3.1",
-        "illuminate/container": "^5.0|^6.0"
+        "php": "~7.2",
+        "flow/jsonpath": "^0.3.1"
     },
     "autoload": {
         "psr-4": {
-            "Marquine\\Etl\\": "src/"
+            "Wizaplace\\Etl\\": "src/"
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.3"
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "phpstan/phpstan": "^0.12.7",
+        "phpunit/phpunit": "^8.5",
+        "squizlabs/php_codesniffer": "^3.5"
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Marquine\\Etl\\EtlServiceProvider"
-            ]
         }
     },
     "minimum-stability": "dev",

@@ -3,7 +3,8 @@
 Extracts data from an XML file.
 
 ```php
-$etl->extract('xml', 'path/to/file.xml', $options);
+/** @var \Wizaplace\Etl\Extractors\Xml $xml */
+$etl->extract($xml, 'path/to/file.xml', $options);
 ```
 
 

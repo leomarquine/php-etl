@@ -1,33 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Loaders;
 
 use Tests\TestCase;
-use Marquine\Etl\Loaders\Insert;
+use Wizaplace\Etl\Loaders\Insert;
 
 class InsertTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->statement = $this->createMock('PDOStatement');
         $this->statement->expects($this->any())->method('execute');
 
-        $this->transaction = $this->createMock('Marquine\Etl\Database\Transaction');
+        $this->transaction = $this->createMock('Wizaplace\Etl\Database\Transaction');
         $this->transaction->expects($this->any())->method('size')->willReturnSelf();
         $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) { call_user_func($callback); });
         $this->transaction->expects($this->any())->method('close');
 
-        $this->builder = $this->createMock('Marquine\Etl\Database\Statement');
+        $this->builder = $this->createMock('Wizaplace\Etl\Database\Statement');
         $this->builder->expects($this->any())->method('insert')->willReturnSelf();
         $this->builder->expects($this->any())->method('prepare')->willReturn($this->statement);
 
-        $this->manager = $this->createMock('Marquine\Etl\Database\Manager');
+        $this->manager = $this->createMock('Wizaplace\Etl\Database\Manager');
         $this->manager->expects($this->any())->method('statement')->willReturn($this->builder);
         $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
-        $this->row = $this->createMock('Marquine\Etl\Row');
+        $this->row = $this->createMock('Wizaplace\Etl\Row');
         $this->row->expects($this->any())->method('toArray')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader = new Insert($this->manager);

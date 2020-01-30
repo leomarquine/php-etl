@@ -3,7 +3,8 @@
 Converts a value into its JSON representation.
 
 ```php
-$etl->transform('json_encode', $options);
+/** @var \Wizaplace\Etl\Transformers\JsonEncode $transformer */
+$etl->transform($transformer, $options);
 ```
 
 

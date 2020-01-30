@@ -1,15 +1,24 @@
 <?php
 
-namespace Marquine\Etl\Transformers;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Transformers;
+
+use Wizaplace\Etl\Row;
 
 class JsonEncode extends Transformer
 {
     /**
      * Transformer columns.
      *
-     * @var array
+     * @var string[]
      */
     protected $columns = [];
 
@@ -23,29 +32,26 @@ class JsonEncode extends Transformer
     /**
      * Maximum depth.
      *
-     * @var string
+     * @var int
      */
     protected $depth = 512;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
     protected $availableOptions = [
-        'columns', 'depth', 'options'
+        'columns', 'depth', 'options',
     ];
 
     /**
      * Transform the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    public function transform(Row $row)
+    public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {
-            return json_encode($column, $this->options, $this->depth);
+            return \json_encode($column, $this->options, $this->depth);
         });
     }
 }

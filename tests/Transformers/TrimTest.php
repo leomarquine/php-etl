@@ -1,14 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Transformers;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Transformers\Trim;
+use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Transformers\Trim;
 
 class TrimTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -26,11 +35,11 @@ class TrimTest extends TestCase
             new Row(['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $this->execute($transformer, $this->data);
 
-        $this->assertEquals($expected, $this->data);
+        static::assertEquals($expected, $this->data);
     }
 
     /** @test */
@@ -41,13 +50,13 @@ class TrimTest extends TestCase
             new Row(['id' => '2', 'name' => 'Jane Doe', 'email' => '  janedoe@email.com  ']),
         ];
 
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $transformer->options(['columns' => ['id', 'name']]);
 
         $this->execute($transformer, $this->data);
 
-        $this->assertEquals($expected, $this->data);
+        static::assertEquals($expected, $this->data);
     }
 
     /** @test */
@@ -58,13 +67,13 @@ class TrimTest extends TestCase
             new Row(['id' => '2', 'name' => '  Jane Doe', 'email' => '  janedoe@email.com']),
         ];
 
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $transformer->options(['type' => 'right']);
 
         $this->execute($transformer, $this->data);
 
-        $this->assertEquals($expected, $this->data);
+        static::assertEquals($expected, $this->data);
     }
 
     /** @test */
@@ -75,13 +84,13 @@ class TrimTest extends TestCase
             new Row(['id' => '2 ', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com  ']),
         ];
 
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $transformer->options(['type' => 'left']);
 
         $this->execute($transformer, $this->data);
 
-        $this->assertEquals($expected, $this->data);
+        static::assertEquals($expected, $this->data);
     }
 
     /** @test */
@@ -92,19 +101,19 @@ class TrimTest extends TestCase
             new Row(['id' => '2', 'name' => 'Jane Doe', 'email' => 'janedoe@email']),
         ];
 
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $transformer->options(['mask' => ' cmo.']);
 
         $this->execute($transformer, $this->data);
 
-        $this->assertEquals($expected, $this->data);
+        static::assertEquals($expected, $this->data);
     }
 
     /** @test */
     public function throws_an_exception_for_unsupported_trim_type()
     {
-        $transformer = new Trim;
+        $transformer = new Trim();
 
         $transformer->options(['type' => 'invalid']);
 

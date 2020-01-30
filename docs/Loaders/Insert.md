@@ -3,7 +3,8 @@
 Inserts data into a database table.
 
 ```php
-$etl->load('insert', 'table_name', $options);
+/** @var \Wizaplace\Etl\Loaders\Insert $insert */
+$etl->load($insert, 'table_name', $options);
 ```
 
 

@@ -3,7 +3,8 @@
 Extracts data from a text file with fields delimited by a fixed number of characters.
 
 ```php
-$etl->extract('fixed_width', 'path/to/file.txt', $options);
+/** @var \Wizaplace\Etl\Extractors\FixedWidth $fixedWidth */
+$etl->extract($fixedWidth, 'path/to/file.txt', $options);
 ```
 
 

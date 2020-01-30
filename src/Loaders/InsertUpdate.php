@@ -1,9 +1,18 @@
 <?php
 
-namespace Marquine\Etl\Loaders;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
-use Marquine\Etl\Database\Manager;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Loaders;
+
+use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Row;
 
 class InsertUpdate extends Loader
 {
@@ -24,7 +33,7 @@ class InsertUpdate extends Loader
     /**
      * The columns to insert/update.
      *
-     * @var array
+     * @var string[]
      */
     protected $columns;
 
@@ -80,30 +89,29 @@ class InsertUpdate extends Loader
     /**
      * The database transaction manager.
      *
-     * @var \Marquine\Etl\Database\Transaction
+     * @var \Wizaplace\Etl\Database\Transaction
      */
     protected $transactionManager;
 
     /**
      * The database manager.
      *
-     * @var \Marquine\Etl\Database\Manager
+     * @var \Wizaplace\Etl\Database\Manager
      */
     protected $db;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
     protected $availableOptions = [
-        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize'
+        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize',
     ];
 
     /**
      * Create a new InsertUpdate Loader instance.
      *
-     * @param  \Marquine\Etl\Database\Manager  $manager
      * @return void
      */
     public function __construct(Manager $manager)
@@ -113,10 +121,8 @@ class InsertUpdate extends Loader
 
     /**
      * Initialize the step.
-     *
-     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->timestamps) {
             $this->time = date('Y-m-d G:i:s');
@@ -126,18 +132,15 @@ class InsertUpdate extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (! empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
 
     /**
      * Load the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    public function load(Row $row)
+    public function load(Row $row): void
     {
         $row = $row->toArray();
 
@@ -152,10 +155,8 @@ class InsertUpdate extends Loader
 
     /**
      * Finalize the step.
-     *
-     * @return void
      */
-    public function finalize()
+    public function finalize(): void
     {
         if ($this->transaction) {
             $this->transactionManager->close();
@@ -164,11 +165,8 @@ class InsertUpdate extends Loader
 
     /**
      * Prepare the select statement.
-     *
-     * @param  string  $table
-     * @return void
      */
-    protected function prepareSelect()
+    protected function prepareSelect(): void
     {
         $this->select = $this->db->statement($this->connection)->select($this->output)->where($this->key)->prepare();
     }
@@ -176,11 +174,9 @@ class InsertUpdate extends Loader
     /**
      * Prepare the insert statement.
      *
-     * @param  string  $table
-     * @param  array   $sample
-     * @return void
+     * @param string[] $sample
      */
-    protected function prepareInsert($sample)
+    protected function prepareInsert(array $sample): void
     {
         if ($this->columns) {
             $columns = array_values($this->columns);
@@ -198,11 +194,9 @@ class InsertUpdate extends Loader
     /**
      * Prepare the update statement.
      *
-     * @param  string  $table
-     * @param  array   $sample
-     * @return void
+     * @param string[] $sample
      */
-    protected function prepareUpdate($sample)
+    protected function prepareUpdate(array $sample): void
     {
         if ($this->columns) {
             $columns = array_values(array_diff($this->columns, $this->key));
@@ -220,25 +214,24 @@ class InsertUpdate extends Loader
     /**
      * Execute the given row.
      *
-     * @param  array  $row
-     * @return void
+     * @param array $row
      */
-    protected function execute($row)
+    protected function execute($row): void
     {
-        if (! $this->select) {
+        if (null === $this->select) {
             $this->prepareSelect();
         }
 
-	if ($this->columns) {
-            $mapped_columns_arr = array();
+        if ($this->columns) {
+            $mapped_columns_arr = [];
             $key_columns = array_intersect($this->columns, $this->key);
 
             foreach ($key_columns as $key => $column) {
                 $mapped_columns_arr[$column] = array_intersect_key($row, $key_columns)[$key];
-            };
+            }
             $this->select->execute($mapped_columns_arr);
-        } else {        
-	    $this->select->execute(array_intersect_key($row, array_flip($this->key)));
+        } else {
+            $this->select->execute(array_intersect_key($row, array_flip($this->key)));
         }
 
         if ($this->columns) {
@@ -260,13 +253,10 @@ class InsertUpdate extends Loader
 
     /**
      * Execute the insert statement.
-     *
-     * @param  array  $row
-     * @return void
      */
-    protected function insert($row)
+    protected function insert(array $row): void
     {
-        if (! $this->insert) {
+        if (null === $this->insert) {
             $this->prepareInsert($row);
         }
 
@@ -280,14 +270,10 @@ class InsertUpdate extends Loader
 
     /**
      * Execute the update statement.
-     *
-     * @param  array  $row
-     * @param  array  $current
-     * @return void
      */
-    protected function update($row, $current)
+    protected function update(array $row, array $current): void
     {
-        if (! $this->update) {
+        if (null === $this->update) {
             $this->prepareUpdate($row);
         }
 

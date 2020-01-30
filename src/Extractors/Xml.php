@@ -1,9 +1,17 @@
 <?php
 
-namespace Marquine\Etl\Extractors;
+declare(strict_types=1);
 
-use XMLReader;
-use Marquine\Etl\Row;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Extractors;
+
+use Wizaplace\Etl\Row;
 
 class Xml extends Extractor
 {
@@ -48,15 +56,13 @@ class Xml extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'loop'
+        'columns', 'loop',
     ];
 
     /**
      * Extract data from the input.
-     *
-     * @return \Generator
      */
-    public function extract()
+    public function extract(): \Generator
     {
         if ($this->columns) {
             foreach ($this->columns as &$value) {
@@ -64,7 +70,7 @@ class Xml extends Extractor
             }
         }
 
-        $this->reader = new XMLReader;
+        $this->reader = new \XMLReader();
 
         $this->reader->open($this->input);
 
@@ -84,10 +90,8 @@ class Xml extends Extractor
 
     /**
      * Get the current row.
-     *
-     * @return array
      */
-    protected function getCurrentRow()
+    protected function getCurrentRow(): Row
     {
         $row = $this->row;
 
@@ -98,64 +102,56 @@ class Xml extends Extractor
 
     /**
      * Check if the current node is an element.
-     *
-     * @return bool
      */
-    protected function isElement()
+    protected function isElement(): bool
     {
-        return $this->reader->nodeType == XMLReader::ELEMENT;
+        return \XMLReader::ELEMENT == $this->reader->nodeType;
     }
 
     /**
      * Check if the current node is an end element.
-     *
-     * @return bool
      */
-    protected function isEndElement()
+    protected function isEndElement(): bool
     {
-        return $this->reader->nodeType == XMLReader::END_ELEMENT || $this->reader->isEmptyElement;
+        return \XMLReader::END_ELEMENT == $this->reader->nodeType || $this->reader->isEmptyElement;
     }
 
     /**
      * Check if the current node is a value.
-     *
-     * @return bool
      */
-    protected function isValue()
+    protected function isValue(): bool
     {
-        return $this->reader->nodeType == XMLReader::TEXT || $this->reader->nodeType === XMLReader::CDATA || $this->reader->nodeType === XMLReader::ATTRIBUTE;
+        return \XMLReader::TEXT == $this->reader->nodeType
+            || \XMLReader::CDATA === $this->reader->nodeType
+            || \XMLReader::ATTRIBUTE === $this->reader->nodeType;
     }
 
     /**
      * Check if the current node has attributes.
-     *
-     * @return bool
      */
-    protected function hasAttributes()
+    protected function hasAttributes(): bool
     {
-        return $this->reader->nodeType == XMLReader::ELEMENT && $this->reader->hasAttributes;
+        return \XMLReader::ELEMENT == $this->reader->nodeType && $this->reader->hasAttributes;
     }
 
     /**
      * Check if the iteration cycle is complete based on the loop path.
-     *
-     * @return bool
      */
-    protected function isCycleComplete()
+    protected function isCycleComplete(): bool
     {
         $value = $this->path . '/' . $this->reader->name;
         $pattern = $this->loop;
 
         if ($value == $pattern) {
-            return $this->reader->nodeType == XMLReader::END_ELEMENT;
+            return \XMLReader::END_ELEMENT == $this->reader->nodeType;
         }
 
         $pattern = preg_quote($pattern, '#');
 
         $pattern = str_replace('\*', '.*', $pattern);
 
-        if (preg_match('#^' . $pattern . '\z#u', $value) === 1) {
-            return $this->reader->nodeType == XMLReader::END_ELEMENT;
+        if (1 === preg_match('#^' . $pattern . '\z#u', $value)) {
+            return \XMLReader::END_ELEMENT == $this->reader->nodeType;
         }
 
         return false;
@@ -163,10 +159,8 @@ class Xml extends Extractor
 
     /**
      * Add the current element to the xml path.
-     *
-     * @return void
      */
-    protected function addElementToPath()
+    protected function addElementToPath(): void
     {
         if ($this->isElement()) {
             $this->path = $this->path . '/' . $this->reader->name;
@@ -175,10 +169,8 @@ class Xml extends Extractor
 
     /**
      * Remove the current element from the xml path.
-     *
-     * @return void
      */
-    protected function removeElementFromPath()
+    protected function removeElementFromPath(): void
     {
         if ($this->isEndElement()) {
             $this->path = substr($this->path, 0, strrpos($this->path, '/'));
@@ -187,32 +179,26 @@ class Xml extends Extractor
 
     /**
      * Add the current attribute to the xml path.
-     *
-     * @return void
      */
-    protected function addAttributeToPath()
+    protected function addAttributeToPath(): void
     {
         $this->path = $this->path . '/@' . $this->reader->name;
     }
 
     /**
      * Remove the current attribute from the xml path.
-     *
-     * @return void
      */
-    protected function removeAttributeFromPath()
+    protected function removeAttributeFromPath(): void
     {
         $this->path = substr($this->path, 0, strrpos($this->path, '/'));
     }
 
     /**
      * Handle current node attributes.
-     *
-     * @return void
      */
-    protected function handleNodeAttributes()
+    protected function handleNodeAttributes(): void
     {
-        if (! $this->hasAttributes()) {
+        if (!$this->hasAttributes()) {
             return;
         }
 
@@ -227,12 +213,10 @@ class Xml extends Extractor
 
     /**
      * Handle the current node value.
-     *
-     * @return void
      */
-    protected function handleNodeValue()
+    protected function handleNodeValue(): void
     {
-        if (! $this->isValue()) {
+        if (!$this->isValue()) {
             return;
         }
 

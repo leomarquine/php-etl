@@ -3,7 +3,8 @@
 Extracts data from a character-separated values file.
 
 ```php
-$etl->extract('csv', 'path/to/file.csv', $options);
+/** @var \Wizaplace\Etl\Extractors\Csv $csv */
+$etl->extract($csv, 'path/to/file.csv', $options);
 ```
 
 

@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Extractors\Json;
+use Wizaplace\Etl\Extractors\Json;
+use Wizaplace\Etl\Row;
 
 class JsonTest extends TestCase
 {
@@ -16,11 +25,11 @@ class JsonTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $extractor = new Json;
+        $extractor = new Json();
 
-        $extractor->input(__DIR__.'/../data/json1.json');
+        $extractor->input(__DIR__ . '/../data/json1.json');
 
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
@@ -31,15 +40,15 @@ class JsonTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $extractor = new Json;
+        $extractor = new Json();
 
-        $extractor->input(__DIR__.'/../data/json2.json');
+        $extractor->input(__DIR__ . '/../data/json2.json');
         $extractor->options(['columns' => [
             'id' => '$..bindings[*].id.value',
             'name' => '$..bindings[*].name.value',
             'email' => '$..bindings[*].email.value',
         ]]);
 
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 }

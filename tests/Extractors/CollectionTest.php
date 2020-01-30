@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
 namespace Tests\Extractors;
 
 use Tests\TestCase;
-use Marquine\Etl\Row;
-use Marquine\Etl\Extractors\Collection;
+use Wizaplace\Etl\Extractors\Collection;
+use Wizaplace\Etl\Row;
 
 class CollectionTest extends TestCase
 {
@@ -21,11 +30,11 @@ class CollectionTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $extractor = new Collection;
+        $extractor = new Collection();
 
         $extractor->input($this->input);
 
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
@@ -36,10 +45,10 @@ class CollectionTest extends TestCase
             new Row(['id' => 2, 'name' => 'Jane Doe']),
         ];
 
-        $extractor = new Collection;
+        $extractor = new Collection();
 
         $extractor->input($this->input)->options(['columns' => ['id', 'name']]);
 
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 }

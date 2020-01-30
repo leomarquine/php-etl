@@ -1,16 +1,22 @@
 <?php
 
-namespace Marquine\Etl\Database\Connectors;
+declare(strict_types=1);
+
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Database\Connectors;
 
 class PostgresConnector extends Connector
 {
     /**
-    * Connect to a database.
-    *
-    * @param  array  $config
-    * @return \PDO
-    */
-    public function connect($config)
+     * Connect to a database.
+     */
+    public function connect(array $config): \PDO
     {
         $dsn = $this->getDsn($config);
 
@@ -24,12 +30,13 @@ class PostgresConnector extends Connector
     /**
      * Get the DSN string.
      *
-     * @param  array  $config
      * @return string
      */
-    public function getDsn($config)
+    protected function getDsn(array $config)
     {
         extract($config, EXTR_SKIP);
+
+        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
 
         $dsn = [];
 
@@ -51,13 +58,13 @@ class PostgresConnector extends Connector
     /**
      * Handle tasks after connection.
      *
-     * @param  \PDO  $connection
-     * @param  array  $config
      * @return void
      */
-    public function afterConnection($connection, $config)
+    protected function afterConnection(\PDO $connection, array $config)
     {
         extract($config, EXTR_SKIP);
+
+        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
 
         if (isset($charset)) {
             $connection->prepare("set names '$charset'")->execute();
@@ -81,10 +88,11 @@ class PostgresConnector extends Connector
     /**
      * Format the schema.
      *
-     * @param  array|string  $schema
+     * @param array|string $schema
+     *
      * @return string
      */
-    public function formatSchema($schema)
+    protected function formatSchema($schema)
     {
         if (is_string($schema)) {
             $schema = [$schema];

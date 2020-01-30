@@ -3,7 +3,8 @@
 Remove duplicate rows from the input stream.
 
 ```php
-$etl->transform('unique_rows', $options);
+/** @var \Wizaplace\Etl\Transformers\UniqueRows $transformer */
+$etl->transform($transformer, $options);
 ```
 
 

@@ -3,7 +3,8 @@
 Rename columns.
 
 ```php
-$etl->transform('rename_columns', $options);
+/** @var \Wizaplace\Etl\Transformers\RenameColumns $transformer */
+$etl->transform($transformer, $options);
 ```
 
 

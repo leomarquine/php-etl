@@ -1,17 +1,23 @@
 <?php
 
-namespace Marquine\Etl\Transformers;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
-use Marquine\Etl\Step;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Transformers;
+
+use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Step;
 
 abstract class Transformer extends Step
 {
     /**
      * Transform the given row.
-     *
-     * @param  \Marquine\Etl\Row  $row
-     * @return void
      */
-    abstract public function transform(Row $row);
+    abstract public function transform(Row $row): void;
 }

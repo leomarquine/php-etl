@@ -1,8 +1,17 @@
 <?php
 
-namespace Marquine\Etl\Extractors;
+declare(strict_types=1);
 
-use Marquine\Etl\Row;
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @copyright   Copyright (c) Leonardo Marquine
+ * @license     MIT
+ */
+
+namespace Wizaplace\Etl\Extractors;
+
+use Wizaplace\Etl\Row;
 
 class Csv extends Extractor
 {
@@ -33,15 +42,13 @@ class Csv extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'delimiter', 'enclosure'
+        'columns', 'delimiter', 'enclosure',
     ];
 
     /**
      * Extract data from the input.
-     *
-     * @return \Generator
      */
-    public function extract()
+    public function extract(): \Generator
     {
         $handle = fopen($this->input, 'r');
 
@@ -56,12 +63,8 @@ class Csv extends Extractor
 
     /**
      * Converts the row string to array.
-     *
-     * @param  string  $row
-     * @param  array  $columns
-     * @return array
      */
-    protected function makeRow($row, $columns)
+    protected function makeRow(string $row, array $columns): array
     {
         $row = str_getcsv($row, $this->delimiter, $this->enclosure);
 
@@ -77,10 +80,9 @@ class Csv extends Extractor
     /**
      * Make columns based on csv header.
      *
-     * @param  array  $handle
-     * @return array
+     * @param resource $handle
      */
-    protected function makeColumns($handle)
+    protected function makeColumns($handle): array
     {
         if (is_array($this->columns) && is_numeric(current($this->columns))) {
             return $this->columns;
@@ -97,7 +99,7 @@ class Csv extends Extractor
         }
 
         if (array_keys($this->columns) === range(0, count($this->columns) - 1)) {
-           return array_intersect_key($columns, array_flip($this->columns));
+            return array_intersect_key($columns, array_flip($this->columns));
         }
 
         $result = [];

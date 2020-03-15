@@ -95,4 +95,32 @@ class CsvTest extends TestCase
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
+
+    public function testMultiLineCsv(): void
+    {
+        $expected = [
+            new Row(
+                [
+                    'id' => '1',
+                    'name' => 'John
+
+Doe',
+                    'email' => 'johndoe@email.com'
+                ]
+            ),
+            new Row(
+                [
+                    'id' => '2',
+                    'name' => 'Jane Doe',
+                    'email' => 'mail:
+janedoe@email.com'
+                ]
+            ),
+        ];
+
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/multiline.csv');
+
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
+    }
 }

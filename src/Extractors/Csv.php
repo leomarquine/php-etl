@@ -34,7 +34,7 @@ class Csv extends Extractor
      *
      * @var string
      */
-    protected $enclosure = '';
+    protected $enclosure = '"';
 
     /**
      * Properties that can be set via the options method.
@@ -54,7 +54,7 @@ class Csv extends Extractor
 
         $columns = $this->makeColumns($handle);
 
-        while ($row = fgets($handle)) {
+        while ($row = fgetcsv($handle, 0, $this->delimiter, $this->enclosure)) {
             yield new Row($this->makeRow($row, $columns));
         }
 
@@ -63,11 +63,12 @@ class Csv extends Extractor
 
     /**
      * Converts the row string to array.
+     *
+     * @param string[] $row
+     * @param string[] $columns
      */
-    protected function makeRow(string $row, array $columns): array
+    protected function makeRow(array $row, array $columns): array
     {
-        $row = str_getcsv($row, $this->delimiter, $this->enclosure);
-
         $data = [];
 
         foreach ($columns as $column => $index) {

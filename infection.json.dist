@@ -1,0 +1,25 @@
+{
+  "source": {
+    "directories": [
+      "src"
+    ]
+  },
+  "timeout": 10,
+  "logs": {
+    "text": "var/tmp-infection/infection.log",
+    "summary": "var/tmp-infection/summary.log",
+    "perMutator": "var/tmp-infection/per-mutator.md"
+  },
+  "tmpDir": "var/tmp-infection",
+  "mutators": {
+    "@default": true,
+    "@function_signature": false,
+    "TrueValue": {
+      "ignore": [
+        "NameSpace\\*\\Class::method"
+      ]
+    }
+  },
+  "testFramework":"phpunit",
+  "testFrameworkOptions": "-vvv"
+}

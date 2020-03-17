@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Extractors;
 
+use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Row;
 
 class Csv extends Extractor
@@ -50,7 +51,10 @@ class Csv extends Extractor
      */
     public function extract(): \Generator
     {
-        $handle = fopen($this->input, 'r');
+        $handle = @fopen($this->input, 'r');
+        if (false === $handle) {
+            throw new IoException("Impossible to open the file '{$this->input}'");
+        }
 
         $columns = $this->makeColumns($handle);
 

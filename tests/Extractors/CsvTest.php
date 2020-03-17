@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Extractors\Csv;
 use Wizaplace\Etl\Row;
 
@@ -122,5 +123,22 @@ janedoe@email.com'
         $extractor->input(__DIR__ . '/../data/multiline.csv');
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
+    }
+
+    /** @test */
+    public function missing_file(): void
+    {
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/csv3trgrtg.csv');
+
+        try {
+            foreach ($extractor->extract() as $element) {
+                static::fail('Since the file does not exist, an exception was expected');
+            }
+        } catch (IoException $exception) {
+            static::assertEquals("Impossible to open the file '" . __DIR__ . "/../data/csv3trgrtg.csv'",
+                $exception->getMessage()
+            );
+        }
     }
 }

@@ -40,9 +40,8 @@ class Row implements \ArrayAccess
     /**
      * Set a row attribute
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return self
+     * @param string $key
+     * @param mixed  $value
      */
     public function set($key, $value): self
     {
@@ -101,8 +100,6 @@ class Row implements \ArrayAccess
 
     /**
      * Discard the row.
-     *
-     * @return self
      */
     public function discard(): self
     {
@@ -134,9 +131,8 @@ class Row implements \ArrayAccess
     /**
      * Dynamically set attributes on the row.
      *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return self
+     * @param string $key
+     * @param mixed  $value
      */
     public function __set($key, $value): self
     {

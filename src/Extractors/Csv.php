@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Extractors;
 
+use Wizaplace\Etl\Exception\InvalidInputException;
 use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Row;
 
@@ -19,7 +20,7 @@ class Csv extends Extractor
     /**
      * Extractor columns.
      *
-     * @var array
+     * @var array|null
      */
     protected $columns;
 
@@ -38,13 +39,38 @@ class Csv extends Extractor
     protected $enclosure = '"';
 
     /**
+     * Throw error if invalid data. Set to false to keep backward compatibility with older versions.
+     *
+     * @var bool
+     */
+    protected $throwError = false;
+
+    /**
+     * The 'currentRow' attribute is global because used in many places and we don't want to change the
+     * signature of the methods
+     *
+     * @var int |null
+     */
+    protected $currentRow;
+
+    /**
      * Properties that can be set via the options method.
      *
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'delimiter', 'enclosure',
+        'columns', 'delimiter', 'enclosure', 'throwError',
     ];
+
+    /** Note that this method could be removed when dropping PHP < 7.4 support, using attribute types. */
+    public function initialize(): void
+    {
+        $this->currentRow = null;
+
+        if (false === is_bool($this->throwError)) {
+            $this->throwError = false;
+        }
+    }
 
     /**
      * Extract data from the input.
@@ -57,8 +83,13 @@ class Csv extends Extractor
         }
 
         $columns = $this->makeColumns($handle);
+        $this->currentRow = 1;
+
+        $this->validateFilteredColumns(count($columns));
 
         while ($row = fgetcsv($handle, 0, $this->delimiter, $this->enclosure)) {
+            $this->currentRow++;
+
             yield new Row($this->makeRow($row, $columns));
         }
 
@@ -69,13 +100,25 @@ class Csv extends Extractor
      * Converts the row string to array.
      *
      * @param string[] $row
-     * @param string[] $columns
+     * @param int[]    $columns
      */
     protected function makeRow(array $row, array $columns): array
     {
         $data = [];
 
+        $rowColumnsCount = count($row);
+        $columnsCount = is_array($this->columns) ? count($this->columns) : count($columns);
+
+        if (true === $this->throwError && $rowColumnsCount < $columnsCount) {
+            $message = "Row with index #{$this->currentRow} only contains $rowColumnsCount "
+                . "elements while $columnsCount were expected.";
+            throw new InvalidInputException($message);
+        }
+
         foreach ($columns as $column => $index) {
+            if ($this->throwError && false === array_key_exists($index - 1, $row)) {
+                throw new InvalidInputException("Row with index #{$this->currentRow} does not have the '{$column}' field.");
+            }
             $data[$column] = $row[$index - 1];
         }
 
@@ -114,5 +157,18 @@ class Csv extends Extractor
         }
 
         return $result;
+    }
+
+    protected function validateFilteredColumns(int $columnsCount): void
+    {
+        if (true === is_array($this->columns) && [] !== $this->columns) {
+            $askedColumnsCount = count($this->columns);
+
+            if (true === $this->throwError && $askedColumnsCount > $columnsCount) {
+                $message = "Asked columns quantity ($askedColumnsCount) is higher than the one really "
+                    . "available ($columnsCount)";
+                throw new InvalidInputException($message);
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Tests\Extractors;
 
 use Tests\TestCase;
+use Wizaplace\Etl\Exception\InvalidInputException;
 use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Extractors\Csv;
 use Wizaplace\Etl\Row;
@@ -66,6 +67,116 @@ class CsvTest extends TestCase
     }
 
     /** @test */
+    public function filtering_columns_with_more_asked_columns_than_really_available()
+    {
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/csv1.csv');
+
+        // Without error handling (no BC). No message or error is expected.
+        $extractor->options(['columns' => ['id', 'email', 'foo', 'bar']]);
+        $data = [];
+        foreach ($extractor->extract() as $row) {
+            $data[] = $row;
+        }
+
+        // With error handling
+        $extractor->options(['columns' => ['id', 'email', 'foo', 'bar'], 'throwError' => true]);
+
+        try {
+            foreach ($extractor->extract() as $row) {
+                static::fail('Since we asked more columns than available, an exception was expected');
+            }
+        } catch (InvalidInputException $exception) {
+            static::assertEquals(
+                'Asked columns quantity (4) is higher than the one really available (2)',
+                $exception->getMessage()
+            );
+        }
+    }
+
+    /** @test */
+    public function filtering_columns_with_incomplete_line()
+    {
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
+
+        // Without error handling (no BC).
+        $extractor->options(['columns' => ['id', 'name', 'email']]);
+        try {
+            $count = 1;
+            foreach ($extractor->extract() as $row) {
+                if (3 === $count) {
+                    static::fail('Since we asked more columns than available, an exception was expected');
+                }
+                $count++;
+            }
+        } catch (\Throwable $exception) {
+            static::assertEquals(
+                'Undefined offset: 2',
+                $exception->getMessage()
+            );
+        }
+
+        // With error handling
+        $extractor->options(['columns' => ['id', 'name', 'email'], 'throwError' => true]);
+        try {
+            $count = 1;
+            foreach ($extractor->extract() as $row) {
+                if (3 === $count) {
+                    static::fail('Since we asked more columns than available, an exception was expected');
+                }
+                $count++;
+            }
+        } catch (InvalidInputException $exception) {
+            static::assertEquals(
+                'Row with index #4 only contains 2 elements while 3 were expected.',
+                $exception->getMessage()
+            );
+        }
+    }
+
+    /** @test */
+    public function filtering_columns_with_unavailable_field()
+    {
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
+
+        // Without error handling (no BC).
+        $extractor->options(['columns' => ['id', 'email']]);
+        try {
+            $count = 1;
+            foreach ($extractor->extract() as $row) {
+                if (3 === $count) {
+                    static::fail('Since we asked a field not available, an exception was expected');
+                }
+                $count++;
+            }
+        } catch (\Throwable $exception) {
+            static::assertEquals(
+                'Undefined offset: 2',
+                $exception->getMessage()
+            );
+        }
+
+        // With error handling
+        $extractor->options(['columns' => ['id', 'email'], 'throwError' => true]);
+        try {
+            $count = 1;
+            foreach ($extractor->extract() as $row) {
+                if (3 === $count) {
+                    static::fail('Since we asked a field not available, an exception was expected');
+                }
+                $count++;
+            }
+        } catch (InvalidInputException $exception) {
+            static::assertEquals(
+                "Row with index #4 does not have the 'email' field.",
+                $exception->getMessage()
+            );
+        }
+    }
+
+    /** @test */
     public function mapping_columns()
     {
         $expected = [
@@ -106,7 +217,7 @@ class CsvTest extends TestCase
                     'name' => 'John
 
 Doe',
-                    'email' => 'johndoe@email.com'
+                    'email' => 'johndoe@email.com',
                 ]
             ),
             new Row(
@@ -114,7 +225,7 @@ Doe',
                     'id' => '2',
                     'name' => 'Jane Doe',
                     'email' => 'mail:
-janedoe@email.com'
+janedoe@email.com',
                 ]
             ),
         ];

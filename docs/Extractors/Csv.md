@@ -61,3 +61,16 @@ Field enclosure character (one character only).
 ```php
 $options = ['enclosure' => '"'];
 ```
+
+### Throw error
+If the extractor need to throw an exception if it
+encounters any input issue during the data processing. Default value
+is set to false to keep backward compatibility.
+
+| Type | Default value |
+|----- | ------------- |
+| boolean | false |
+
+```php
+$options = ['throwError' => '"'];
+```

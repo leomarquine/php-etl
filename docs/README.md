@@ -18,5 +18,6 @@
 * [Loaders](Loaders/README.md)
     * [Insert](Loaders/Insert.md)
     * [Insert/Update](Loaders/InsertUpdate.md)
+    * [Csv](Loaders/CsvLoader.md)
 * [Helpers](Helpers.md)
 * [Running Processes](RunningProcesses.md)

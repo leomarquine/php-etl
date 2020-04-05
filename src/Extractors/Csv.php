@@ -41,7 +41,7 @@ class Csv extends Extractor
     /**
      * Throw error if invalid data. Set to false to keep backward compatibility with older versions.
      *
-     * @var bool
+     * @var bool|mixed
      */
     protected $throwError = false;
 

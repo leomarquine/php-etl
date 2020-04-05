@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Loaders;
 
-use Wizaplace\Etl\Database\Manager;
 use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Row;
 
@@ -18,50 +17,58 @@ class CsvLoader extends Loader
 {
     /**
      * Count how many lines have been loaded
+     *
      * @var int
      */
     protected $loaderCounter = 0;
 
     /**
      * Count how many files have been created
+     *
      * @var int
      */
     protected $fileCounter = 0;
 
     /**
      * CSV file handler
+     *
      * @var resource|bool
      */
     protected $fileHandler;
 
     /**
      * All available options for this loader
+     *
      * @var string[]
      */
     protected $availableOptions = [
-        'delimiter', 'enclosure', 'escapeChar', 'linePerFile'
+        'delimiter', 'enclosure', 'escapeChar', 'linePerFile',
     ];
 
     /**
      * The CSV delimiter string.
+     *
      * @var string
      */
     protected $delimiter = ';';
 
     /**
      * The CSV enclosure string.
+     *
      * @var string
      */
     protected $enclosure = '"';
 
     /**
      * The CSV escaping string.
+     *
      * @var string
      */
     protected $escapeChar = '\\';
 
     /**
      * Max lines per file
+     *
      * @var int
      */
     protected $linePerFile = -1;
@@ -133,8 +140,7 @@ class CsvLoader extends Loader
      */
     protected function putCsv(array $data): void
     {
-        fputcsv
-        (
+        fputcsv(
             $this->fileHandler,
             $data,
             $this->delimiter,

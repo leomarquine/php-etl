@@ -32,9 +32,11 @@ class MySqlConnector extends Connector
      */
     protected function getDsn(array $config): string
     {
-        extract($config, EXTR_SKIP);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if, empty, are here to clean the legacy code before the fork. See the git history.
+        $host = array_key_exists('host', $config) ? $config['host'] : null;
+        $unix_socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
+        $port = array_key_exists('port', $config) ? $config['port'] : null;
+        $database = array_key_exists('database', $config) ? $config['database'] : null;
 
         $dsn = [];
 
@@ -42,15 +44,15 @@ class MySqlConnector extends Connector
             $dsn['unix_socket'] = $unix_socket;
         }
 
-        if (isset($host) && empty($unix_socket)) {
+        if (!empty($host) && empty($unix_socket)) {
             $dsn['host'] = $host;
         }
 
-        if (isset($port) && empty($unix_socket)) {
+        if (!empty($port) && empty($unix_socket)) {
             $dsn['port'] = $port;
         }
 
-        if (isset($database)) {
+        if (!empty($database)) {
             $dsn['dbname'] = $database;
         }
 
@@ -62,25 +64,27 @@ class MySqlConnector extends Connector
      */
     protected function afterConnection(\PDO $connection, array $config): void
     {
-        extract($config, EXTR_SKIP);
+        // All these if are here to clean the legacy code before the fork. See the git history.
+        $database = array_key_exists('database', $config) ? $config['database'] : null;
+        $charset = array_key_exists('charset', $config) ? $config['charset'] : null;
+        $collation = array_key_exists('collation', $config) ? $config['collation'] : null;
+        $timezone = array_key_exists('timezone', $config) ? $config['timezone'] : null;
 
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
-
-        if (isset($database)) {
+        if (!empty($database)) {
             $connection->exec("use `$database`");
         }
 
-        if (isset($charset)) {
+        if (!empty($charset)) {
             $statement = "set names '$charset'";
 
-            if (isset($collation)) {
+            if (!empty($collation)) {
                 $statement .= " collate '$collation'";
             }
 
             $connection->prepare($statement)->execute();
         }
 
-        if (isset($timezone)) {
+        if (!empty($timezone)) {
             $connection->prepare("set time_zone = '$timezone'")->execute();
         }
     }

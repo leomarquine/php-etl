@@ -34,21 +34,22 @@ class PostgresConnector extends Connector
      */
     protected function getDsn(array $config)
     {
-        extract($config, EXTR_SKIP);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if are here to clean the legacy code before the fork. See the git history.
+        $host = array_key_exists('host', $config) ? $config['host'] : null;
+        $port = array_key_exists('port', $config) ? $config['port'] : null;
+        $database = array_key_exists('database', $config) ? $config['database'] : null;
 
         $dsn = [];
 
-        if (isset($host)) {
+        if (!empty($host)) {
             $dsn['host'] = $host;
         }
 
-        if (isset($port)) {
+        if (!empty($port)) {
             $dsn['port'] = $port;
         }
 
-        if (isset($database)) {
+        if (!empty($database)) {
             $dsn['dbname'] = $database;
         }
 
@@ -62,25 +63,27 @@ class PostgresConnector extends Connector
      */
     protected function afterConnection(\PDO $connection, array $config)
     {
-        extract($config, EXTR_SKIP);
+        // All these if are here to clean the legacy code before the fork. See the git history.
+        $charset = array_key_exists('charset', $config) ? $config['charset'] : null;
+        $timezone = array_key_exists('timezone', $config) ? $config['timezone'] : null;
+        $schema = array_key_exists('schema', $config) ? $config['schema'] : null;
+        $application_name = array_key_exists('application_name', $config) ? $config['application_name'] : null;
 
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
-
-        if (isset($charset)) {
+        if (!empty($charset)) {
             $connection->prepare("set names '$charset'")->execute();
         }
 
-        if (isset($timezone)) {
+        if (!empty($timezone)) {
             $connection->prepare("set time zone '$timezone'")->execute();
         }
 
-        if (isset($schema)) {
+        if (!empty($schema)) {
             $schema = $this->formatSchema($schema);
 
             $connection->prepare("set search_path to $schema")->execute();
         }
 
-        if (isset($application_name)) {
+        if (!empty($application_name)) {
             $connection->prepare("set application_name to '$application_name'")->execute();
         }
     }

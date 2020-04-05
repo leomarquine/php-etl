@@ -34,21 +34,23 @@ class SqlServerConnector extends Connector
      */
     protected function getDsn(array $config)
     {
-        extract($config, EXTR_SKIP);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if, empty, are here to clean the legacy code before the fork. See the git history.
+        $host = array_key_exists('host', $config) ? $config['host'] : null;
+        $port = array_key_exists('port', $config) ? $config['port'] : null;
+        $database = array_key_exists('database', $config) ? $config['database'] : null;
+        $unix_socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
 
         $dsn = [];
 
-        if (isset($host) && !isset($unix_socket)) {
+        if (!empty($host) && empty($unix_socket)) {
             $dsn['host'] = $host;
         }
 
-        if (isset($port) && !isset($unix_socket)) {
+        if (!empty($port) && empty($unix_socket)) {
             $dsn['port'] = $port;
         }
 
-        if (isset($database)) {
+        if (!empty($database)) {
             $dsn['dbname'] = $database;
         }
 
@@ -62,11 +64,10 @@ class SqlServerConnector extends Connector
      */
     protected function afterConnection(\PDO $connection, array $config)
     {
-        extract($config, EXTR_SKIP);
+        // This if, are here to clean the legacy code before the fork. See the git history.
+        $database = array_key_exists('database', $config) ? $config['database'] : null;
 
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
-
-        if (isset($database)) {
+        if (!empty($database)) {
             $connection->exec("USE $database");
         }
     }

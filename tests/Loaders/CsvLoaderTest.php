@@ -12,11 +12,9 @@ declare(strict_types=1);
 namespace Tests\Loaders;
 
 use Tests\TestCase;
-use Wizaplace\Etl\Etl;
 use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Extractors\Csv;
 use Wizaplace\Etl\Loaders\CsvLoader;
-use Wizaplace\Etl\Loaders\Insert;
 use Wizaplace\Etl\Row;
 
 class CsvLoaderTest extends TestCase
@@ -49,8 +47,8 @@ class CsvLoaderTest extends TestCase
      */
     public function testLoadCsvNoOption(): void
     {
-        $row1 = $this->productRowFactory('Table',10.5,'A simple table');
-        $row2 = $this->productRowFactory('Chair',305.75,'A \"deluxe chair\". You need it!');
+        $row1 = $this->productRowFactory('Table', 10.5, 'A simple table');
+        $row2 = $this->productRowFactory('Chair', 305.75, 'A \"deluxe chair\". You need it!');
 
         $this->csvLoader->load($row1);
         $this->csvLoader->load($row2);
@@ -74,8 +72,8 @@ class CsvLoaderTest extends TestCase
      */
     public function testLoadCsvCustomOptions(): void
     {
-        $row1 = $this->productRowFactory('Table',10.5,'A simple table');
-        $row2 = $this->productRowFactory('Chair',305.75,'A #|deluxe chair#|. You need it!');
+        $row1 = $this->productRowFactory('Table', 10.5, 'A simple table');
+        $row2 = $this->productRowFactory('Chair', 305.75, 'A #|deluxe chair#|. You need it!');
 
         // Custom options
         $this->csvLoader->options(['delimiter' => ',', 'enclosure' => '|', 'escapeChar' => '#']);
@@ -96,15 +94,14 @@ class CsvLoaderTest extends TestCase
         static::assertEquals('Chair,305.75,|A #|deluxe chair#|. You need it!|', trim($line));
     }
 
-
     /**
      * Test CSV loading with 3 rows and 1 row per file
      */
     public function testLoadCsvMultipleFiles(): void
     {
-        $row1 = $this->productRowFactory('Table',10.5,'A simple table');
-        $row2 = $this->productRowFactory('Chair',305.75,'A "deluxe chair". You need it!');
-        $row3 = $this->productRowFactory('Desk',12.2,'Basic, really boring.');
+        $row1 = $this->productRowFactory('Table', 10.5, 'A simple table');
+        $row2 = $this->productRowFactory('Chair', 305.75, 'A "deluxe chair". You need it!');
+        $row3 = $this->productRowFactory('Desk', 12.2, 'Basic, really boring.');
 
         // 1 line per file
         $this->csvLoader->options(['linePerFile' => 1]);
@@ -116,7 +113,7 @@ class CsvLoaderTest extends TestCase
         $expectedResults = [
             'Table;10.5;"A simple table"',
             'Chair;305.75;"A ""deluxe chair"". You need it!"',
-            'Desk;12.2;"Basic, really boring."'
+            'Desk;12.2;"Basic, really boring."',
         ];
 
         // We should have 3 files

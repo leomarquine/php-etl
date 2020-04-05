@@ -216,9 +216,11 @@ class Query
      */
     protected function compileWhere(array $where)
     {
-        extract($where);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if, empty, are here to clean the legacy code before the fork. See the git history.
+        $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
+        $column = array_key_exists('column', $where) ? $where['column'] : null;
+        $operator = array_key_exists('operator', $where) ? $where['operator'] : null;
+        $value = array_key_exists('value', $where) ? $where['value'] : null;
 
         $this->bindings[] = $value;
 
@@ -232,9 +234,11 @@ class Query
      */
     protected function compileWhereIn(array $where)
     {
-        extract($where);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if, empty, are here to clean the legacy code before the fork. See the git history.
+        $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
+        $column = array_key_exists('column', $where) ? $where['column'] : null;
+        $operator = array_key_exists('operator', $where) ? $where['operator'] : null;
+        $values = array_key_exists('values', $where) ? $where['values'] : null;
 
         $this->bindings = array_merge($this->bindings, $values);
 
@@ -250,9 +254,11 @@ class Query
      */
     protected function compileCompositeWhereIn(array $where)
     {
-        extract($where);
-
-        // @TODO refactor this code as the use of extract() is a bad practice, prone to create bugs
+        // All these if, empty, are here to clean the legacy code before the fork. See the git history.
+        $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
+        $columns = array_key_exists('columns', $where) ? $where['columns'] : null;
+        $operator = array_key_exists('operator', $where) ? $where['operator'] : null;
+        $values = array_key_exists('values', $where) ? $where['values'] : null;
 
         sort($columns);
 

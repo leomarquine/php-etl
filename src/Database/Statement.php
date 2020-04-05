@@ -165,7 +165,10 @@ class Statement
      */
     protected function compileWhere(array $where)
     {
-        extract($where);
+        // This code is here to remove the use of the extract() method in the original repo. See the git history.
+        $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
+        $column = array_key_exists('column', $where) ? $where['column'] : null;
+        $operator = array_key_exists('operator', $where) ? $where['operator'] : null;
 
         return "$boolean $column $operator :$column";
     }

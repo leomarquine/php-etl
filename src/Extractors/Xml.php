@@ -18,7 +18,7 @@ class Xml extends Extractor
     /**
      * Extractor columns.
      *
-     * @var array
+     * @var array|null
      */
     protected $columns;
 
@@ -64,7 +64,7 @@ class Xml extends Extractor
      */
     public function extract(): \Generator
     {
-        if ($this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             foreach ($this->columns as &$value) {
                 $value = $this->loop . $value;
             }
@@ -220,12 +220,12 @@ class Xml extends Extractor
             return;
         }
 
-        if (empty($this->columns)) {
+        if (false === is_array($this->columns) || [] === $this->columns) {
             $column = ltrim(strrchr($this->path, '/'), '/@');
         }
 
-        if (in_array($this->path, (array) $this->columns)) {
-            $column = array_search($this->path, $this->columns);
+        if (in_array($this->path, (array) $this->columns, true)) {
+            $column = array_search($this->path, $this->columns, true);
         }
 
         if (isset($column)) {

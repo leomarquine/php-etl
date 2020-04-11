@@ -33,7 +33,7 @@ class InsertUpdate extends Loader
     /**
      * The columns to insert/update.
      *
-     * @var string[]
+     * @var string[]|null
      */
     protected $columns;
 
@@ -132,7 +132,10 @@ class InsertUpdate extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+        if (
+            is_array($this->columns) && [] !== $this->columns
+            && array_keys($this->columns) === range(0, count($this->columns) - 1)
+        ) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
@@ -145,7 +148,7 @@ class InsertUpdate extends Loader
         $row = $row->toArray();
 
         if ($this->transaction) {
-            $this->transactionManager->run(function () use ($row) {
+            $this->transactionManager->run(function () use ($row): void {
                 $this->execute($row);
             });
         } else {
@@ -178,7 +181,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareInsert(array $sample): void
     {
-        if ($this->columns) {
+        if (is_array($this->columns) ?? [] !== $this->columns) {
             $columns = array_values($this->columns);
         } else {
             $columns = array_keys($sample);
@@ -198,7 +201,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareUpdate(array $sample): void
     {
-        if ($this->columns) {
+        if (is_array($this->columns) ?? [] !== $this->columns) {
             $columns = array_values(array_diff($this->columns, $this->key));
         } else {
             $columns = array_keys(array_diff_key($sample, array_flip($this->key)));
@@ -222,7 +225,7 @@ class InsertUpdate extends Loader
             $this->prepareSelect();
         }
 
-        if ($this->columns) {
+        if (is_array($this->columns) ?? [] !== $this->columns) {
             $mapped_columns_arr = [];
             $key_columns = array_intersect($this->columns, $this->key);
 
@@ -234,7 +237,7 @@ class InsertUpdate extends Loader
             $this->select->execute(array_intersect_key($row, array_flip($this->key)));
         }
 
-        if ($this->columns) {
+        if (is_array($this->columns) ?? [] !== $this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {
@@ -244,7 +247,8 @@ class InsertUpdate extends Loader
             $row = $result;
         }
 
-        if ($current = $this->select->fetch()) {
+        $current = $this->select->fetch();
+        if (false !== $current) {
             $this->update($row, $current);
         } else {
             $this->insert($row);

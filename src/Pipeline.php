@@ -27,7 +27,7 @@ class Pipeline implements \Iterator
     /**
      * The maximum number of rows.
      *
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
@@ -180,7 +180,7 @@ class Pipeline implements \Iterator
      */
     protected function limitReached(): bool
     {
-        return $this->limit && $this->key() === $this->limit;
+        return is_int($this->limit) && $this->key() === $this->limit;
     }
 
     /**

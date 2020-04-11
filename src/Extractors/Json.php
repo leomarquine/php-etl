@@ -19,7 +19,7 @@ class Json extends Extractor
     /**
      * Extractor columns.
      *
-     * @var array
+     * @var array|null
      */
     protected $columns;
 
@@ -39,7 +39,7 @@ class Json extends Extractor
     {
         $data = json_decode(file_get_contents($this->input), true);
 
-        if ($this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $jsonPath = new JSONPath($data);
 
             foreach ($this->columns as $key => $path) {

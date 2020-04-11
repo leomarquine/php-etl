@@ -192,7 +192,7 @@ class Query
      */
     protected function compileWheres(): void
     {
-        if (empty($this->wheres)) {
+        if ([] === $this->wheres) {
             return;
         }
 
@@ -284,7 +284,7 @@ class Query
      */
     protected function implode(array $columns, string $mask = '{column}'): string
     {
-        $columns = array_map(function ($column) use ($mask) {
+        $columns = array_map(function ($column) use ($mask): string {
             return str_replace('{column}', $column, $mask);
         }, $columns);
 

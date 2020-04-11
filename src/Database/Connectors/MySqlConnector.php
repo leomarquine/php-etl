@@ -40,19 +40,19 @@ class MySqlConnector extends Connector
 
         $dsn = [];
 
-        if (!empty($unix_socket)) {
+        if (null !== $unix_socket) {
             $dsn['unix_socket'] = $unix_socket;
         }
 
-        if (!empty($host) && empty($unix_socket)) {
+        if (null !== $host && null == $unix_socket) {
             $dsn['host'] = $host;
         }
 
-        if (!empty($port) && empty($unix_socket)) {
+        if (null !== $port && null === $unix_socket) {
             $dsn['port'] = $port;
         }
 
-        if (!empty($database)) {
+        if (null !== $database) {
             $dsn['dbname'] = $database;
         }
 
@@ -70,21 +70,21 @@ class MySqlConnector extends Connector
         $collation = array_key_exists('collation', $config) ? $config['collation'] : null;
         $timezone = array_key_exists('timezone', $config) ? $config['timezone'] : null;
 
-        if (!empty($database)) {
+        if (null !== $database) {
             $connection->exec("use `$database`");
         }
 
-        if (!empty($charset)) {
+        if (null !== $charset) {
             $statement = "set names '$charset'";
 
-            if (!empty($collation)) {
+            if (null !== $collation) {
                 $statement .= " collate '$collation'";
             }
 
             $connection->prepare($statement)->execute();
         }
 
-        if (!empty($timezone)) {
+        if (null !== $timezone) {
             $connection->prepare("set time_zone = '$timezone'")->execute();
         }
     }

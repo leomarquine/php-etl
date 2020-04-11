@@ -1,6 +1,27 @@
+# WARNING: DO NOT ADD ANY EXCLUSION. THE ONES ALREADY HERE ARE FOR THE LEGACY CODE.
 parameters:
     level: 6
     paths:
         - src
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        -
+            message: '~^Variable method call on ~'
+            path: src/Database/Query.php
+
+        -
+            message: '~^Variable method call on ~'
+            path: src/Database/Statement.php
+
+        -
+            message: '~^Variable method call on ~'
+            path: src/Etl.php
+
+        -
+            message: '~^Variable property access on ~'
+            path: src/Row.php
+
+        -
+            message: '~^Variable property access on ~'
+            path: src/Step.php

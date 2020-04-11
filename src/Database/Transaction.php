@@ -39,7 +39,7 @@ class Transaction
     /**
      * Commit size.
      *
-     * @var int
+     * @var int|null
      */
     protected $size;
 
@@ -96,7 +96,7 @@ class Transaction
      */
     protected function shouldBeginTransaction(): bool
     {
-        return !$this->open && (empty($this->size) || 1 === $this->count);
+        return !$this->open && (false === is_int($this->size) || 0 === $this->size || 1 === $this->count);
     }
 
     /**

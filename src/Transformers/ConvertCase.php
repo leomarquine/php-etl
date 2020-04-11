@@ -65,7 +65,7 @@ class ConvertCase extends Transformer
      */
     public function transform(Row $row): void
     {
-        $row->transform($this->columns, function ($column) {
+        $row->transform($this->columns, function ($column): string {
             return mb_convert_case($column, $this->conversionMode, $this->encoding);
         });
     }

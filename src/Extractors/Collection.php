@@ -18,7 +18,7 @@ class Collection extends Extractor
     /**
      * Extractor columns.
      *
-     * @var array
+     * @var array|null
      */
     protected $columns;
 
@@ -37,7 +37,7 @@ class Collection extends Extractor
     public function extract(): \Generator
     {
         foreach ($this->input as $row) {
-            if ($this->columns) {
+            if (is_array($this->columns)) {
                 $row = array_intersect_key($row, array_flip($this->columns));
             }
 

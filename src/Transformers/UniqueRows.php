@@ -75,7 +75,7 @@ class UniqueRows extends Transformer
     {
         $row = $row->toArray();
 
-        if (false === empty($this->columns)) {
+        if (null !== $this->columns) {
             $row = array_intersect_key($row, array_flip($this->columns));
         }
 
@@ -89,7 +89,7 @@ class UniqueRows extends Transformer
      */
     protected function isDuplicate($subject): bool
     {
-        return $this->consecutive ? $subject === $this->control : in_array($subject, $this->hashTable);
+        return $this->consecutive ? $subject === $this->control : in_array($subject, $this->hashTable, true);
     }
 
     /**

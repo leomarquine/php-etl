@@ -32,7 +32,7 @@ abstract class Step
         foreach ($options as $option => $value) {
             $option = lcfirst(implode('', array_map('ucfirst', explode('_', $option))));
 
-            if (in_array($option, $this->availableOptions)) {
+            if (in_array($option, $this->availableOptions, true)) {
                 $this->$option = $value;
             }
         }

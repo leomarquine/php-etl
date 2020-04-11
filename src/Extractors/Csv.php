@@ -116,7 +116,8 @@ class Csv extends Extractor
         }
 
         foreach ($columns as $column => $index) {
-            if ($this->throwError && false === array_key_exists($index - 1, $row)) {
+            // The is bool is redundant, it is necessary because of PHP Stan, since we check the type in initialize()
+            if ((bool) $this->throwError && false === array_key_exists($index - 1, $row)) {
                 throw new InvalidInputException("Row with index #{$this->currentRow} does not have the '{$column}' field.");
             }
             $data[$column] = $row[$index - 1];
@@ -142,7 +143,7 @@ class Csv extends Extractor
             $columns[$key] = $index + 1;
         }
 
-        if (empty($this->columns)) {
+        if (false === is_array($this->columns) || [] === $this->columns) {
             return $columns;
         }
 

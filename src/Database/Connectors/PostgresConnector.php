@@ -41,15 +41,15 @@ class PostgresConnector extends Connector
 
         $dsn = [];
 
-        if (!empty($host)) {
+        if (null !== $host) {
             $dsn['host'] = $host;
         }
 
-        if (!empty($port)) {
+        if (null !== $port) {
             $dsn['port'] = $port;
         }
 
-        if (!empty($database)) {
+        if (null !== $database) {
             $dsn['dbname'] = $database;
         }
 
@@ -69,21 +69,21 @@ class PostgresConnector extends Connector
         $schema = array_key_exists('schema', $config) ? $config['schema'] : null;
         $application_name = array_key_exists('application_name', $config) ? $config['application_name'] : null;
 
-        if (!empty($charset)) {
+        if (null !== $charset) {
             $connection->prepare("set names '$charset'")->execute();
         }
 
-        if (!empty($timezone)) {
+        if (null !== $timezone) {
             $connection->prepare("set time zone '$timezone'")->execute();
         }
 
-        if (!empty($schema)) {
+        if (null !== $schema) {
             $schema = $this->formatSchema($schema);
 
             $connection->prepare("set search_path to $schema")->execute();
         }
 
-        if (!empty($application_name)) {
+        if (null !== $application_name) {
             $connection->prepare("set application_name to '$application_name'")->execute();
         }
     }

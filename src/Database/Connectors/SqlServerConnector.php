@@ -42,15 +42,15 @@ class SqlServerConnector extends Connector
 
         $dsn = [];
 
-        if (!empty($host) && empty($unix_socket)) {
+        if (null !== $host && null === $unix_socket) {
             $dsn['host'] = $host;
         }
 
-        if (!empty($port) && empty($unix_socket)) {
+        if (null !== $port && null === $unix_socket) {
             $dsn['port'] = $port;
         }
 
-        if (!empty($database)) {
+        if (null !== $database) {
             $dsn['dbname'] = $database;
         }
 
@@ -67,7 +67,7 @@ class SqlServerConnector extends Connector
         // This if, are here to clean the legacy code before the fork. See the git history.
         $database = array_key_exists('database', $config) ? $config['database'] : null;
 
-        if (!empty($database)) {
+        if (null !== $database) {
             $connection->exec("USE $database");
         }
     }

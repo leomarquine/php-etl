@@ -26,7 +26,7 @@ class Insert extends Loader
     /**
      * The columns to insert.
      *
-     * @var array
+     * @var array|null
      */
     protected $columns;
 
@@ -111,7 +111,10 @@ class Insert extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (!empty($this->columns) && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
+        if (
+            is_array($this->columns) && [] !== $this->columns
+            && array_keys($this->columns) === range(0, count($this->columns) - 1)
+        ) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
@@ -124,7 +127,7 @@ class Insert extends Loader
         $row = $row->toArray();
 
         if ($this->transaction) {
-            $this->transactionManager->run(function () use ($row) {
+            $this->transactionManager->run(function () use ($row): void {
                 $this->insert($row);
             });
         } else {
@@ -147,7 +150,7 @@ class Insert extends Loader
      */
     protected function prepareInsert(array $sample): void
     {
-        if ($this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $columns = array_values($this->columns);
         } else {
             $columns = array_keys($sample);
@@ -169,7 +172,7 @@ class Insert extends Loader
             $this->prepareInsert($row);
         }
 
-        if ($this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {

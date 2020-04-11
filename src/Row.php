@@ -79,7 +79,7 @@ class Row implements \ArrayAccess
      */
     public function transform(array $columns, callable $callback): void
     {
-        if (empty($columns)) {
+        if ([] === $columns) {
             $columns = array_keys($this->attributes);
         }
 

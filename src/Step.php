@@ -23,7 +23,7 @@ abstract class Step
     /**
      * Set the step options.
      *
-     * @param string[]|int[] $options
+     * @param string[]|int[]|bool[] $options
      *
      * @return $this
      */

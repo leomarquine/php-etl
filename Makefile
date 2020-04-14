@@ -2,6 +2,7 @@ phpcs:
 	vendor/bin/phpcs
 
 phpstan:
+	vendor/bin/phpstan clear-result-cache
 	vendor/bin/phpstan analyse
 
 phpcsfixer:

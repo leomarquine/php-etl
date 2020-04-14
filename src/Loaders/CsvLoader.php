@@ -12,9 +12,12 @@ namespace Wizaplace\Etl\Loaders;
 
 use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Row;
+use Wizaplace\Etl\Traits\FilePathTrait;
 
 class CsvLoader extends Loader
 {
+    use FilePathTrait;
+
     /**
      * Count how many lines have been loaded
      *
@@ -76,6 +79,8 @@ class CsvLoader extends Loader
     public function initialize(): void
     {
         $fileUri = $this->output . '_' . $this->fileCounter . '.csv';
+        $this->checkOrCreateDir($fileUri);
+
         $this->fileHandler = @fopen($fileUri, 'w+');
 
         if (false === $this->fileHandler) {

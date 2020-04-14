@@ -30,19 +30,10 @@ class CsvLoaderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->outputPath = tempnam('/tmp', 'testOutput');
+        $this->outputPath = tempnam('/tmp', 'phpunit_');
 
         $this->csvLoader = new CsvLoader();
         $this->csvLoader->output($this->outputPath);
-        $this->csvLoader->initialize();
-    }
-
-    public function testLoadCsvWrongPath(): void
-    {
-        static::expectException(IoException::class);
-
-        $this->csvLoader = new CsvLoader();
-        $this->csvLoader->output('unknown_path/unknown_file');
         $this->csvLoader->initialize();
     }
 

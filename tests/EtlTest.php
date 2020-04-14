@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Wizaplace\Etl\Etl;
+use Wizaplace\Etl\Row;
 
 class EtlTest extends TestCase
 {
@@ -76,13 +77,16 @@ class EtlTest extends TestCase
     public function get_an_array_of_the_etl_data()
     {
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);
-        $pipeline->expects($this->exactly(2))->method('key')->willReturnOnConsecutiveCalls(0, 1);
-        $pipeline->expects($this->exactly(2))->method('current')->willReturnOnConsecutiveCalls(['row1'], ['row2']);
-        $pipeline->expects($this->exactly(2))->method('next');
+        $pipeline->expects($this->exactly(4))->method('valid')->willReturnOnConsecutiveCalls(true, true, true, false);
+        $pipeline->expects($this->exactly(3))->method('current')->willReturnOnConsecutiveCalls(
+            new Row(['row1']),
+            (new Row(['row2']))->discard(),
+            new Row(['row3'])
+        );
+        $pipeline->expects($this->exactly(3))->method('next');
 
         $etl = new Etl($pipeline);
 
-        static::assertEquals([['row1'], ['row2']], $etl->toArray());
+        static::assertEquals([['row1'], ['row3']], $etl->toArray());
     }
 }

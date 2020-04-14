@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Wizaplace\Etl\Pipeline;
+use Wizaplace\Etl\Row;
 
 class PipelineTest extends TestCase
 {
@@ -69,7 +70,10 @@ class PipelineTest extends TestCase
         $this->pipeline->pipe($this->transformer);
         $this->pipeline->pipe($this->loader);
 
-        static::assertEquals([['row1'], ['row2'], ['row3']], iterator_to_array($this->pipeline));
+        static::assertEquals(
+            [['row1'], ['row2'], ['row3']],
+            $this->pipelineToArray($this->pipeline)
+        );
     }
 
     /** @test */
@@ -77,7 +81,7 @@ class PipelineTest extends TestCase
     {
         $this->pipeline->limit(1);
 
-        static::assertEquals([['row1']], iterator_to_array($this->pipeline));
+        static::assertEquals([['row1']], $this->pipelineToArray($this->pipeline));
     }
 
     /** @test */
@@ -85,11 +89,11 @@ class PipelineTest extends TestCase
     {
         $this->pipeline->skip(2);
 
-        static::assertEquals([['row3']], iterator_to_array($this->pipeline));
+        static::assertEquals([['row3']], $this->pipelineToArray($this->pipeline));
 
         $this->pipeline->skip(3);
 
-        static::assertEquals([], iterator_to_array($this->pipeline));
+        static::assertEquals([], $this->pipelineToArray($this->pipeline));
     }
 
     /** @test */
@@ -98,7 +102,7 @@ class PipelineTest extends TestCase
         $this->pipeline->skip(1);
         $this->pipeline->limit(1);
 
-        static::assertEquals([['row2']], iterator_to_array($this->pipeline));
+        static::assertEquals([['row2']], $this->pipelineToArray($this->pipeline));
     }
 
     /** @test */
@@ -112,6 +116,16 @@ class PipelineTest extends TestCase
         $this->transformer->expects($this->exactly(2))->method('transform');
         $this->loader->expects($this->exactly(2))->method('load');
 
-        static::assertEquals([['row1'], ['row3']], iterator_to_array($this->pipeline));
+        static::assertEquals([['row1'], ['row3']], $this->pipelineToArray($this->pipeline));
+    }
+
+    protected function pipelineToArray(Pipeline $pipeline): array
+    {
+        return array_map(
+            function (Row $row): array {
+                return $row->toArray();
+            },
+            iterator_to_array($pipeline)
+        );
     }
 }

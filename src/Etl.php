@@ -107,7 +107,24 @@ class Etl
      */
     public function toArray(): array
     {
-        return iterator_to_array($this->pipeline);
+        return iterator_to_array(
+            $this->toIterator()
+        );
+    }
+
+    /**
+     * Consume the pipeline as a Generator
+     *
+     * @return \Generator<array>
+     */
+    public function toIterator(): \Generator
+    {
+        /** @var Row $row */
+        foreach ($this->pipeline as $row) {
+            if (!$row->discarded()) {
+                yield $row->toArray();
+            }
+        }
     }
 
     /**

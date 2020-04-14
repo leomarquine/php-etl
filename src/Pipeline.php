@@ -102,12 +102,10 @@ class Pipeline implements \Iterator
 
     /**
      * Get the current element.
-     *
-     * @return string[]|int[]
      */
-    public function current(): array
+    public function current(): Row
     {
-        return $this->current->toArray();
+        return $this->current;
     }
 
     /**

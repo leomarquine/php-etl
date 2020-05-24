@@ -166,6 +166,23 @@ class Query
     }
 
     /**
+     * Where statement.
+     *
+     * @param  array  $columns
+     * @return $this
+     */
+    public function whereOp($columns)
+    {
+        foreach ($columns as $column => $compare) {
+            $this->wheres[] = [
+                'type' => 'Where', 'column' => $column, 'value' => $compare['value'], 'operator' => $compare['operator'], 'boolean' => 'and',
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
      * Where In statement.
      *
      * @param  array|string  $column

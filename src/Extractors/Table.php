@@ -29,6 +29,13 @@ class Table extends Extractor
     protected $where = [];
 
     /**
+     * The array of where clause.
+     *
+     * @var array
+     */
+    protected $whereOp = [];
+
+    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager
@@ -41,7 +48,7 @@ class Table extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'connection', 'where'
+        'columns', 'connection', 'where', 'whereOp'
     ];
 
     /**
@@ -66,6 +73,7 @@ class Table extends Extractor
             ->query($this->connection)
             ->select($this->input, $this->columns)
             ->where($this->where)
+            ->whereOp($this->whereOp)
             ->execute();
 
         while ($row = $statement->fetch()) {

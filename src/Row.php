@@ -28,6 +28,13 @@ class Row implements \ArrayAccess
     protected $discarded = false;
 
     /**
+     * Flag the row as incomplete
+     *
+     * @var bool
+     */
+    protected $incomplete = false;
+
+    /**
      * Create a new Row instance.
      *
      * @param string[] $attributes
@@ -114,6 +121,24 @@ class Row implements \ArrayAccess
     public function discarded(): bool
     {
         return $this->discarded;
+    }
+
+    /**
+     * Set the row dirty
+     */
+    public function setIncomplete(): self
+    {
+        $this->incomplete = true;
+
+        return $this;
+    }
+
+    /**
+     * Check if the is dirty
+     */
+    public function isIncomplete(): bool
+    {
+        return $this->incomplete;
     }
 
     /**

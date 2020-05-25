@@ -113,7 +113,7 @@ class Etl
     }
 
     /**
-     * Consume the pipeline as a Generator
+     * Consume the pipeline as a Generator.
      *
      * @return \Generator<array>
      */

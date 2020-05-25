@@ -4,12 +4,14 @@
 
 Extract, Transform and Load data using PHP.
 
+![ETL](docs/img/etl.svg)
+
 ## Changelog
 See the changelog [here](changelog.MD)
 
 ## Installation
 In your application's folder, run:
-```
+```shell
 composer require wizaplace/php-etl
 ```
 

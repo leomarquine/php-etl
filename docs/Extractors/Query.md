@@ -7,10 +7,10 @@ Extracts data from a database table using a custom SQL query.
 $etl->extract($query, 'select * from users', $options);
 ```
 
-
 ## Options
 
 ### Connection
+
 Name of the database connection to use.
 
 | Type | Default value |
@@ -22,6 +22,7 @@ $options = ['connection' => 'app'];
 ```
 
 ### Bindings
+
 Values to bind to the query statement.
 
 | Type | Default value |
@@ -29,11 +30,13 @@ Values to bind to the query statement.
 | array | `[]` |
 
 Using prepared statement with named placeholders `select * from users where status = :status`:
+
 ```php
 $options = ['bindings' => ['status' => 'active']];
 ```
 
 Using prepared statement with question mark placeholders `select * from users where status = ?`:
+
 ```php
 $options = ['bindings' => ['active']];
 ```

@@ -7,17 +7,18 @@ Extracts data from a text file with fields delimited by a fixed number of charac
 $etl->extract($fixedWidth, 'path/to/file.txt', $options);
 ```
 
-
 ## Options
 
 ### Columns (required)
+
 Columns that will be extracted.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `null` |
+| Type  | Default value |
+|-------|---------------|
+| array | `null`        |
 
 Associative array where the `key` is the name of the column and the `value` is an array containing the start position and the length of the column;
+
 ```php
 $options = ['columns' => [
     'id' => [0, 5], // Start position is 0 and length is 5.

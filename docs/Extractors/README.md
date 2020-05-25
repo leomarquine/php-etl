@@ -7,9 +7,9 @@ Extractors are the entry point of any process. To start a process, you must set 
 $etl->extract($type, $source, $options);
 ```
 
-
 ## Available extractors types
 
+* [Aggregator](Aggregator.md)
 * [Collection](Collection.md)
 * [CSV](Csv.md)
 * [Fixed Width](FixedWidth.md)

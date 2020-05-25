@@ -1,6 +1,7 @@
 * [Introduction](Introduction.md)
 * [Getting Started](GettingStarted.md)
 * [Extractors](Extractors/README.md)
+    * [Aggregator](Extractors/Aggregator.md)
     * [Collection](Extractors/Collection.md)
     * [CSV](Extractors/Csv.md)
     * [Fixed Width](Extractors/FixedWidth.md)

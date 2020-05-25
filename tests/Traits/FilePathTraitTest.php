@@ -22,8 +22,7 @@ class FilePathTraitTest extends TestCase
 
     public function setUp(): void
     {
-        $this->fakeLoader = new class ()
-        {
+        $this->fakeLoader = new class() {
             use FilePathTrait;
 
             public function input(string $filePath)
@@ -46,29 +45,6 @@ class FilePathTraitTest extends TestCase
     public function illegal_path_trigger_exception()
     {
         $filePath = '/dev/random/illegal/path';
-
-        static::expectException(IoException::class);
-        static::expectExceptionMessage(
-            sprintf(
-                'Cannot create path: %s',
-                dirname($filePath)
-            )
-        );
-
-        $this->fakeLoader->input($filePath);
-    }
-
-    /** @test */
-    public function unwritable_path_trigger_exception()
-    {
-        // make a forbidden folder
-        $basePath = '/tmp/forbidden';
-        if (is_dir($basePath)) {
-            rmdir($basePath); // remove if any previous
-        }
-        mkdir($basePath, 0000);
-
-        $filePath = "$basePath/stuff/file";
 
         static::expectException(IoException::class);
         static::expectExceptionMessage(

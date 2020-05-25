@@ -1,0 +1,181 @@
+version: '2.1'
+executors:
+  php7-2:
+    docker:
+      - image: php:7.2-alpine
+    working_directory: ~/repo
+  php7-3:
+    docker:
+      - image: php:7.3-alpine
+    working_directory: ~/repo
+  php7-4:
+    docker:
+      - image: php:7.4-alpine
+    working_directory: ~/repo
+
+jobs:
+  # The complete list : all in the minimum PHP version supported.
+  composer7-2:
+    executor: php7-2
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpcs7-2:
+    executor: php7-2
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpcs
+          command: vendor/bin/phpcs
+
+  phpcsfixer7-2:
+    executor: php7-2
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpcsfixer
+          command: vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes
+
+  phpstan7-2:
+    executor: php7-2
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpstan
+          command: vendor/bin/phpstan analyse
+
+  phpunit7-2:
+    executor: php7-2
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
+
+  # Now we repeat the basics for each PHP version. Composer + PHPUNIT
+  composer7-3:
+    executor: php7-3
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpunit7-3:
+    executor: php7-3
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
+
+  composer7-4:
+    executor: php7-4
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpunit7-4:
+    executor: php7-4
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
+
+workflows:
+  version: '2.1'
+  Code quality:
+    jobs:
+      - composer7-2
+      - composer7-3
+      - composer7-4
+      - phpcs7-2:
+          requires:
+            - composer7-2
+      - phpcsfixer7-2:
+          requires:
+            - composer7-2
+      - phpstan7-2:
+          requires:
+            - composer7-2
+      - phpunit7-2:
+          requires:
+            - composer7-2
+      - phpunit7-3:
+          requires:
+            - composer7-3
+      - phpunit7-4:
+          requires:
+            - composer7-4

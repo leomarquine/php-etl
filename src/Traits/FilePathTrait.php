@@ -5,7 +5,6 @@ declare(strict_types=1);
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
- * @copyright   Copyright (c) Leonardo Marquine
  * @license     MIT
  */
 
@@ -17,7 +16,7 @@ trait FilePathTrait
 {
     /**
      * Check if path dirname exist,
-     * recursivly create dir path if not
+     * recursively create dir path if not
      *
      * @throws IoException
      */
@@ -31,10 +30,7 @@ trait FilePathTrait
 
         $isCreated = @\mkdir($dirName, 0755, true);
         if (false === $isCreated) {
-            throw new IoException(
-                "Cannot create path: $dirName",
-                1
-            );
+            throw new IoException("Cannot create path: $dirName", 1);
         }
 
         return $isCreated;

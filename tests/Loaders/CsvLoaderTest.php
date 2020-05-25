@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Tests\Loaders;
 
 use Tests\TestCase;
-use Wizaplace\Etl\Exception\IoException;
 use Wizaplace\Etl\Loaders\CsvLoader;
 use Wizaplace\Etl\Row;
 

@@ -27,7 +27,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
-        "infection/infection": "^0.16.2",
+        "infection/infection": "^0.15.3",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^0.12.18",
         "phpstan/phpstan-deprecation-rules": "^0.12.2",

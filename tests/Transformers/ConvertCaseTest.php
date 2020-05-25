@@ -66,10 +66,18 @@ class ConvertCaseTest extends TestCase
     /** @test */
     public function titlecase()
     {
-        $expected = [
-            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'Janedoe@Email.com']),
-            new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'Johndoe@Email.com']),
-        ];
+        // @see https://www.php.net/manual/en/migration73.new-features.php
+        if (phpversion() < 7.3) {
+            $expected = [
+                new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'Janedoe@email.com']),
+                new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'Johndoe@email.com']),
+            ];
+        } else {
+            $expected = [
+                new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'Janedoe@Email.com']),
+                new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'Johndoe@Email.com']),
+            ];
+        }
 
         $transformer = new ConvertCase();
 

@@ -29,13 +29,6 @@ class Table extends Extractor
     protected $where = [];
 
     /**
-     * The array of where clause.
-     *
-     * @var array
-     */
-    protected $whereOp = [];
-
-    /**
      * The database manager.
      *
      * @var \Marquine\Etl\Database\Manager

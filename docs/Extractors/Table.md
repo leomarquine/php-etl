@@ -33,12 +33,17 @@ $options = ['connection' => 'app'];
 ```
 
 ### Where
-Array of conditions, where `key` equals `value`. If you need more flexibility in the the query creation, you may use the [Query extractor](Query.md).
+Array of conditions, where `key` equals `value` or `key` _comparesTo_ `value` (for =, <, <=, =>, >, or <>).
+ 
+If you need more flexibility in the the query creation, you may use the [Query extractor](Query.md).
 
 | Type | Default value |
 |----- | ------------- |
 | array | `[]` |
 
 ```php
-$options = ['where' => ['status' => 'active']];
+$options = ['where' => [
+    'status' => 'active',
+    'colName' => ['<', 'comparisonValue']],
+];
 ```

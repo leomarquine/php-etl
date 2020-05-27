@@ -48,7 +48,7 @@ class Table extends Extractor
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'connection', 'where', 'whereOp'
+        'columns', 'connection', 'where'
     ];
 
     /**
@@ -73,7 +73,6 @@ class Table extends Extractor
             ->query($this->connection)
             ->select($this->input, $this->columns)
             ->where($this->where)
-            ->whereOp($this->whereOp)
             ->execute();
 
         while ($row = $statement->fetch()) {

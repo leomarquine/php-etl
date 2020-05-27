@@ -33,6 +33,13 @@ class InsertUpdate extends Loader
      *
      * @var bool
      */
+    protected $doUpdates = true;
+
+    /**
+     * Indicates if the table has timestamps columns.
+     *
+     * @var bool
+     */
     protected $timestamps = false;
 
     /**
@@ -97,7 +104,7 @@ class InsertUpdate extends Loader
      * @var array
      */
     protected $availableOptions = [
-        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize'
+        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize', 'doUpdates'
     ];
 
     /**
@@ -229,16 +236,16 @@ class InsertUpdate extends Loader
             $this->prepareSelect();
         }
 
-	if ($this->columns) {
+	    if ($this->columns) {
             $mapped_columns_arr = array();
             $key_columns = array_intersect($this->columns, $this->key);
 
             foreach ($key_columns as $key => $column) {
                 $mapped_columns_arr[$column] = array_intersect_key($row, $key_columns)[$key];
-            };
+            }
             $this->select->execute($mapped_columns_arr);
         } else {        
-	    $this->select->execute(array_intersect_key($row, array_flip($this->key)));
+	        $this->select->execute(array_intersect_key($row, array_flip($this->key)));
         }
 
         if ($this->columns) {
@@ -252,7 +259,9 @@ class InsertUpdate extends Loader
         }
 
         if ($current = $this->select->fetch()) {
-            $this->update($row, $current);
+            if ($this->doUpdates) {
+                $this->update($row, $current);
+            }
         } else {
             $this->insert($row);
         }

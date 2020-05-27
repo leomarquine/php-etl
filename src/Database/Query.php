@@ -157,26 +157,15 @@ class Query
     public function where($columns)
     {
         foreach ($columns as $column => $value) {
-            $this->wheres[] = [
-                'type' => 'Where', 'column' => $column, 'value' => $value, 'operator' => '=', 'boolean' => 'and',
-            ];
-        }
-
-        return $this;
-    }
-
-    /**
-     * Where statement.
-     *
-     * @param  array  $columns
-     * @return $this
-     */
-    public function whereOp($columns)
-    {
-        foreach ($columns as $column => $compare) {
-            $this->wheres[] = [
-                'type' => 'Where', 'column' => $column, 'value' => $compare['value'], 'operator' => $compare['operator'], 'boolean' => 'and',
-            ];
+            $condition = ['type' => 'Where', 'column' => $column, 'boolean' => 'and'];
+            if (is_scalar($value)) {
+                $condition['operator'] = '=';
+                $condition['value'] = $value;
+            } else {
+                $condition['operator'] = $value[0];
+                $condition['value'] = $value[1];
+            }
+            $this->wheres[] = $condition;
         }
 
         return $this;

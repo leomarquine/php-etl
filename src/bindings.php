@@ -11,6 +11,7 @@ $container->alias(Marquine\Etl\Database\Manager::class, 'db');
 // Extractors
 $container->bind('collection_extractor', Marquine\Etl\Extractors\Collection::class);
 $container->bind('csv_extractor', Marquine\Etl\Extractors\Csv::class);
+$container->bind('date_dimension_extractor', Marquine\Etl\Extractors\DateDimension::class);
 $container->bind('fixed_width_extractor', Marquine\Etl\Extractors\FixedWidth::class);
 $container->bind('json_extractor', Marquine\Etl\Extractors\Json::class);
 $container->bind('query_extractor', Marquine\Etl\Extractors\Query::class);

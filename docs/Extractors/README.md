@@ -11,6 +11,7 @@ $etl->extract('type', $source, $options);
 
 * [Collection](Collection.md)
 * [CSV](Csv.md)
+* [Date Dimension](DateDimension.md)
 * [Fixed Width](FixedWidth.md)
 * [JSON](Json.md)
 * [Query](Query.md)

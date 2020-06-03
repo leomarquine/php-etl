@@ -48,8 +48,8 @@ class ChainingTest extends TestCase
                 new RenameColumns(),
                 [
                     'columns' => [
-                        'courriel' => 'email'
-                    ]
+                        'courriel' => 'email',
+                    ],
                 ]
             )
             ->transform(
@@ -75,9 +75,9 @@ class ChainingTest extends TestCase
                         'id',
                         'email',
                         'name',
-                        'age'
+                        'age',
                     ],
-                    'strict' => false
+                    'strict' => false,
                 ]
             )
             ->toIterator();
@@ -103,7 +103,7 @@ class ChainingTest extends TestCase
             [
                 'age' => '1000',
                 'email' => 'glinglin@email.com',
-            ]
+            ],
         ];
 
         $actual = iterator_to_array(

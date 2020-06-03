@@ -241,7 +241,8 @@ janedoe@email.com',
                 static::fail('Since the file does not exist, an exception was expected');
             }
         } catch (IoException $exception) {
-            static::assertEquals("Impossible to open the file '" . __DIR__ . "/../data/csv3trgrtg.csv'",
+            static::assertEquals(
+                "Impossible to open the file '" . __DIR__ . "/../data/csv3trgrtg.csv'",
                 $exception->getMessage()
             );
         }

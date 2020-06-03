@@ -49,17 +49,7 @@ jobs:
           at: .
       - run:
           name: phpcs
-          command: vendor/bin/phpcs
-
-  phpcsfixer7-2:
-    executor: php7-2
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: phpcsfixer
-          command: vendor/bin/php-cs-fixer fix --dry-run --allow-risky=yes
+          command: vendor/bin/phpcs -n
 
   phpstan7-2:
     executor: php7-2
@@ -162,9 +152,6 @@ workflows:
       - composer7-3
       - composer7-4
       - phpcs7-2:
-          requires:
-            - composer7-2
-      - phpcsfixer7-2:
           requires:
             - composer7-2
       - phpstan7-2:

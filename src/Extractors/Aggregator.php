@@ -6,9 +6,10 @@
  * @license     MIT
  */
 
+declare(strict_types=1);
+
 namespace Wizaplace\Etl\Extractors;
 
-use Wizaplace\Etl\DirtyRow;
 use Wizaplace\Etl\Exception\IncompleteDataException;
 use Wizaplace\Etl\Exception\InvalidOptionException;
 use Wizaplace\Etl\Exception\UndefinedIndexException;
@@ -19,14 +20,14 @@ class Aggregator extends Extractor
     /**
      * The matching key tuplet between iterators.
      *
-     * @var string[]
+     * @var string[]|null
      */
     protected $index;
 
     /**
      * Columns.
      *
-     * @var string[]
+     * @var string[]|null
      */
     protected $columns;
 
@@ -73,11 +74,13 @@ class Aggregator extends Extractor
         // consume input iterators
         do {
             foreach ($this->input as $iterator) {
-                if (
-                    ($line = $iterator->current())
-                    && ($row = $this->build($line))
-                ) {
-                    yield new Row($row);
+                $line = $iterator->current();
+
+                if (true === is_array($line)) {
+                    $row = $this->build($line);
+                    if (true === is_array($row)) {
+                        yield new Row($row);
+                    }
                 }
                 $iterator->next();
             }
@@ -86,7 +89,7 @@ class Aggregator extends Extractor
         );
 
         $incompletes = \count($this->data);
-        if ($this->strict && $incompletes) {
+        if ($this->strict && 0 !== $incompletes) {
             throw new IncompleteDataException("$incompletes rows");
         }
 

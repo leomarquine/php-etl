@@ -1,8 +1,15 @@
 # Wizaplace PHP ETL (WP-ETL)
 
 [![License](https://poser.pugx.org/marquine/php-etl/license)](https://packagist.org/packages/marquine/php-etl)
+[![CircleCI](https://circleci.com/gh/wizaplace/php-etl/tree/master.svg?style=svg)](https://circleci.com/gh/wizaplace/php-etl/tree/master)
+[![Version](https://img.shields.io/github/v/release/wizaplace/php-etl)](https://circleci.com/gh/wizaplace/php-etl/tree/master)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/wizaplace/php-etl/graphs/commit-activity)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/wizaplace/php-etl)
 
 Extract, Transform and Load data using PHP.
+This library provides classes and a workflow to allow you to extract data from various sources (CSV, DB...), one or many, then transform them before saving them in another format.
+
+You can also easily add your custom classes (Extractors, Transformers and Loaders).
 
 ![ETL](docs/img/etl.svg)
 
@@ -15,7 +22,7 @@ In your application's folder, run:
 composer require wizaplace/php-etl
 ```
 
-## Example
+## Example :light_rail:
 In the example below, we will extract data from a csv file, trim white spaces from the name and email columns and then insert the values into the users table:
 ```php
 use Wizaplace\Etl\Etl;
@@ -48,7 +55,7 @@ _services.yaml_
     Wizaplace\Etl\Etl:
         shared: false
 ```
-## Documentation
+## Documentation :notebook:
 The documentation is available in a subfolder of the repo, [here](docs/README.md).
 
 ## License

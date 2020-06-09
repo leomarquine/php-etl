@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/github/v/release/wizaplace/php-etl)](https://circleci.com/gh/wizaplace/php-etl/tree/master)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/wizaplace/php-etl/graphs/commit-activity)
 [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/wizaplace/php-etl)
+![PHP Version](https://img.shields.io/packagist/php-v/wizaplace/php-etl)
 
 Extract, Transform and Load data using PHP.
 This library provides classes and a workflow to allow you to extract data from various sources (CSV, DB...), one or many, then transform them before saving them in another format.

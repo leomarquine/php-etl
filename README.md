@@ -1,6 +1,6 @@
 # Wizaplace PHP ETL (WP-ETL)
 
-[![License](https://poser.pugx.org/marquine/php-etl/license)](https://packagist.org/packages/marquine/php-etl)
+[![License](https://poser.pugx.org/wizaplace/php-etl/license)](https://packagist.org/packages/wizaplace/php-etl)
 [![CircleCI](https://circleci.com/gh/wizaplace/php-etl/tree/master.svg?style=svg)](https://circleci.com/gh/wizaplace/php-etl/tree/master)
 [![Version](https://img.shields.io/github/v/release/wizaplace/php-etl)](https://circleci.com/gh/wizaplace/php-etl/tree/master)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/wizaplace/php-etl/graphs/commit-activity)

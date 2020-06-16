@@ -55,7 +55,7 @@ $mergedData = (new Etl())
 
 ### Index (required)
 
-An array of column names common in all data sources
+An array of column names common in all data sources. Note: be careful when using numerical values, they must be of the same type.
 
 | Type  | Default value |
 |-------|---------------|

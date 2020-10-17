@@ -48,6 +48,6 @@ If you need more flexibility in the query creation, you may use the [Query extra
 ```php
 $options = ['where' => [
     'status' => 'active', // 'key' equals 'value'
-    'colName' => ['<', 'comparisonValue']], // 'key' comparesTo 'value'
-];
+    'colName' => ['<', 'comparisonValue'], // 'key' comparesTo 'value'
+]];
 ```

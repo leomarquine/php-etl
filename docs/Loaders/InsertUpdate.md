@@ -51,17 +51,6 @@ List of primary keys or identifiers of the table.
 $options = ['key' => ['id', 'type']];
 ```
 
-### Updates
-When this option is enabled, new rows (based on key) will be inserted, but existing rows will be left unchanged.
-
-| Type | Default value |
-|----- | ------------- |
-| boolean | `true` |
-
-```php
-$options = ['doUpdates' => false];
-```
-
 ### Timestamps
 Populates the `created_at` and/or `updated_at` columns with the current timestamp when inserting or updating a row.
 

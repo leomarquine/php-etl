@@ -33,8 +33,11 @@ $options = ['connection' => 'app'];
 ```
 
 ### Where
-Array of conditions, where either `key` equals `value`, or where `key` _comparesTo_ `value` (comparesTo
-can be: =, <, <=, =>, >, or <>).
+
+Array of conditions, each condition is either:
+
+ * `key` equals `value` , or
+ * `key` _comparesTo_ `value` (comparesTo can be: =, <, <=, =>, >, or <>).
  
 If you need more flexibility in the query creation, you may use the [Query extractor](Query.md).
 
@@ -44,7 +47,7 @@ If you need more flexibility in the query creation, you may use the [Query extra
 
 ```php
 $options = ['where' => [
-    'status' => 'active',
-    'colName' => ['<', 'comparisonValue']],
+    'status' => 'active', // 'key' equals 'value'
+    'colName' => ['<', 'comparisonValue']], // 'key' comparesTo 'value'
 ];
 ```

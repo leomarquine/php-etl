@@ -32,4 +32,4 @@ abstract class Extractor extends Step
      * @return \Generator
      */
     abstract public function extract();
-}
+};

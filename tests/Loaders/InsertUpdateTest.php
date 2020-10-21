@@ -110,6 +110,54 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
+    public function insert_row_even_if_updates_are_suppressed()
+    {
+        $this->loader->options(['doUpdates' => false]);
+        $this->statement->expects($this->once())->method('select')->with('table');
+        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
+        $this->selectStatement->expects($this->once())->method('prepare');
+        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
+        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+
+        $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->insertStatement->expects($this->once())->method('prepare');
+        $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+
+        $this->update->expects($this->never())->method('execute');
+
+        $this->transaction->expects($this->once())->method('size')->with(100);
+        $this->transaction->expects($this->once())->method('run');
+        $this->transaction->expects($this->once())->method('close');
+
+        $this->execute($this->loader, [$this->row]);
+    }
+
+    /** @test */
+    public function do_not_update_or_insert_row_if_updates_are_suppressed()
+    {
+        $this->loader->options(['doUpdates' => false]);
+        $this->statement->expects($this->once())->method('select')->with('table');
+        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
+        $this->selectStatement->expects($this->once())->method('prepare');
+        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
+        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+
+        $this->statement->expects($this->never())->method('update')->with('table', ['name', 'email']);
+        $this->statement->expects($this->never())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->updateStatement->expects($this->never())->method('where')->with(['id']);
+        $this->updateStatement->expects($this->never())->method('prepare');
+        $this->update->expects($this->never())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+
+        $this->insert->expects($this->never())->method('execute');
+
+        $this->transaction->expects($this->once())->method('size')->with(100);
+        $this->transaction->expects($this->once())->method('run');
+        $this->transaction->expects($this->once())->method('close');
+
+        $this->execute($this->loader, [$this->row]);
+    }
+
+    /** @test */
     public function do_not_update_if_there_are_no_changes()
     {
         $this->statement->expects($this->once())->method('select')->with('table');

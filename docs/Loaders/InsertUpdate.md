@@ -52,6 +52,22 @@ List of primary keys or identifiers of the table.
 $options = ['key' => ['id', 'type']];
 ```
 
+### DoUpdates
+When this option is enabled, new rows (based on key) will be inserted, but existing rows will be left unchanged.
+
+The boolean option 'doUpdates' defaults to true, preserving the previous behavior. When set to false, rows that have
+keys already present in the destination are skipped rather than updated. This allows new rows to be brought into the
+ETL without overwriting any manual edits to the destination table. A future enhancement could be to make it so the
+list of columns to update is a subset of the list of columns that are inserted.
+
+| Type | Default value |
+|----- | ------------- |
+| boolean | `true` |
+
+```php
+$options = ['doUpdates' => false];
+```
+
 ### Timestamps
 Populates the `created_at` and/or `updated_at` columns with the current timestamp when inserting or updating a row.
 

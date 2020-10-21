@@ -38,6 +38,13 @@ class InsertUpdate extends Loader
     protected $columns;
 
     /**
+     * Indicates if existing destination rows in table should be updated.
+     *
+     * @var bool
+     */
+    protected $doUpdates = true;
+
+    /**
      * Indicates if the table has timestamps columns.
      *
      * @var bool
@@ -106,7 +113,7 @@ class InsertUpdate extends Loader
      * @var string[]
      */
     protected $availableOptions = [
-        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize',
+        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize', 'doUpdates',
     ];
 
     /**
@@ -248,10 +255,10 @@ class InsertUpdate extends Loader
         }
 
         $current = $this->select->fetch();
-        if (false !== $current) {
-            $this->update($row, $current);
-        } else {
+        if (false === $current) {
             $this->insert($row);
+        } else {
+            $this->update($row, $current);
         }
     }
 
@@ -277,6 +284,10 @@ class InsertUpdate extends Loader
      */
     protected function update(array $row, array $current): void
     {
+        if (false === $this->doUpdates) {
+            return;
+        }
+
         if (null === $this->update) {
             $this->prepareUpdate($row);
         }

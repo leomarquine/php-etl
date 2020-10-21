@@ -21,5 +21,6 @@
     * [Insert](Loaders/Insert.md)
     * [Insert/Update](Loaders/InsertUpdate.md)
     * [Csv](Loaders/CsvLoader.md)
+    * [MemoryLoader](Loaders/MemoryLoader.md)
 * [Helpers](Helpers.md)
 * [Running Processes](RunningProcesses.md)

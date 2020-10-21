@@ -23,7 +23,7 @@ class ColumnFilterTransformer extends Transformer
     protected $columns = [];
 
     /**
-     * @var callable $callback Callback function to apply on every Row attribute (column):
+     * @var callable|null $callback Callback function to apply on every Row attribute (column):
      *                            - it takes the column name as first parameter
      *                            - it takes the column value as second parameter
      *                            - it must return a boolean (true to keep the column, false otherwise)

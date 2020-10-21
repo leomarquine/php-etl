@@ -10,6 +10,7 @@ $etl->transform($transformer, $options);
 
 ## Available transformers types
 
+* [Column Filter](ColumnFilterTransformer.md)
 * [Convert Case](ConvertCase.md)
 * [JSON Decode](JsonDecode.md)
 * [JSON Encode](JsonEncode.md)

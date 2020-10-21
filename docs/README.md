@@ -10,6 +10,7 @@
     * [Table](Extractors/Table.md)
     * [XML](Extractors/Xml.md)
 * [Transformers](Transformers/README.md)
+    * [Column Filter](Transformers/ColumnFilterTransformer.md)
     * [Convert Case](Transformers/ConvertCase.md)
     * [JSON Decode](Transformers/JsonDecode.md)
     * [JSON Encode](Transformers/JsonEncode.md)

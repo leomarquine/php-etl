@@ -59,7 +59,7 @@ jobs:
           at: .
       - run:
           name: phpstan
-          command: vendor/bin/phpstan analyse
+          command: vendor/bin/phpstan analyse --memory-limit=256M
 
   phpunit7-2:
     executor: php7-2

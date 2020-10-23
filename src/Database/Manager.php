@@ -112,7 +112,7 @@ class Manager
      *
      * @return \Wizaplace\Etl\Database\Transaction
      */
-    public function transaction($connection): Transaction
+    public function transaction(string $connection): Transaction
     {
         return new Transaction($this->getConnection($connection));
     }

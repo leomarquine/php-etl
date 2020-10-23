@@ -40,7 +40,7 @@ class ColumnFilterTransformerTest extends TestCase
 
         $this->transformer->options([
             'callback' => function (string $column, string $value): bool {
-                return $column === 'g' || $value === 'keep';
+                return 'g' === $column || 'keep' === $value;
             },
         ]);
         $this->transformer->transform($row);
@@ -55,7 +55,7 @@ class ColumnFilterTransformerTest extends TestCase
         $this->transformer->options([
             'columns' => ['c', 'e'],
             'callback' => function (string $column, string $value): bool {
-                return $value === 'keep';
+                return 'keep' === $value;
             },
         ]);
         $this->transformer->transform($row);

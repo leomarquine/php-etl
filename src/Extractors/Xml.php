@@ -32,7 +32,7 @@ class Xml extends Extractor
     /**
      * XML Reader.
      *
-     * @var \XMLReader|bool
+     * @var \XMLReader
      */
     protected $reader;
 
@@ -70,10 +70,9 @@ class Xml extends Extractor
             }
         }
 
-        $this->reader = \XMLReader::open($this->input);
-        if (false === $this->reader) {
-            throw new XmlException('Could not open XMLReader.');
-        }
+        $this->reader = new \XMLReader();
+
+        $this->reader->open($this->input);
 
         while ($this->reader->read()) {
             $this->addElementToPath();

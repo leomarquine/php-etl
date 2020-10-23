@@ -218,7 +218,10 @@ class InsertUpdate extends Loader
             array_push($columns, 'updated_at');
         }
 
-        $this->update = $this->db->statement($this->connection)->update($this->output, $columns)->where($this->key)->prepare();
+        $this->update = $this->db->statement($this->connection)
+            ->update($this->output, $columns)
+            ->where($this->key)
+            ->prepare();
     }
 
     /**
@@ -226,7 +229,7 @@ class InsertUpdate extends Loader
      *
      * @param array $row
      */
-    protected function execute($row): void
+    protected function execute(array $row): void
     {
         if (null === $this->select) {
             $this->prepareSelect();

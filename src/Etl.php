@@ -81,7 +81,7 @@ class Etl
      *
      * @return $this
      */
-    public function load(Loader $loader, $output, $options = []): Etl
+    public function load(Loader $loader, string $output, $options = []): Etl
     {
         $loader->output($output)->options($options);
 
@@ -133,7 +133,7 @@ class Etl
      * @param string $method
      * @param array  $parameters
      */
-    public function __call($method, $parameters): Etl
+    public function __call(string $method, array $parameters): Etl
     {
         $this->pipeline->$method(...$parameters);
 

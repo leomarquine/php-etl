@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
  * @copyright   Copyright (c) Leonardo Marquine
  * @license     MIT
  */
+
+declare(strict_types=1);
 
 namespace Tests;
 
@@ -39,10 +39,12 @@ class PipelineTest extends TestCase
         $this->extractor->expects($this->any())->method('extract')->willReturn($generator());
 
         $this->transformer = $this->createMock('Wizaplace\Etl\Transformers\Transformer');
-        $this->transformer->expects($this->any())->method('transform')->withConsecutive([$this->row1], [$this->row2], [$this->row3]);
+        $this->transformer->expects($this->any())->method('transform')
+            ->withConsecutive([$this->row1], [$this->row2], [$this->row3]);
 
         $this->loader = $this->createMock('Wizaplace\Etl\Loaders\Loader');
-        $this->loader->expects($this->any())->method('load')->withConsecutive([$this->row1], [$this->row2], [$this->row3]);
+        $this->loader->expects($this->any())->method('load')
+            ->withConsecutive([$this->row1], [$this->row2], [$this->row3]);
 
         $this->pipeline = new Pipeline();
         $this->pipeline->extractor($this->extractor);

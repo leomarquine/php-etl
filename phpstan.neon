@@ -25,3 +25,6 @@ parameters:
         -
             message: '~^Variable property access on ~'
             path: src/Step.php
+        -
+            message: '~^Dynamic call to static method XMLReader::open\(\)\.~'
+            path: src/Extractors\Xml.php

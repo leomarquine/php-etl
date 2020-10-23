@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
  * @copyright   Copyright (c) Leonardo Marquine
  * @license     MIT
  */
+
+declare(strict_types=1);
 
 namespace Tests\Extractors;
 
@@ -21,7 +21,8 @@ class TableTest extends TestCase
     public function default_options()
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects($this->exactly(3))->method('fetch')
+            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Wizaplace\Etl\Database\Query');
         $query->expects($this->once())->method('select')->with('table', ['*'])->will($this->returnSelf());
@@ -42,7 +43,8 @@ class TableTest extends TestCase
     public function custom_connection_columns_and_where_clause()
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects($this->exactly(3))->method('fetch')
+            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Wizaplace\Etl\Database\Query');
         $query->expects($this->once())->method('select')->with('table', ['columns'])->will($this->returnSelf());

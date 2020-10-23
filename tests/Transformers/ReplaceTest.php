@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
  * @copyright   Copyright (c) Leonardo Marquine
  * @license     MIT
  */
+
+declare(strict_types=1);
 
 namespace Tests\Transformers;
 
@@ -17,6 +17,13 @@ use Wizaplace\Etl\Transformers\Replace;
 
 class ReplaceTest extends TestCase
 {
+    /**
+     * Row array to be transformed in testing.
+     *
+     * @var Row[]
+     */
+    protected $data;
+
     protected function setUp(): void
     {
         parent::setUp();

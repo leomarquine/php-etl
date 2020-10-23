@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
@@ -9,11 +7,12 @@ declare(strict_types=1);
  * @license     MIT
  */
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 use Tests\TestCase;
 use Wizaplace\Etl\Exception\IoException;
-use Wizaplace\Etl\Traits\FilePathTrait;
 
 class FilePathTraitTest extends TestCase
 {
@@ -22,14 +21,7 @@ class FilePathTraitTest extends TestCase
 
     public function setUp(): void
     {
-        $this->fakeLoader = new class() {
-            use FilePathTrait;
-
-            public function input(string $filePath)
-            {
-                return $this->checkOrCreateDir($filePath);
-            }
-        };
+        $this->fakeLoader = new FakeLoader();
     }
 
     /** @test */

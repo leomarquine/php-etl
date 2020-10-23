@@ -167,9 +167,21 @@ class Query
     public function whereIn($column, array $values, string $operator = 'in'): Query
     {
         if (is_string($column)) {
-            $this->wheres[] = ['type' => 'WhereIn', 'column' => $column, 'values' => $values, 'operator' => $operator, 'boolean' => 'and'];
+            $this->wheres[] = [
+                'type' => 'WhereIn',
+                'column' => $column,
+                'values' => $values,
+                'operator' => $operator,
+                'boolean' => 'and',
+            ];
         } else {
-            $this->wheres[] = ['type' => 'CompositeWhereIn', 'columns' => $column, 'values' => $values, 'operator' => $operator, 'boolean' => 'and'];
+            $this->wheres[] = [
+                'type' => 'CompositeWhereIn',
+                'columns' => $column,
+                'values' => $values,
+                'operator' => $operator,
+                'boolean' => 'and',
+            ];
         }
 
         return $this;

@@ -50,7 +50,7 @@ class Row implements \ArrayAccess
      * @param string $key
      * @param mixed  $value
      */
-    public function set($key, $value): self
+    public function set(string $key, $value): self
     {
         $this->attributes[$key] = $value;
 
@@ -64,7 +64,7 @@ class Row implements \ArrayAccess
      *
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
         return $this->attributes[$key] ?? null;
     }
@@ -74,7 +74,7 @@ class Row implements \ArrayAccess
      *
      * @param string $key
      */
-    public function remove($key): void
+    public function remove(string $key): void
     {
         unset($this->attributes[$key]);
     }
@@ -148,7 +148,7 @@ class Row implements \ArrayAccess
      *
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         return $this->attributes[$key];
     }
@@ -159,7 +159,7 @@ class Row implements \ArrayAccess
      * @param string $key
      * @param mixed  $value
      */
-    public function __set($key, $value): self
+    public function __set(string $key, $value): self
     {
         $this->attributes[$key] = $value;
 

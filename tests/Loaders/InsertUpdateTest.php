@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
  * @copyright   Copyright (c) Leonardo Marquine
  * @license     MIT
  */
+
+declare(strict_types=1);
 
 namespace Tests\Loaders;
 
@@ -22,7 +22,9 @@ class InsertUpdateTest extends TestCase
 
         $this->transaction = $this->createMock('Wizaplace\Etl\Database\Transaction');
         $this->transaction->expects($this->any())->method('size')->willReturnSelf();
-        $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) { call_user_func($callback); });
+        $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) {
+            call_user_func($callback);
+        });
         $this->transaction->expects($this->any())->method('close');
 
         $this->insert = $this->createMock('PDOStatement');
@@ -58,7 +60,8 @@ class InsertUpdateTest extends TestCase
         $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
 
         $this->row = $this->createMock('Wizaplace\Etl\Row');
-        $this->row->expects($this->any())->method('toArray')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->row->expects($this->any())->method('toArray')
+            ->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader = new InsertUpdate($this->manager);
         $this->loader->output('table');
@@ -75,7 +78,8 @@ class InsertUpdateTest extends TestCase
 
         $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
         $this->insertStatement->expects($this->once())->method('prepare');
-        $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->insert->expects($this->once())->method('execute')
+            ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->update->expects($this->never())->method('execute');
 
@@ -98,7 +102,8 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
         $this->updateStatement->expects($this->once())->method('where')->with(['id']);
         $this->updateStatement->expects($this->once())->method('prepare');
-        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->update->expects($this->once())->method('execute')
+            ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->insert->expects($this->never())->method('execute');
 
@@ -121,7 +126,8 @@ class InsertUpdateTest extends TestCase
 
         $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
         $this->insertStatement->expects($this->once())->method('prepare');
-        $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->insert->expects($this->once())->method('execute')
+            ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->update->expects($this->never())->method('execute');
 
@@ -146,7 +152,8 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects($this->never())->method('insert')->with('table', ['id', 'name', 'email']);
         $this->updateStatement->expects($this->never())->method('where')->with(['id']);
         $this->updateStatement->expects($this->never())->method('prepare');
-        $this->update->expects($this->never())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+        $this->update->expects($this->never())->method('execute')
+            ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->insert->expects($this->never())->method('execute');
 
@@ -164,7 +171,13 @@ class InsertUpdateTest extends TestCase
         $this->selectStatement->expects($this->once())->method('where')->with(['id']);
         $this->selectStatement->expects($this->once())->method('prepare');
         $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
+        $this->select->expects($this->once())->method('fetch')->willReturn([
+            'id' => '1',
+            'name' => 'Jane Doe',
+            'email' => 'janedoe@example.com',
+            'created_at' => date('Y-m-d G:i:s'),
+            'updated_at' => date('Y-m-d G:i:s'),
+        ]);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
         $this->updateStatement->expects($this->once())->method('where')->with(['id']);
@@ -236,8 +249,15 @@ class InsertUpdateTest extends TestCase
     {
         $this->select->expects($this->once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email', 'created_at', 'updated_at']);
-        $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'created_at' => date('Y-m-d G:i:s'), 'updated_at' => date('Y-m-d G:i:s')]);
+        $this->statement->expects($this->once())->method('insert')
+            ->with('table', ['id', 'name', 'email', 'created_at', 'updated_at']);
+        $this->insert->expects($this->once())->method('execute')->with([
+            'id' => '1',
+            'name' => 'Jane Doe',
+            'email' => 'janedoe@example.com',
+            'created_at' => date('Y-m-d G:i:s'),
+            'updated_at' => date('Y-m-d G:i:s'),
+        ]);
 
         $this->loader->options(['timestamps' => true]);
 
@@ -250,7 +270,12 @@ class InsertUpdateTest extends TestCase
         $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
 
         $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email', 'updated_at']);
-        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com', 'updated_at' => date('Y-m-d G:i:s')]);
+        $this->update->expects($this->once())->method('execute')->with([
+            'id' => '1',
+            'name' => 'Jane Doe',
+            'email' => 'janedoe@example.com',
+            'updated_at' => date('Y-m-d G:i:s'),
+        ]);
 
         $this->loader->options(['timestamps' => true]);
 

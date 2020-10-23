@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author      Wizacha DevTeam <dev@wizacha.com>
  * @copyright   Copyright (c) Wizacha
@@ -9,9 +7,9 @@ declare(strict_types=1);
  * @license     MIT
  */
 
-namespace Tests;
+declare(strict_types=1);
 
-use Wizaplace\Etl\Step;
+namespace Tests;
 
 class StepTest extends TestCase
 {
@@ -27,19 +25,5 @@ class StepTest extends TestCase
 
         static::assertEquals('value', $step->getOption('Option1'));
         static::assertNull($step->getOption('Option2'));
-    }
-}
-
-class FakeStep extends Step
-{
-    protected $option1;
-    protected $option2;
-    protected $availableOptions = ['option1'];
-
-    public function getOption(string $name)
-    {
-        $name = lcfirst($name);
-
-        return $this->$name ?? null;
     }
 }

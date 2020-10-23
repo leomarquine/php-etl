@@ -3,6 +3,8 @@
 Merge rows from a list of partial data iterators with a matching index.
 
 ```php
+use \Wizaplace\Etl\Etl;
+
 # user data from one CSV file
 $userDataIterator = (new Etl())
     ->extract(
@@ -21,7 +23,7 @@ $extendedInfoIterator = (new Etl())
         ['columns' => 'courriel', 'twitter']
     )
     # let's rename 'courriel' to 'email'
-    ->tranform(
+    ->transform(
         new RenameColumns(),
         [
             'columns' => ['courriel' => 'email']

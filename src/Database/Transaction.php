@@ -60,7 +60,7 @@ class Transaction
      *
      * @return $this
      */
-    public function size($size): Transaction
+    public function size(int $size): Transaction
     {
         $this->size = $size;
 

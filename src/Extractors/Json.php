@@ -36,7 +36,7 @@ class Json extends Extractor
             $jsonPath = new JSONPath($data);
 
             foreach ($this->columns as $key => $path) {
-                $this->columns[$key] = $jsonPath->find($path)->data();
+                $this->columns[$key] = $jsonPath->find($path)->getData();
             }
 
             $data = $this->transpose($this->columns);

@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "flow/jsonpath": "^0.3.1",
-        "illuminate/container": "^5.0|^6.0|^7.0|^8.0"
+        "illuminate/container": "^5.0|^6.0|^7.0|^8.0",
+        "softcreatr/jsonpath": "^0.7.2"
     },
     "autoload": {
         "psr-4": {

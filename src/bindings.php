@@ -25,6 +25,7 @@ $container->bind('rename_columns_transformer', Marquine\Etl\Transformers\RenameC
 $container->bind('trim_transformer', Marquine\Etl\Transformers\Trim::class);
 $container->bind('unique_rows_transformer', Marquine\Etl\Transformers\UniqueRows::class);
 $container->bind('replace_transformer', Marquine\Etl\Transformers\Replace::class);
+$container->bind('callback_transformer', Marquine\Etl\Transformers\Replace::class);
 
 // Loaders
 $container->bind('insert_loader', Marquine\Etl\Loaders\Insert::class);

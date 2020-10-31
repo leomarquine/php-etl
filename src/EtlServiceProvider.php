@@ -19,5 +19,9 @@ class EtlServiceProvider extends ServiceProvider
         foreach ($connections as $name => $config) {
             Etl::service('db')->addConnection($config, $name);
         }
+
+        $this->app->bind(Etl::class, function ($app) {
+            return new Etl;
+        });
     }
 }

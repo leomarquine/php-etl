@@ -23,6 +23,7 @@ $container->bind('convert_case_transformer', Marquine\Etl\Transformers\ConvertCa
 $container->bind('json_decode_transformer', Marquine\Etl\Transformers\JsonDecode::class);
 $container->bind('json_encode_transformer', Marquine\Etl\Transformers\JsonEncode::class);
 $container->bind('number_format_transformer', Marquine\Etl\Transformers\NumberFormat::class);
+$container->bind('pad_transformer', Marquine\Etl\Transformers\Pad::class);
 $container->bind('rename_columns_transformer', Marquine\Etl\Transformers\RenameColumns::class);
 $container->bind('replace_transformer', Marquine\Etl\Transformers\Replace::class);
 $container->bind('trim_transformer', Marquine\Etl\Transformers\Trim::class);

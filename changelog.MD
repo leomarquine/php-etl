@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2
+
+**New features**
+* Add a _DateDimension_ feature with its own extractor. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* In the _DatabaseLoader_, add the possibility to skip updates. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Add a _ColumnFilterTransformer_. Contribution by [ArthurHoaro](https://github.com/ArthurHoaro).
+* Add a _MemoryLoader_. Contribution by [ArthurHoaro](https://github.com/ArthurHoaro).
+
+**Miscellaneous**
+* Fix PHPStan failures and cleanup. Add a new _XmlException_. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* PHPCS cleanup and force more strong typehinting. Contribution by [kdebisschop](https://github.com/kdebisschop).
+
 ## 1.1
 
 **New features**

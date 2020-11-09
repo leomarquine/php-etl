@@ -28,7 +28,7 @@ jobs:
           name: composer
           command: |
             if [[ ! -f vendor/autoload.php ]]; then
-                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                curl https://getcomposer.org/composer-1.phar --location --silent  --output /usr/bin/composer; \
                 chmod +x /usr/bin/composer; \
                 composer install --no-progress --no-interaction; \
             fi
@@ -85,7 +85,7 @@ jobs:
           name: composer
           command: |
             if [[ ! -f vendor/autoload.php ]]; then
-                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                curl https://getcomposer.org/composer-1.phar --location --silent  --output /usr/bin/composer; \
                 chmod +x /usr/bin/composer; \
                 composer install --no-progress --no-interaction; \
             fi

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+**Miscellaneous**
+* Fix CI: utilization of the library with PHP 7.2 and 7.3 requires composer 1.x while an utilization with PHP 7.4
+can work with Composer 2. This requirement comes from the _ocramius/package-versions_ package, a dependency of
+_infection/infection_. This limitation should be removed in the next release with dropping the support of < PHP 7.4.
+
 ## 1.2
 
 **New features**

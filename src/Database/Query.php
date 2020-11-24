@@ -149,9 +149,15 @@ class Query
     public function where(array $columns): Query
     {
         foreach ($columns as $column => $value) {
-            $this->wheres[] = [
-                'type' => 'Where', 'column' => $column, 'value' => $value, 'operator' => '=', 'boolean' => 'and',
-            ];
+            $condition = ['type' => 'Where', 'column' => $column, 'boolean' => 'and'];
+            if (is_scalar($value)) {
+                $condition['operator'] = '=';
+                $condition['value'] = $value;
+            } else {
+                $condition['operator'] = $value[0];
+                $condition['value'] = $value[1];
+            }
+            $this->wheres[] = $condition;
         }
 
         return $this;

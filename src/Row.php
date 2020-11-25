@@ -47,8 +47,7 @@ class Row implements \ArrayAccess
     /**
      * Set a row attribute
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function set(string $key, $value): self
     {
@@ -60,8 +59,6 @@ class Row implements \ArrayAccess
     /**
      * Get a row attribute.
      *
-     * @param string $key
-     *
      * @return mixed
      */
     public function get(string $key)
@@ -71,8 +68,6 @@ class Row implements \ArrayAccess
 
     /**
      * Remove a row attribute.
-     *
-     * @param string $key
      */
     public function remove(string $key): void
     {
@@ -144,8 +139,6 @@ class Row implements \ArrayAccess
     /**
      * Dynamically retrieve attributes on the row.
      *
-     * @param string $key
-     *
      * @return mixed
      */
     public function __get(string $key)
@@ -156,8 +149,7 @@ class Row implements \ArrayAccess
     /**
      * Dynamically set attributes on the row.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function __set(string $key, $value): self
     {

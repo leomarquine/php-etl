@@ -56,8 +56,6 @@ class Transaction
     /**
      * Set the commit size.
      *
-     * @param int $size
-     *
      * @return $this
      */
     public function size(int $size): Transaction

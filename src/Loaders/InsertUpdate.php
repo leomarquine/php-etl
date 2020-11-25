@@ -226,8 +226,6 @@ class InsertUpdate extends Loader
 
     /**
      * Execute the given row.
-     *
-     * @param array $row
      */
     protected function execute(array $row): void
     {

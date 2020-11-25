@@ -10,12 +10,11 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Loaders;
 
-use Wizaplace\Etl\Loaders\Loader;
 use Wizaplace\Etl\Row;
 
 class MemoryLoader extends Loader
 {
-    /** @var string $index Which Row attribute (column) to use as collection index. */
+    /** @var string Which Row attribute (column) to use as collection index. */
     protected $index;
 
     /**
@@ -32,7 +31,7 @@ class MemoryLoader extends Loader
     protected $collection;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function load(Row $row): void
     {

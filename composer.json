@@ -26,6 +26,10 @@
         }
     },
     "require-dev": {
+        "ext-PDO": "*",
+        "ext-json": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-xmlreader": "*",
         "friendsofphp/php-cs-fixer": "^2.16",
         "infection/infection": "^0.15.3",
         "phpstan/extension-installer": "^1.0",
@@ -39,6 +43,25 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "suggest": {
+        "ext-PDO": "Required for various extractors and loaders. Most users will want this.",
+        "ext-json": "Required for JSON extractor and JSON Encode/Decode transformers.",
+        "ext-pdo_mysql": "Required to work with MySQL databases.",
+        "ext-pdo_pgsql": "Required to work with PostgreSQL databases.",
+        "ext-pdo_sqlite": "Required to work with SQLite databases.",
+        "ext-pdo_sqlsrv": "Required to work with MS SQL Server databases.",
+        "ext-xmlreader": "Required for XML extractor."
+    },
+    "scripts": {
+        "scan": [
+            "php-cs-fixer --dry-run -v --allow-risky=yes fix",
+            "phpcs",
+            "(cd tests && phpcs)",
+            "phpstan --memory-limit=256M analyze"
+        ],
+        "test": "phpunit",
+        "check": ["@scan", "@test"]
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -108,8 +108,6 @@ class Manager
     /**
      * Get a new transaction instance.
      *
-     * @param string $connection
-     *
      * @return \Wizaplace\Etl\Database\Transaction
      */
     public function transaction(string $connection): Transaction

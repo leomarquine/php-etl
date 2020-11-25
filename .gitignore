@@ -5,3 +5,10 @@ composer.lock
 .phpunit.result.cache
 .idea
 var/
+
+# For these quality tools, the *.dist form should be in VCS and the forms
+# below should be reserved for local customizations.
+.php_cs
+phpcs.xml
+phpstan.neon
+phpunit.xml

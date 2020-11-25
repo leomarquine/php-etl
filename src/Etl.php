@@ -76,8 +76,7 @@ class Etl
     /**
      * Load.
      *
-     * @param string $output
-     * @param array  $options
+     * @param array $options
      *
      * @return $this
      */
@@ -129,9 +128,6 @@ class Etl
 
     /**
      * Handle dynamic method calls.
-     *
-     * @param string $method
-     * @param array  $parameters
      */
     public function __call(string $method, array $parameters): Etl
     {

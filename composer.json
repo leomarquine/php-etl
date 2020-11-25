@@ -18,7 +18,7 @@
     },
     "require": {
         "php": "~7.2",
-        "flow/jsonpath": "^0.3.1"
+        "softcreatr/jsonpath": "^0.7.2"
     },
     "autoload": {
         "psr-4": {

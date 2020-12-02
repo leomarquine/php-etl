@@ -49,8 +49,9 @@ fi
 if [ "$(git diff --cached --name-only --diff-filter=ACMR $against | grep '[.]php')" != "" ]
 then
     echo "Running PHP-CS-fixer."
+    config=.php_cs$(test -f .php_cs || printf .dist)
     git diff --cached --name-only --diff-filter=ACMR $against | grep '[.]php' | \
-        xargs ./vendor/bin/php-cs-fixer fix -v --using-cache=no --dry-run --allow-risky=yes
+        xargs ./vendor/bin/php-cs-fixer fix -v --using-cache=no --dry-run --allow-risky=yes --config=$config
     if [ $? != 0 ]
     then
         echo "Fix the error before commit!"
@@ -82,8 +83,8 @@ if [ "$(git diff --cached --name-only --diff-filter=ACMR $against | grep 'tests/
 then
     echo "Running Code Sniffer for tests."
     cd tests
-    git diff --cached --name-only --diff-filter=ACMR $against | grep --null 'tests/.*[.]php' | tr \\n \\0 | \
-        xargs -0 ./vendor/bin/phpcs
+    git diff --cached --name-only --diff-filter=ACMR $against | cut -c 6- | grep --null 'tests/.*[.]php' | tr \\n \\0 | \
+        xargs -0 ../vendor/bin/phpcs
     exit_status=$?
     cd ..
     if [ $exit_status != 0 ]

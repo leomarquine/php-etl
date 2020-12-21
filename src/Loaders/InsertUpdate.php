@@ -188,7 +188,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareInsert(array $sample): void
     {
-        if (is_array($this->columns) ?? [] !== $this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $columns = array_values($this->columns);
         } else {
             $columns = array_keys($sample);
@@ -208,7 +208,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareUpdate(array $sample): void
     {
-        if (is_array($this->columns) ?? [] !== $this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $columns = array_values(array_diff($this->columns, $this->key));
         } else {
             $columns = array_keys(array_diff_key($sample, array_flip($this->key)));
@@ -233,7 +233,7 @@ class InsertUpdate extends Loader
             $this->prepareSelect();
         }
 
-        if (is_array($this->columns) ?? [] !== $this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $mapped_columns_arr = [];
             $key_columns = array_intersect($this->columns, $this->key);
 
@@ -245,7 +245,7 @@ class InsertUpdate extends Loader
             $this->select->execute(array_intersect_key($row, array_flip($this->key)));
         }
 
-        if (is_array($this->columns) ?? [] !== $this->columns) {
+        if (is_array($this->columns) && [] !== $this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {

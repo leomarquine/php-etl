@@ -206,6 +206,21 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
+    public function empty_filter_on_columns_to_insert()
+    {
+        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+
+        $this->statement->expects($this->once())->method('insert')
+            ->with('table', ['id', 'name', 'email']);
+        $this->insert->expects($this->once())->method('execute')
+            ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
+
+        $this->loader->options(['columns' => []]);
+
+        $this->execute($this->loader, [$this->row]);
+    }
+
+    /** @test */
     public function filtering_columns_to_update()
     {
         $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);

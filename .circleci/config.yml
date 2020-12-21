@@ -12,6 +12,10 @@ executors:
     docker:
       - image: php:7.4-alpine
     working_directory: ~/repo
+  php8-0:
+    docker:
+      - image: php:8.0-alpine
+    working_directory: ~/repo
 
 jobs:
   # The complete list : all in the minimum PHP version supported.
@@ -144,6 +148,42 @@ jobs:
           name: phpunit
           command: vendor/bin/phpunit --testdox
 
+  composer8-0:
+    executor: php8-0
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpunit8-0:
+    executor: php8-0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
+
 workflows:
   version: '2.1'
   Code quality:
@@ -151,6 +191,7 @@ workflows:
       - composer7-2
       - composer7-3
       - composer7-4
+      - composer8-0
       - phpcs7-2:
           requires:
             - composer7-2
@@ -166,3 +207,6 @@ workflows:
       - phpunit7-4:
           requires:
             - composer7-4
+      - phpunit8-0:
+          requires:
+            - composer8-0

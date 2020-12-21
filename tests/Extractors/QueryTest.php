@@ -42,7 +42,7 @@ class QueryTest extends TestCase
     public function custom_connection_and_bindings()
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->once())->method('execute')->with('bindings');
+        $statement->expects($this->once())->method('execute')->with(['binding']);
         $statement->expects($this->exactly(3))->method('fetch')
             ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
 
@@ -57,7 +57,7 @@ class QueryTest extends TestCase
         $extractor->input('select query');
         $extractor->options([
             'connection' => 'connection',
-            'bindings' => 'bindings',
+            'bindings' => ['binding'],
         ]);
 
         static::assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));

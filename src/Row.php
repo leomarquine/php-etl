@@ -151,11 +151,9 @@ class Row implements \ArrayAccess
      *
      * @param mixed $value
      */
-    public function __set(string $key, $value): self
+    public function __set(string $key, $value): void
     {
         $this->attributes[$key] = $value;
-
-        return $this;
     }
 
     /**

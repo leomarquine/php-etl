@@ -108,8 +108,14 @@ class CsvTest extends TestCase
                 $count++;
             }
         } catch (\Throwable $exception) {
+            if (phpversion() < 8) {
+                $expectedMessage = 'Undefined offset: 2';
+            } else {
+                $expectedMessage = 'Undefined array key 2';
+            }
+
             static::assertEquals(
-                'Undefined offset: 2',
+                $expectedMessage,
                 $exception->getMessage()
             );
         }
@@ -146,8 +152,14 @@ class CsvTest extends TestCase
                 $count++;
             }
         } catch (\Throwable $exception) {
+            if (phpversion() < 8) {
+                $expectedMessage = 'Undefined offset: 2';
+            } else {
+                $expectedMessage = 'Undefined array key 2';
+            }
+
             static::assertEquals(
-                'Undefined offset: 2',
+                $expectedMessage,
                 $exception->getMessage()
             );
         }

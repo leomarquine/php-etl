@@ -57,7 +57,7 @@ class CallbackTest extends TestCase
     }
 
     /** @test */
-    public function useDataFromOtherColumn()
+    public function useDataFromOtherColumn(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Doe <johndoe@email.com>', 'email' => 'johndoe@email.com']),
@@ -65,7 +65,7 @@ class CallbackTest extends TestCase
             new Row(['id' => '3', 'name' => 'Jane Doe <janeDoe@email.com>', 'email' => 'janeDoe@email.com']),
         ];
 
-        $callback = function (Row $row, $column) {
+        $callback = function (Row $row, $column): string {
             return "{$row->get($column)} <{$row->get('email')}>";
         };
 

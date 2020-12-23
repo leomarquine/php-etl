@@ -21,19 +21,19 @@ use Wizaplace\Etl\Row;
 class TableTest extends TestCase
 {
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')
-            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects(static::exactly(3))->method('fetch')
+            ->will(static::onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Wizaplace\Etl\Database\Query');
-        $query->expects($this->once())->method('select')->with('table', ['*'])->will($this->returnSelf());
-        $query->expects($this->once())->method('where')->with([])->will($this->returnSelf());
-        $query->expects($this->once())->method('execute')->willReturn($statement);
+        $query->expects(static::once())->method('select')->with('table', ['*'])->will(static::returnSelf());
+        $query->expects(static::once())->method('where')->with([])->will(static::returnSelf());
+        $query->expects(static::once())->method('execute')->willReturn($statement);
 
         $manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $manager->expects($this->once())->method('query')->with('default')->willReturn($query);
+        $manager->expects(static::once())->method('query')->with('default')->willReturn($query);
 
         $extractor = new Table($manager);
 
@@ -43,19 +43,19 @@ class TableTest extends TestCase
     }
 
     /** @test */
-    public function custom_connection_columns_and_where_clause()
+    public function customConnectionColumnsAndWhereClause(): void
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->exactly(3))->method('fetch')
-            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects(static::exactly(3))->method('fetch')
+            ->will(static::onConsecutiveCalls(['row1'], ['row2'], null));
 
         $query = $this->createMock('Wizaplace\Etl\Database\Query');
-        $query->expects($this->once())->method('select')->with('table', ['columns'])->will($this->returnSelf());
-        $query->expects($this->once())->method('where')->with(['where'])->will($this->returnSelf());
-        $query->expects($this->once())->method('execute')->willReturn($statement);
+        $query->expects(static::once())->method('select')->with('table', ['columns'])->will(static::returnSelf());
+        $query->expects(static::once())->method('where')->with(['where'])->will(static::returnSelf());
+        $query->expects(static::once())->method('execute')->willReturn($statement);
 
         $manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $manager->expects($this->once())->method('query')->with('connection')->willReturn($query);
+        $manager->expects(static::once())->method('query')->with('connection')->willReturn($query);
 
         $extractor = new Table($manager);
 
@@ -72,13 +72,13 @@ class TableTest extends TestCase
     /**
      * Tests extended where-clause comparisons (e.g., <>, <, >, <=, >=).
      *
-     * @param array $expected The expected result of table extraction.
-     * @param string|string[] $where The where clause used in filtering.
+     * @param array           $expected the expected result of table extraction
+     * @param string|string[] $where    the where clause used in filtering
      *
      * @test
      * @dataProvider whereClauseDataProvider
      */
-    public function whereClauseOperators(array $expected, $where)
+    public function whereClauseOperators(array $expected, $where): void
     {
         // Set up connection to SQLite test database.
         $connection = 'default';
@@ -111,8 +111,6 @@ class TableTest extends TestCase
 
     /**
      * Provides test case scenarios for {@see whereClauseOperators()}.
-     *
-     * @return array A list of test case scenarios.
      */
     public function whereClauseDataProvider(): array
     {

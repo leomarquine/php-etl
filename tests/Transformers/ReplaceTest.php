@@ -36,7 +36,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function default_type_option()
+    public function defaultTypeOption(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -54,7 +54,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function default_type_option_custom_columns()
+    public function defaultTypeOptionCustomColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -76,7 +76,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function str_type_option()
+    public function strTypeOption(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -98,7 +98,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function str_type_option_custom_columns()
+    public function strTypeOptionCustomColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -121,7 +121,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function preg_type_option()
+    public function pregTypeOption(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -143,7 +143,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function preg_type_option_custom_columns()
+    public function pregTypeOptionCustomColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Die', 'email' => 'johndoe@email.com']),
@@ -166,7 +166,7 @@ class ReplaceTest extends TestCase
     }
 
     /** @test */
-    public function throws_an_exception_for_unsupported_replace_type()
+    public function throwsExceptionForUnsupportedReplaceType(): void
     {
         $transformer = new Replace();
 

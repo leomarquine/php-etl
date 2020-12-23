@@ -36,7 +36,7 @@ class FormatUnixTimeTest extends TestCase
     }
 
     /** @test */
-    public function setUtc()
+    public function setUtc(): void
     {
         $expected = [
             new Row(['id' => '1', 'timestamp' => '19700101', 'unixtime' => '1']),
@@ -50,7 +50,7 @@ class FormatUnixTimeTest extends TestCase
     }
 
     /** @test */
-    public function setAmericaNewYork()
+    public function setAmericaNewYork(): void
     {
         $expected = [
             new Row(['id' => '1', 'timestamp' => '19691231', 'unixtime' => '1']),
@@ -64,7 +64,7 @@ class FormatUnixTimeTest extends TestCase
     }
 
     /** @test */
-    public function changeFormat()
+    public function changeFormat(): void
     {
         $expected = [
             new Row(['id' => '1', 'timestamp' => '1970-01-01 00:00:01', 'unixtime' => '1']),
@@ -78,7 +78,7 @@ class FormatUnixTimeTest extends TestCase
     }
 
     /** @test */
-    public function selectMultipleColumns()
+    public function selectMultipleColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'timestamp' => '19700101', 'unixtime' => '19700101']),
@@ -92,7 +92,7 @@ class FormatUnixTimeTest extends TestCase
     }
 
     /** @test */
-    public function systemDefaultTimezone()
+    public function systemDefaultTimezone(): void
     {
         $expected = [
             new Row(['id' => '1', 'timestamp' => date_create()->setTimestamp(1)->format('Ymd'), 'unixtime' => '1']),

@@ -3,6 +3,7 @@ parameters:
     level: 6
     paths:
         - src
+        - tests
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
@@ -28,3 +29,9 @@ parameters:
         -
             message: '~^Dynamic call to static method XMLReader::open\(\)\.~'
             path: src/Extractors\Xml.php
+        -
+            message: '~Variable method call on Wizaplace\\Etl\\Step\.~'
+            path: tests/TestCase.php
+        -
+            message: '~Access to an undefined property Wizaplace\\Etl\\Row::\$name\.~'
+            path: tests/RowTest.php

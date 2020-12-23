@@ -20,7 +20,7 @@ use Wizaplace\Etl\Row;
 class CsvTest extends TestCase
 {
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -35,7 +35,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function custom_delimiter_and_enclosure()
+    public function customDelimiterAndEnclosure(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -51,7 +51,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns()
+    public function filteringColumns(): void
     {
         $expected = [
             new Row(['id' => 1, 'email' => 'johndoe@email.com']),
@@ -67,7 +67,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns_with_more_asked_columns_than_really_available()
+    public function filteringColumnsWithMoreAskedColumnsThanReallyAvailable(): void
     {
         $extractor = new Csv();
         $extractor->input(__DIR__ . '/../data/csv1.csv');
@@ -95,7 +95,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns_with_incomplete_line()
+    public function filteringColumnsWithIncompleteLine(): void
     {
         $extractor = new Csv();
         $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
@@ -139,7 +139,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns_with_unavailable_field()
+    public function filteringColumnsWithUnavailableField(): void
     {
         $extractor = new Csv();
         $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
@@ -183,7 +183,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function mapping_columns()
+    public function mappingColumns(): void
     {
         $expected = [
             new Row(['id' => 1, 'email_address' => 'johndoe@email.com']),
@@ -199,7 +199,7 @@ class CsvTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns_indexes_when_there_is_no_header()
+    public function customColumnsIndexesWhenThereIsNoHeader(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -243,7 +243,7 @@ janedoe@email.com',
     }
 
     /** @test */
-    public function missing_file(): void
+    public function missingFile(): void
     {
         $extractor = new Csv();
         $extractor->input(__DIR__ . '/../data/csv3trgrtg.csv');

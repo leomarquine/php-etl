@@ -36,8 +36,6 @@ class Row implements \ArrayAccess
 
     /**
      * Create a new Row instance.
-     *
-     * @param string[] $attributes
      */
     public function __construct(array $attributes)
     {

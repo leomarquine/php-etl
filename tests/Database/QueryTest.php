@@ -17,7 +17,7 @@ use Wizaplace\Etl\Database\Query;
 class QueryTest extends TestCase
 {
     /** @test */
-    public function select()
+    public function select(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->select('users');
@@ -31,7 +31,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function insert()
+    public function insert(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->insert('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -41,7 +41,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function update()
+    public function update(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->update('users', ['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -51,7 +51,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function delete()
+    public function delete(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->delete('users');
@@ -61,7 +61,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function where()
+    public function where(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->where(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
@@ -71,7 +71,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function where_in()
+    public function whereIn(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->whereIn('id', ['1', '2']);
@@ -81,7 +81,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function where_not_in()
+    public function whereNotIn(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->whereNotIn('id', ['1', '2']);
@@ -91,7 +91,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function composite_where_in()
+    public function compositeWhereIn(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->whereIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
@@ -101,7 +101,7 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function composite_where_not_in()
+    public function compositeWhereNotIn(): void
     {
         $query = new Query($this->createMock('PDO'));
         $query->whereNotIn(['id', 'company'], [['id' => '1', 'company' => '1'], ['id' => '2', 'company' => '1']]);
@@ -111,13 +111,13 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function execute_query()
+    public function executeQuery(): void
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->once())->method('execute')->with([]);
+        $statement->expects(static::once())->method('execute')->with([]);
 
         $pdo = $this->createMock('PDO');
-        $pdo->expects($this->once())->method('prepare')->with('')->willReturn($statement);
+        $pdo->expects(static::once())->method('prepare')->with('')->willReturn($statement);
 
         $query = new Query($pdo);
 

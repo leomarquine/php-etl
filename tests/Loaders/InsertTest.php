@@ -11,54 +11,77 @@ declare(strict_types=1);
 
 namespace Tests\Loaders;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
+use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Database\Statement;
+use Wizaplace\Etl\Database\Transaction;
 use Wizaplace\Etl\Loaders\Insert;
+use Wizaplace\Etl\Row;
 
 class InsertTest extends TestCase
 {
+    /** @var \PDOStatement|MockObject */
+    private $statement;
+
+    /** @var MockObject|Transaction */
+    private $transaction;
+
+    /** @var MockObject|Statement */
+    private $builder;
+
+    /** @var MockObject|Manager */
+    private $manager;
+
+    /** @var MockObject|Row */
+    private $row;
+
+    /** @var Insert */
+    private $loader;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->statement = $this->createMock('PDOStatement');
-        $this->statement->expects($this->any())->method('execute');
+        $this->statement->expects(static::any())->method('execute');
 
         $this->transaction = $this->createMock('Wizaplace\Etl\Database\Transaction');
-        $this->transaction->expects($this->any())->method('size')->willReturnSelf();
-        $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) {
+        $this->transaction->expects(static::any())->method('size')->willReturnSelf();
+        $this->transaction->expects(static::any())->method('run')->willReturnCallback(function ($callback): void {
             call_user_func($callback);
         });
-        $this->transaction->expects($this->any())->method('close');
+        $this->transaction->expects(static::any())->method('close');
 
         $this->builder = $this->createMock('Wizaplace\Etl\Database\Statement');
-        $this->builder->expects($this->any())->method('insert')->willReturnSelf();
-        $this->builder->expects($this->any())->method('prepare')->willReturn($this->statement);
+        $this->builder->expects(static::any())->method('insert')->willReturnSelf();
+        $this->builder->expects(static::any())->method('prepare')->willReturn($this->statement);
 
         $this->manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $this->manager->expects($this->any())->method('statement')->willReturn($this->builder);
-        $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
+        $this->manager->expects(static::any())->method('statement')->willReturn($this->builder);
+        $this->manager->expects(static::any())->method('transaction')->willReturn($this->transaction);
 
         $this->row = $this->createMock('Wizaplace\Etl\Row');
-        $this->row->expects($this->any())->method('toArray')
+        $this->row->expects(static::any())->method('toArray')
             ->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader = new Insert($this->manager);
     }
 
     /** @test */
-    public function insert()
+    public function insert(): void
     {
-        $this->manager->expects($this->once())->method('statement')->with('default');
-        $this->manager->expects($this->once())->method('transaction')->with('default');
+        $this->manager->expects(static::once())->method('statement')->with('default');
+        $this->manager->expects(static::once())->method('transaction')->with('default');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
-        $this->transaction->expects($this->once())->method('close');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
+        $this->transaction->expects(static::once())->method('close');
 
-        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
-        $this->builder->expects($this->once())->method('prepare');
+        $this->builder->expects(static::once())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->builder->expects(static::once())->method('prepare');
 
-        $this->statement->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader->output('table');
@@ -67,11 +90,11 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns()
+    public function filteringColumns(): void
     {
-        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name']);
+        $this->builder->expects(static::once())->method('insert')->with('table', ['id', 'name']);
 
-        $this->statement->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
+        $this->statement->expects(static::once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
 
         $this->loader->output('table');
         $this->loader->options(['columns' => ['id', 'name']]);
@@ -80,11 +103,11 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function mapping_columns()
+    public function mappingColumns(): void
     {
-        $this->builder->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name']);
+        $this->builder->expects(static::once())->method('insert')->with('table', ['user_id', 'full_name']);
 
-        $this->statement->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('execute')
             ->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
         $this->loader->output('table');
@@ -94,16 +117,16 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function without_transactions()
+    public function withoutTransactions(): void
     {
-        $this->manager->expects($this->never())->method('transaction');
+        $this->manager->expects(static::never())->method('transaction');
 
-        $this->transaction->expects($this->never())->method('size');
-        $this->transaction->expects($this->never())->method('run');
+        $this->transaction->expects(static::never())->method('size');
+        $this->transaction->expects(static::never())->method('run');
 
-        $this->builder->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->builder->expects(static::once())->method('insert')->with('table', ['id', 'name', 'email']);
 
-        $this->statement->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader->output('table');
@@ -113,12 +136,12 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function with_timestamps()
+    public function withTimestamps(): void
     {
-        $this->builder->expects($this->once())->method('insert')
+        $this->builder->expects(static::once())->method('insert')
             ->with('table', ['id', 'name', 'email', 'created_at', 'updated_at']);
 
-        $this->statement->expects($this->once())->method('execute')->with([
+        $this->statement->expects(static::once())->method('execute')->with([
             'id' => '1',
             'name' => 'Jane Doe',
             'email' => 'janedoe@example.com',
@@ -133,9 +156,9 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function custom_commit_size()
+    public function customCommitSize(): void
     {
-        $this->transaction->expects($this->once())->method('size')->with(50)->willReturnSelf();
+        $this->transaction->expects(static::once())->method('size')->with(50)->willReturnSelf();
 
         $this->loader->output('table');
         $this->loader->options(['commit_size' => 50]);
@@ -144,10 +167,10 @@ class InsertTest extends TestCase
     }
 
     /** @test */
-    public function custom_connection()
+    public function customConnection(): void
     {
-        $this->manager->expects($this->once())->method('statement')->with('custom');
-        $this->manager->expects($this->once())->method('transaction')->with('custom');
+        $this->manager->expects(static::once())->method('statement')->with('custom');
+        $this->manager->expects(static::once())->method('transaction')->with('custom');
 
         $this->loader->output('table');
         $this->loader->options(['connection' => 'custom']);

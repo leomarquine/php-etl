@@ -18,7 +18,7 @@ use Wizaplace\Etl\Transformers\RenameColumns;
 class RenameColumnsTest extends TestCase
 {
     /** @test */
-    public function rename_column()
+    public function renameColumn(): void
     {
         $data = [
             new Row(['id' => '1', 'name' => 'John Doe', 'email_address' => 'johndoe@email.com']),

@@ -58,7 +58,7 @@ then
         exit 1
     fi
     echo "Running PHPStan level 6."
-    git diff --cached --name-only --diff-filter=ACMR $against | grep 'src/.*[.]php' | \
+    git diff --cached --name-only --diff-filter=ACMR $against | grep '[.]php' | \
         xargs ./vendor/bin/phpstan analyze
     if [ $? != 0 ]
     then
@@ -67,27 +67,12 @@ then
     fi
 fi
 
-if [ "$(git diff --cached --name-only --diff-filter=ACMR $against | grep 'src/.*[.]php')" != "" ]
+if [ "$(git diff --cached --name-only --diff-filter=ACMR $against | grep '[.]php')" != "" ]
 then
     echo "Running Code Sniffer for src."
-    git diff --cached --name-only --diff-filter=ACMR $against | grep --null 'src/.*[.]php' | tr \\n \\0 | \
+    git diff --cached --name-only --diff-filter=ACMR $against | grep --null '[.]php' | tr \\n \\0 | \
         xargs -0 ./vendor/bin/phpcs
     if [ $? != 0 ]
-    then
-        echo "Fix the error before commit!"
-        exit 1
-    fi
-fi
-
-if [ "$(git diff --cached --name-only --diff-filter=ACMR $against | grep 'tests/.*[.]php')" != "" ]
-then
-    echo "Running Code Sniffer for tests."
-    cd tests
-    git diff --cached --name-only --diff-filter=ACMR $against | cut -c 6- | grep --null 'tests/.*[.]php' | tr \\n \\0 | \
-        xargs -0 ../vendor/bin/phpcs
-    exit_status=$?
-    cd ..
-    if [ $exit_status != 0 ]
     then
         echo "Fix the error before commit!"
         exit 1

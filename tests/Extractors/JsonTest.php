@@ -18,7 +18,7 @@ use Wizaplace\Etl\Row;
 class JsonTest extends TestCase
 {
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -33,7 +33,7 @@ class JsonTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns_json_path()
+    public function customColumnsJsonPath(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),

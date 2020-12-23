@@ -19,8 +19,9 @@ class MemoryLoaderTest extends TestCase
     /** @var MemoryLoader */
     protected $loader;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->loader = new MemoryLoader();
     }
 

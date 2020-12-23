@@ -26,7 +26,7 @@ class ChainingTest extends TestCase
      *
      * @test
      */
-    public function merging_iterators_chaining()
+    public function mergingIteratorsChaining(): void
     {
         // lazy get users
         $usersIterator = (new Etl())

@@ -35,7 +35,7 @@ class ConvertCaseTest extends TestCase
     }
 
     /** @test */
-    public function lowercase()
+    public function lowercase(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'jane doe', 'email' => 'janedoe@email.com']),
@@ -52,7 +52,7 @@ class ConvertCaseTest extends TestCase
     }
 
     /** @test */
-    public function uppercase()
+    public function uppercase(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'JANE DOE', 'email' => 'JANEDOE@EMAIL.COM']),
@@ -69,7 +69,7 @@ class ConvertCaseTest extends TestCase
     }
 
     /** @test */
-    public function titlecase()
+    public function titleCase(): void
     {
         // @see https://www.php.net/manual/en/migration73.new-features.php
         if (phpversion() < 7.3) {
@@ -94,7 +94,7 @@ class ConvertCaseTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns()
+    public function customColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'jane doe', 'email' => 'janedoe@email.com']),

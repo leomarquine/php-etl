@@ -6,4 +6,5 @@
     <rule ref="PSR12"/>
     <rule ref="Generic.PHP.Syntax"/>
     <file>src</file>
+    <file>tests</file>
 </ruleset>

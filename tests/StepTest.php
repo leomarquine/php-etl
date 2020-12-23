@@ -14,7 +14,7 @@ namespace Tests;
 class StepTest extends TestCase
 {
     /** @test */
-    public function set_options()
+    public function setOptions(): void
     {
         $step = new FakeStep();
 

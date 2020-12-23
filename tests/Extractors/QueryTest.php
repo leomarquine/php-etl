@@ -18,18 +18,18 @@ use Wizaplace\Etl\Row;
 class QueryTest extends TestCase
 {
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->once())->method('execute')->with([]);
-        $statement->expects($this->exactly(3))->method('fetch')
-            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects(static::once())->method('execute')->with([]);
+        $statement->expects(static::exactly(3))->method('fetch')
+            ->will(static::onConsecutiveCalls(['row1'], ['row2'], null));
 
         $connection = $this->createMock('PDO');
-        $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
+        $connection->expects(static::once())->method('prepare')->with('select query')->willReturn($statement);
 
         $manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $manager->expects($this->once())->method('pdo')->with('default')->willReturn($connection);
+        $manager->expects(static::once())->method('pdo')->with('default')->willReturn($connection);
 
         $extractor = new Query($manager);
 
@@ -39,18 +39,18 @@ class QueryTest extends TestCase
     }
 
     /** @test */
-    public function custom_connection_and_bindings()
+    public function customConnectionAndBindings(): void
     {
         $statement = $this->createMock('PDOStatement');
-        $statement->expects($this->once())->method('execute')->with(['binding']);
-        $statement->expects($this->exactly(3))->method('fetch')
-            ->will($this->onConsecutiveCalls(['row1'], ['row2'], null));
+        $statement->expects(static::once())->method('execute')->with(['binding']);
+        $statement->expects(static::exactly(3))->method('fetch')
+            ->will(static::onConsecutiveCalls(['row1'], ['row2'], null));
 
         $connection = $this->createMock('PDO');
-        $connection->expects($this->once())->method('prepare')->with('select query')->willReturn($statement);
+        $connection->expects(static::once())->method('prepare')->with('select query')->willReturn($statement);
 
         $manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $manager->expects($this->once())->method('pdo')->with('connection')->willReturn($connection);
+        $manager->expects(static::once())->method('pdo')->with('connection')->willReturn($connection);
 
         $extractor = new Query($manager);
 

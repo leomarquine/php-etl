@@ -18,7 +18,7 @@ use Wizaplace\Etl\Row;
 class XmlTest extends TestCase
 {
     /** @test */
-    public function custom_loop_path()
+    public function customLoopPath(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -34,7 +34,7 @@ class XmlTest extends TestCase
     }
 
     /** @test */
-    public function custom_fields_within_the_loop_path()
+    public function customFieldsWithinTheLoopPath(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),

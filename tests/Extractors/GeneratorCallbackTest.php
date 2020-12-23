@@ -17,12 +17,16 @@ use Wizaplace\Etl\Row;
 
 class GeneratorCallbackTest extends TestCase
 {
+    /** @var array|array[] */
     protected $input = [
         ['id' => 1, 'json' => '["a", "b", "c"]'],
         ['id' => 2, 'json' => '["x", "y", "z"]'],
     ];
 
+    /** @var \Closure */
     protected $callback;
+
+    /** @var array|Row[] */
     private $expected;
 
     protected function setUp(): void
@@ -36,7 +40,7 @@ class GeneratorCallbackTest extends TestCase
             new Row(['id' => 2, 'value' => 'y']),
             new Row(['id' => 2, 'value' => 'z']),
         ];
-        $this->callback = function ($row) {
+        $this->callback = function ($row): \Generator {
             foreach (json_decode($row['json']) as $value) {
                 yield ['id' => $row['id'], 'value' => $value];
             }

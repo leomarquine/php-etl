@@ -19,13 +19,14 @@ class FilePathTraitTest extends TestCase
     /** @var object * */
     protected $fakeLoader;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->fakeLoader = new FakeLoader();
     }
 
     /** @test */
-    public function can_recursivly_create_a_dir_path()
+    public function canRecursivlyCreateDirPath(): void
     {
         $base = uniqid();
         $filePath = sys_get_temp_dir() . "/phpunit_$base/test/output";
@@ -34,7 +35,7 @@ class FilePathTraitTest extends TestCase
     }
 
     /** @test */
-    public function illegal_path_trigger_exception()
+    public function illegalPathTriggerException(): void
     {
         $filePath = '/dev/random/illegal/path';
 

@@ -17,7 +17,7 @@ use Wizaplace\Etl\Database\Manager;
 class ManagerTest extends TestCase
 {
     /** @test */
-    public function default_connection()
+    public function defaultConnection(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
 
@@ -28,7 +28,7 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function connection_with_custom_name()
+    public function connectionWithCustomName(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
 
@@ -39,10 +39,10 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function get_a_query_builder_instance_for_the_given_connection()
+    public function getQueryBuilderInstanceForGivenConnection(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+        $factory->expects(static::once())->method('make')->with([])->willReturn($this->createMock('PDO'));
 
         $manager = new Manager($factory);
         $manager->addConnection([]);
@@ -51,10 +51,10 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function get_a_statement_builder_instance_for_the_given_connection()
+    public function getStatementBuilderInstanceForGivenConnection(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+        $factory->expects(static::once())->method('make')->with([])->willReturn($this->createMock('PDO'));
 
         $manager = new Manager($factory);
         $manager->addConnection([]);
@@ -63,10 +63,10 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function get_a_transaction_manager_instance_for_the_given_connection()
+    public function getTransactionManagerInstanceForGivenConnection(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+        $factory->expects(static::once())->method('make')->with([])->willReturn($this->createMock('PDO'));
 
         $manager = new Manager($factory);
         $manager->addConnection([]);
@@ -75,10 +75,10 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function get_the_pdo_connection()
+    public function getPdoConnection(): void
     {
         $factory = $this->createMock('Wizaplace\Etl\Database\ConnectionFactory');
-        $factory->expects($this->once())->method('make')->with([])->willReturn($this->createMock('PDO'));
+        $factory->expects(static::once())->method('make')->with([])->willReturn($this->createMock('PDO'));
 
         $manager = new Manager($factory);
         $manager->addConnection([]);
@@ -87,7 +87,7 @@ class ManagerTest extends TestCase
     }
 
     /** @test */
-    public function invalid_connection_throws_exception()
+    public function invalidConnectionThrowsException(): void
     {
         $manager = new Manager($this->createMock('Wizaplace\Etl\Database\ConnectionFactory'));
 

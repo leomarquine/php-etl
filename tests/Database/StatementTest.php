@@ -17,7 +17,7 @@ use Wizaplace\Etl\Database\Statement;
 class StatementTest extends TestCase
 {
     /** @test */
-    public function select()
+    public function select(): void
     {
         $statement = new Statement($this->createMock('PDO'));
         $statement->select('users');
@@ -31,7 +31,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    public function insert()
+    public function insert(): void
     {
         $statement = new Statement($this->createMock('PDO'));
         $statement->insert('users', ['name', 'email']);
@@ -40,7 +40,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    public function update()
+    public function update(): void
     {
         $statement = new Statement($this->createMock('PDO'));
         $statement->update('users', ['name', 'email']);
@@ -49,7 +49,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    public function delete()
+    public function delete(): void
     {
         $statement = new Statement($this->createMock('PDO'));
         $statement->delete('users');
@@ -58,7 +58,7 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    public function where()
+    public function where(): void
     {
         $statement = new Statement($this->createMock('PDO'));
         $statement->where(['name', 'email']);
@@ -67,12 +67,12 @@ class StatementTest extends TestCase
     }
 
     /** @test */
-    public function prepare()
+    public function prepare(): void
     {
         $pdoStatement = $this->createMock('PDOStatement');
 
         $pdo = $this->createMock('PDO');
-        $pdo->expects($this->once())->method('prepare')->with('')->willReturn($pdoStatement);
+        $pdo->expects(static::once())->method('prepare')->with('')->willReturn($pdoStatement);
 
         $statement = new Statement($pdo);
 

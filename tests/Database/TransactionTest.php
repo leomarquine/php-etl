@@ -12,22 +12,32 @@ declare(strict_types=1);
 namespace Tests\Database;
 
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 use Wizaplace\Etl\Database\Transaction;
 
 class TransactionTest extends TestCase
 {
+    /** @var Transaction */
+    private $transaction;
+
+    /** @var MockObject|\stdClass */
+    private $callback;
+
+    /** @var \PDO|MockObject */
+    private $connection;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->connection = $this->createMock('PDO');
-        $this->callback = $this->getMockBuilder('stdClass')->setMethods(['callback'])->getMock();
+        $this->callback = $this->getMockBuilder('stdClass')->addMethods(['callback'])->getMock();
 
         $this->transaction = new Transaction($this->connection);
     }
 
-    protected function transaction($range)
+    protected function transaction(array $range): void
     {
         foreach ($range as $current) {
             $this->transaction->run([$this->callback, 'callback']);
@@ -37,25 +47,25 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    public function runs_a_single_transaction_if_size_is_empty()
+    public function runsSingleTransactionIfSizeIsEmpty(): void
     {
-        $this->callback->expects($this->exactly(4))->method('callback');
+        $this->callback->expects(static::exactly(4))->method('callback');
 
-        $this->connection->expects($this->exactly(1))->method('beginTransaction');
-        $this->connection->expects($this->exactly(0))->method('rollBack');
-        $this->connection->expects($this->exactly(1))->method('commit');
+        $this->connection->expects(static::exactly(1))->method('beginTransaction');
+        $this->connection->expects(static::exactly(0))->method('rollBack');
+        $this->connection->expects(static::exactly(1))->method('commit');
 
         $this->transaction(range(1, 4));
     }
 
     /** @test */
-    public function runs_transactions_when_commit_size_is_multiple_of_total_lines()
+    public function runsTransactionsWhenCommitSizeIsMultipleOfTotalLines(): void
     {
-        $this->callback->expects($this->exactly(4))->method('callback');
+        $this->callback->expects(static::exactly(4))->method('callback');
 
-        $this->connection->expects($this->exactly(2))->method('beginTransaction');
-        $this->connection->expects($this->exactly(0))->method('rollBack');
-        $this->connection->expects($this->exactly(2))->method('commit');
+        $this->connection->expects(static::exactly(2))->method('beginTransaction');
+        $this->connection->expects(static::exactly(0))->method('rollBack');
+        $this->connection->expects(static::exactly(2))->method('commit');
 
         $this->transaction->size(2);
 
@@ -63,13 +73,13 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    public function runs_transactions_when_commit_size_is_not_multiple_of_total_lines()
+    public function runsTransactionsWhenCommitSizeIsNotMultipleOfTotalLines(): void
     {
-        $this->callback->expects($this->exactly(3))->method('callback');
+        $this->callback->expects(static::exactly(3))->method('callback');
 
-        $this->connection->expects($this->exactly(2))->method('beginTransaction');
-        $this->connection->expects($this->exactly(0))->method('rollBack');
-        $this->connection->expects($this->exactly(2))->method('commit');
+        $this->connection->expects(static::exactly(2))->method('beginTransaction');
+        $this->connection->expects(static::exactly(0))->method('rollBack');
+        $this->connection->expects(static::exactly(2))->method('commit');
 
         $this->transaction->size(2);
 
@@ -77,17 +87,17 @@ class TransactionTest extends TestCase
     }
 
     /** @test */
-    public function rolls_back_the_last_transaction_and_stops_execution_on_error()
+    public function rollsBackTheLastTransactionAndStopsExecutionOnError(): void
     {
-        $this->callback->expects($this->exactly(3))->method('callback')->willReturnOnConsecutiveCalls(
+        $this->callback->expects(static::exactly(3))->method('callback')->willReturnOnConsecutiveCalls(
             null,
             null,
-            $this->throwException(new Exception())
+            static::throwException(new Exception())
         );
 
-        $this->connection->expects($this->exactly(2))->method('beginTransaction');
-        $this->connection->expects($this->exactly(1))->method('rollBack');
-        $this->connection->expects($this->exactly(1))->method('commit');
+        $this->connection->expects(static::exactly(2))->method('beginTransaction');
+        $this->connection->expects(static::exactly(1))->method('rollBack');
+        $this->connection->expects(static::exactly(1))->method('commit');
 
         $this->transaction->size(2);
 

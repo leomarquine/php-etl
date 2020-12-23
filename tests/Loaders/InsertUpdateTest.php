@@ -11,56 +11,94 @@ declare(strict_types=1);
 
 namespace Tests\Loaders;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
+use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Database\Statement;
+use Wizaplace\Etl\Database\Transaction;
 use Wizaplace\Etl\Loaders\InsertUpdate;
+use Wizaplace\Etl\Row;
 
 class InsertUpdateTest extends TestCase
 {
+    /** @var MockObject|Transaction */
+    private $transaction;
+
+    /** @var \PDOStatement|MockObject */
+    private $insert;
+
+    /** @var \PDOStatement|MockObject */
+    private $select;
+
+    /** @var MockObject|Statement */
+    private $insertStatement;
+
+    /** @var MockObject|Statement */
+    private $selectStatement;
+
+    /** @var \PDOStatement|MockObject */
+    private $update;
+
+    /** @var MockObject|Statement */
+    private $updateStatement;
+
+    /** @var MockObject|Statement */
+    private $statement;
+
+    /** @var MockObject|Manager */
+    private $manager;
+
+    /** @var MockObject|Row */
+    private $row;
+
+    /** @var InsertUpdate */
+    private $loader;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->transaction = $this->createMock('Wizaplace\Etl\Database\Transaction');
-        $this->transaction->expects($this->any())->method('size')->willReturnSelf();
-        $this->transaction->expects($this->any())->method('run')->willReturnCallback(function ($callback) {
+        $this->transaction->expects(static::any())->method('size')->willReturnSelf();
+        $this->transaction->expects(static::any())->method('run')->willReturnCallback(function ($callback): void {
             call_user_func($callback);
         });
-        $this->transaction->expects($this->any())->method('close');
+        $this->transaction->expects(static::any())->method('close');
 
         $this->insert = $this->createMock('PDOStatement');
-        $this->insert->expects($this->any())->method('execute');
+        $this->insert->expects(static::any())->method('execute');
 
         $this->insertStatement = $this->createMock('Wizaplace\Etl\Database\Statement');
-        $this->insertStatement->expects($this->any())->method('insert')->willReturnSelf();
-        $this->insertStatement->expects($this->any())->method('prepare')->willReturn($this->insert);
+        $this->insertStatement->expects(static::any())->method('insert')->willReturnSelf();
+        $this->insertStatement->expects(static::any())->method('prepare')->willReturn($this->insert);
 
         $this->select = $this->createMock('PDOStatement');
-        $this->select->expects($this->any())->method('execute');
+        $this->select->expects(static::any())->method('execute');
 
         $this->selectStatement = $this->createMock('Wizaplace\Etl\Database\Statement');
-        $this->selectStatement->expects($this->any())->method('select')->willReturnSelf();
-        $this->selectStatement->expects($this->any())->method('where')->willReturnSelf();
-        $this->selectStatement->expects($this->any())->method('prepare')->willReturn($this->select);
+        $this->selectStatement->expects(static::any())->method('select')->willReturnSelf();
+        $this->selectStatement->expects(static::any())->method('where')->willReturnSelf();
+        $this->selectStatement->expects(static::any())->method('prepare')->willReturn($this->select);
 
         $this->update = $this->createMock('PDOStatement');
-        $this->update->expects($this->any())->method('execute');
+        $this->update->expects(static::any())->method('execute');
 
         $this->updateStatement = $this->createMock('Wizaplace\Etl\Database\Statement');
-        $this->updateStatement->expects($this->any())->method('update')->willReturnSelf();
-        $this->updateStatement->expects($this->any())->method('where')->willReturnSelf();
-        $this->updateStatement->expects($this->any())->method('prepare')->willReturn($this->update);
+        $this->updateStatement->expects(static::any())->method('update')->willReturnSelf();
+        $this->updateStatement->expects(static::any())->method('where')->willReturnSelf();
+        $this->updateStatement->expects(static::any())->method('prepare')->willReturn($this->update);
 
         $this->statement = $this->createMock('Wizaplace\Etl\Database\Statement');
-        $this->statement->expects($this->any())->method('insert')->willReturn($this->insertStatement);
-        $this->statement->expects($this->any())->method('select')->willReturn($this->selectStatement);
-        $this->statement->expects($this->any())->method('update')->willReturn($this->updateStatement);
+        $this->statement->expects(static::any())->method('insert')->willReturn($this->insertStatement);
+        $this->statement->expects(static::any())->method('select')->willReturn($this->selectStatement);
+        $this->statement->expects(static::any())->method('update')->willReturn($this->updateStatement);
 
         $this->manager = $this->createMock('Wizaplace\Etl\Database\Manager');
-        $this->manager->expects($this->any())->method('statement')->willReturn($this->statement);
-        $this->manager->expects($this->any())->method('transaction')->willReturn($this->transaction);
+        $this->manager->expects(static::any())->method('statement')->willReturn($this->statement);
+        $this->manager->expects(static::any())->method('transaction')->willReturn($this->transaction);
 
         $this->row = $this->createMock('Wizaplace\Etl\Row');
-        $this->row->expects($this->any())->method('toArray')
+        $this->row->expects(static::any())->method('toArray')
             ->willReturn(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader = new InsertUpdate($this->manager);
@@ -68,110 +106,110 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function insert_row_if_it_was_not_found_in_the_database()
+    public function insertRowIfNotFoundInDatabase(): void
     {
-        $this->statement->expects($this->once())->method('select')->with('table');
-        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
-        $this->selectStatement->expects($this->once())->method('prepare');
-        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->statement->expects(static::once())->method('select')->with('table');
+        $this->selectStatement->expects(static::once())->method('where')->with(['id']);
+        $this->selectStatement->expects(static::once())->method('prepare');
+        $this->select->expects(static::once())->method('execute')->with(['id' => '1']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
-        $this->insertStatement->expects($this->once())->method('prepare');
-        $this->insert->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->insertStatement->expects(static::once())->method('prepare');
+        $this->insert->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $this->update->expects($this->never())->method('execute');
+        $this->update->expects(static::never())->method('execute');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
-        $this->transaction->expects($this->once())->method('close');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
+        $this->transaction->expects(static::once())->method('close');
 
         $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
-    public function update_row_if_it_was_found_in_the_database()
+    public function updateRowIfFoundInDatabase(): void
     {
-        $this->statement->expects($this->once())->method('select')->with('table');
-        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
-        $this->selectStatement->expects($this->once())->method('prepare');
-        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->statement->expects(static::once())->method('select')->with('table');
+        $this->selectStatement->expects(static::once())->method('where')->with(['id']);
+        $this->selectStatement->expects(static::once())->method('prepare');
+        $this->select->expects(static::once())->method('execute')->with(['id' => '1']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
 
-        $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
-        $this->updateStatement->expects($this->once())->method('where')->with(['id']);
-        $this->updateStatement->expects($this->once())->method('prepare');
-        $this->update->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('update')->with('table', ['name', 'email']);
+        $this->updateStatement->expects(static::once())->method('where')->with(['id']);
+        $this->updateStatement->expects(static::once())->method('prepare');
+        $this->update->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $this->insert->expects($this->never())->method('execute');
+        $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
-        $this->transaction->expects($this->once())->method('close');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
+        $this->transaction->expects(static::once())->method('close');
 
         $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
-    public function insert_row_even_if_updates_are_suppressed()
+    public function insertRowEvenIfUpdatesAreSuppressed(): void
     {
         $this->loader->options(['doUpdates' => false]);
-        $this->statement->expects($this->once())->method('select')->with('table');
-        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
-        $this->selectStatement->expects($this->once())->method('prepare');
-        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->statement->expects(static::once())->method('select')->with('table');
+        $this->selectStatement->expects(static::once())->method('where')->with(['id']);
+        $this->selectStatement->expects(static::once())->method('prepare');
+        $this->select->expects(static::once())->method('execute')->with(['id' => '1']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name', 'email']);
-        $this->insertStatement->expects($this->once())->method('prepare');
-        $this->insert->expects($this->once())->method('execute')
+        $this->statement->expects(static::once())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->insertStatement->expects(static::once())->method('prepare');
+        $this->insert->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $this->update->expects($this->never())->method('execute');
+        $this->update->expects(static::never())->method('execute');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
-        $this->transaction->expects($this->once())->method('close');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
+        $this->transaction->expects(static::once())->method('close');
 
         $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
-    public function do_not_update_or_insert_row_if_updates_are_suppressed()
+    public function doNotUpdateOrInsertRowIfUpdatesAreSuppressed(): void
     {
         $this->loader->options(['doUpdates' => false]);
-        $this->statement->expects($this->once())->method('select')->with('table');
-        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
-        $this->selectStatement->expects($this->once())->method('prepare');
-        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->statement->expects(static::once())->method('select')->with('table');
+        $this->selectStatement->expects(static::once())->method('where')->with(['id']);
+        $this->selectStatement->expects(static::once())->method('prepare');
+        $this->select->expects(static::once())->method('execute')->with(['id' => '1']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
 
-        $this->statement->expects($this->never())->method('update')->with('table', ['name', 'email']);
-        $this->statement->expects($this->never())->method('insert')->with('table', ['id', 'name', 'email']);
-        $this->updateStatement->expects($this->never())->method('where')->with(['id']);
-        $this->updateStatement->expects($this->never())->method('prepare');
-        $this->update->expects($this->never())->method('execute')
+        $this->statement->expects(static::never())->method('update')->with('table', ['name', 'email']);
+        $this->statement->expects(static::never())->method('insert')->with('table', ['id', 'name', 'email']);
+        $this->updateStatement->expects(static::never())->method('where')->with(['id']);
+        $this->updateStatement->expects(static::never())->method('prepare');
+        $this->update->expects(static::never())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $this->insert->expects($this->never())->method('execute');
+        $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
-        $this->transaction->expects($this->once())->method('close');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
+        $this->transaction->expects(static::once())->method('close');
 
         $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
-    public function do_not_update_if_there_are_no_changes()
+    public function doNotUpdateIfThereAreNoChanges(): void
     {
-        $this->statement->expects($this->once())->method('select')->with('table');
-        $this->selectStatement->expects($this->once())->method('where')->with(['id']);
-        $this->selectStatement->expects($this->once())->method('prepare');
-        $this->select->expects($this->once())->method('execute')->with(['id' => '1']);
-        $this->select->expects($this->once())->method('fetch')->willReturn([
+        $this->statement->expects(static::once())->method('select')->with('table');
+        $this->selectStatement->expects(static::once())->method('where')->with(['id']);
+        $this->selectStatement->expects(static::once())->method('prepare');
+        $this->select->expects(static::once())->method('execute')->with(['id' => '1']);
+        $this->select->expects(static::once())->method('fetch')->willReturn([
             'id' => '1',
             'name' => 'Jane Doe',
             'email' => 'janedoe@example.com',
@@ -179,26 +217,26 @@ class InsertUpdateTest extends TestCase
             'updated_at' => date('Y-m-d G:i:s'),
         ]);
 
-        $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email']);
-        $this->updateStatement->expects($this->once())->method('where')->with(['id']);
-        $this->updateStatement->expects($this->once())->method('prepare');
-        $this->update->expects($this->never())->method('execute');
+        $this->statement->expects(static::once())->method('update')->with('table', ['name', 'email']);
+        $this->updateStatement->expects(static::once())->method('where')->with(['id']);
+        $this->updateStatement->expects(static::once())->method('prepare');
+        $this->update->expects(static::never())->method('execute');
 
-        $this->insert->expects($this->never())->method('execute');
+        $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects($this->once())->method('size')->with(100);
-        $this->transaction->expects($this->once())->method('run');
+        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('run');
 
         $this->execute($this->loader, [$this->row]);
     }
 
     /** @test */
-    public function filtering_columns_to_insert()
+    public function filteringColumnsToInsert(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')->with('table', ['id', 'name']);
-        $this->insert->expects($this->once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
+        $this->statement->expects(static::once())->method('insert')->with('table', ['id', 'name']);
+        $this->insert->expects(static::once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
 
         $this->loader->options(['columns' => ['id', 'name']]);
 
@@ -206,13 +244,13 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function empty_filter_on_columns_to_insert()
+    public function emptyFilterOnColumnsToInsert(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')
+        $this->statement->expects(static::once())->method('insert')
             ->with('table', ['id', 'name', 'email']);
-        $this->insert->expects($this->once())->method('execute')
+        $this->insert->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader->options(['columns' => []]);
@@ -221,12 +259,12 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function filtering_columns_to_update()
+    public function filteringColumnsToUpdate(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
 
-        $this->statement->expects($this->once())->method('update')->with('table', ['name']);
-        $this->update->expects($this->once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
+        $this->statement->expects(static::once())->method('update')->with('table', ['name']);
+        $this->update->expects(static::once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
 
         $this->loader->options(['columns' => ['id', 'name']]);
 
@@ -234,12 +272,12 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function mapping_columns_to_insert()
+    public function mappingColumnsToInsert(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')->with('table', ['user_id', 'full_name']);
-        $this->insert->expects($this->once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
+        $this->statement->expects(static::once())->method('insert')->with('table', ['user_id', 'full_name']);
+        $this->insert->expects(static::once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
         $this->loader->options(['columns' => ['id' => 'user_id', 'name' => 'full_name']]);
 
@@ -247,12 +285,12 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function mapping_columns_to_update()
+    public function mappingColumnsToUpdate(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
 
-        $this->statement->expects($this->once())->method('update')->with('table', ['full_name']);
-        $this->update->expects($this->once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
+        $this->statement->expects(static::once())->method('update')->with('table', ['full_name']);
+        $this->update->expects(static::once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
 
         $this->loader->options(['columns' => ['id' => 'id', 'name' => 'full_name']]);
 
@@ -260,13 +298,13 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function insert_data_using_timestamps()
+    public function insertDataUsingTimestamps(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
 
-        $this->statement->expects($this->once())->method('insert')
+        $this->statement->expects(static::once())->method('insert')
             ->with('table', ['id', 'name', 'email', 'created_at', 'updated_at']);
-        $this->insert->expects($this->once())->method('execute')->with([
+        $this->insert->expects(static::once())->method('execute')->with([
             'id' => '1',
             'name' => 'Jane Doe',
             'email' => 'janedoe@example.com',
@@ -280,12 +318,12 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function update_data_using_timestamps()
+    public function updateDataUsingTimestamps(): void
     {
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
 
-        $this->statement->expects($this->once())->method('update')->with('table', ['name', 'email', 'updated_at']);
-        $this->update->expects($this->once())->method('execute')->with([
+        $this->statement->expects(static::once())->method('update')->with('table', ['name', 'email', 'updated_at']);
+        $this->update->expects(static::once())->method('execute')->with([
             'id' => '1',
             'name' => 'Jane Doe',
             'email' => 'janedoe@example.com',
@@ -298,14 +336,14 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function insert_data_into_the_database_without_transactions()
+    public function insertDataIntoDatabaseWithoutTransactions(): void
     {
-        $this->transaction->expects($this->never())->method('size');
-        $this->transaction->expects($this->never())->method('run');
-        $this->manager->expects($this->never())->method('transaction');
+        $this->transaction->expects(static::never())->method('size');
+        $this->transaction->expects(static::never())->method('run');
+        $this->manager->expects(static::never())->method('transaction');
 
-        $this->select->expects($this->once())->method('fetch')->willReturn(false);
-        $this->insert->expects($this->once())->method('execute');
+        $this->select->expects(static::once())->method('fetch')->willReturn(false);
+        $this->insert->expects(static::once())->method('execute');
 
         $this->loader->options(['transaction' => false]);
 
@@ -313,14 +351,14 @@ class InsertUpdateTest extends TestCase
     }
 
     /** @test */
-    public function update_data_into_the_database_without_transactions()
+    public function updateDataIntoDatabaseWithoutTransactions(): void
     {
-        $this->transaction->expects($this->never())->method('size');
-        $this->transaction->expects($this->never())->method('run');
-        $this->manager->expects($this->never())->method('transaction');
+        $this->transaction->expects(static::never())->method('size');
+        $this->transaction->expects(static::never())->method('run');
+        $this->manager->expects(static::never())->method('transaction');
 
-        $this->select->expects($this->once())->method('fetch')->willReturn(['name' => 'Jane']);
-        $this->update->expects($this->once())->method('execute');
+        $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
+        $this->update->expects(static::once())->method('execute');
 
         $this->loader->options(['transaction' => false]);
 

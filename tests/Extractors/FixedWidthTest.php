@@ -18,7 +18,7 @@ use Wizaplace\Etl\Row;
 class FixedWidthTest extends TestCase
 {
     /** @test */
-    public function columns_start_and_length()
+    public function columnsStartAndLength(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),

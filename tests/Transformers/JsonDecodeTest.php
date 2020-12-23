@@ -35,7 +35,7 @@ class JsonDecodeTest extends TestCase
     }
 
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row(['id' => '1', 'data' => (object) ['name' => 'John Doe', 'email' => 'johndoe@email.com']]),
@@ -50,7 +50,7 @@ class JsonDecodeTest extends TestCase
     }
 
     /** @test */
-    public function converting_objects_to_associative_arrays()
+    public function convertingObjectsToAssociativeArrays(): void
     {
         $expected = [
             new Row(['id' => '1', 'data' => ['name' => 'John Doe', 'email' => 'johndoe@email.com']]),
@@ -67,7 +67,7 @@ class JsonDecodeTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns()
+    public function customColumns(): void
     {
         $expected = [
             new Row(['id' => '"1"', 'data' => (object) ['name' => 'John Doe', 'email' => 'johndoe@email.com']]),

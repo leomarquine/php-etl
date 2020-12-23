@@ -13,11 +13,12 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Wizaplace\Etl\Loaders\Loader;
+use Wizaplace\Etl\Step;
 use Wizaplace\Etl\Transformers\Transformer;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected function execute($step, $data)
+    protected function execute(Step $step, array $data): void
     {
         if ($step instanceof Transformer) {
             $method = 'transform';
@@ -29,8 +30,10 @@ abstract class TestCase extends BaseTestCase
 
         $step->initialize();
 
-        foreach ($data as $row) {
-            $step->$method($row);
+        if (isset($method)) {
+            foreach ($data as $row) {
+                $step->$method($row);
+            }
         }
 
         $step->finalize();

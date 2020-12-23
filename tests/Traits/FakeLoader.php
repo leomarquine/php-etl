@@ -17,7 +17,7 @@ class FakeLoader
 {
     use FilePathTrait;
 
-    public function input(string $filePath)
+    public function input(string $filePath): bool
     {
         return $this->checkOrCreateDir($filePath);
     }

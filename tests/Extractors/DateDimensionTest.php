@@ -18,7 +18,7 @@ use Wizaplace\Etl\Row;
 class DateDimensionTest extends TestCase
 {
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row([
@@ -69,11 +69,11 @@ class DateDimensionTest extends TestCase
 
         $extractor = new DateDimension();
         $extractor->options(['startDate' => '2020-01-01T00:00:00+0', 'endDate' => '2020-01-02T00:00:00+0']);
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
-    public function selected_columns()
+    public function selectedColumns(): void
     {
         $expected = [
             new Row([
@@ -105,20 +105,20 @@ class DateDimensionTest extends TestCase
             'endDate' => '2020-01-03T06:00:00-4',
             'columns' => ['DateKey', 'DateFull', 'Year', 'Month', 'DayOfMonth'],
         ]);
-        $this->assertEquals($expected, iterator_to_array($extractor->extract()));
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
     /** @test */
-    public function default_start()
+    public function defaultStart(): void
     {
         $extractor = new DateDimension();
         $extractor->options([
             'columns' => ['DateKey', 'DateFull'],
         ]);
         $result = iterator_to_array($extractor->extract());
-        $this->assertGreaterThan(3650, count($result));
+        static::assertGreaterThan(3650, count($result));
         $year = (int) (new \DateTime())->format('Y');
-        $this->assertEquals($year - 5 . '0101', $result[0]['DateKey']);
-        $this->assertEquals($year + 5 . '0101', $result[count($result) - 1]['DateKey']);
+        static::assertEquals($year - 5 . '0101', $result[0]['DateKey']);
+        static::assertEquals($year + 5 . '0101', $result[count($result) - 1]['DateKey']);
     }
 }

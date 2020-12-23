@@ -35,7 +35,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -50,7 +50,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns()
+    public function customColumns(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Doe', 'email' => ' johndoe@email.com ']),
@@ -67,7 +67,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function trim_right()
+    public function trimRight(): void
     {
         $expected = [
             new Row(['id' => ' 1', 'name' => 'John Doe', 'email' => ' johndoe@email.com']),
@@ -84,7 +84,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function trim_left()
+    public function trimLeft(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Doe  ', 'email' => 'johndoe@email.com ']),
@@ -101,7 +101,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function custom_character_mask()
+    public function customCharacterMask(): void
     {
         $expected = [
             new Row(['id' => '1', 'name' => 'John Doe', 'email' => 'johndoe@email']),
@@ -118,7 +118,7 @@ class TrimTest extends TestCase
     }
 
     /** @test */
-    public function throws_an_exception_for_unsupported_trim_type()
+    public function throwsExceptionForUnsupportedTrimType(): void
     {
         $transformer = new Trim();
 

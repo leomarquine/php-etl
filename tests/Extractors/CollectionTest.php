@@ -17,13 +17,14 @@ use Wizaplace\Etl\Row;
 
 class CollectionTest extends TestCase
 {
+    /** @var array[] */
     protected $input = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];
 
     /** @test */
-    public function default_options()
+    public function defaultOptions(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
@@ -38,7 +39,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function custom_columns()
+    public function customColumns(): void
     {
         $expected = [
             new Row(['id' => 1, 'name' => 'John Doe']),

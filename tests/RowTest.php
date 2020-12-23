@@ -16,7 +16,7 @@ use Wizaplace\Etl\Row;
 class RowTest extends TestCase
 {
     /** @test */
-    public function set_attribute()
+    public function setAttribute(): void
     {
         $row = new Row([]);
 
@@ -26,7 +26,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function get_attribute()
+    public function getAttribute(): void
     {
         $row = new Row(['name' => 'Jane Doe']);
 
@@ -35,7 +35,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function remove_attribute()
+    public function removeAttribute(): void
     {
         $row = new Row(['name' => 'Jane Doe']);
 
@@ -45,18 +45,18 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function transform_values_using_a_callback()
+    public function transformValuesUsingCallback(): void
     {
         $row = new Row(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $row->transform([], function ($value) {
+        $row->transform([], function (string $value): string {
             return "*$value*";
         });
 
         static::assertEquals('*Jane Doe*', $row->get('name'));
         static::assertEquals('*janedoe@example.com*', $row->get('email'));
 
-        $row->transform(['name'], function ($value) {
+        $row->transform(['name'], function (string $value): string {
             return trim($value, '*');
         });
 
@@ -65,7 +65,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function get_the_array_representation_of_the_row()
+    public function getArrayRepresentationOfRow(): void
     {
         $row = new Row(['name' => 'Jane Doe']);
 
@@ -73,7 +73,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function discard_row()
+    public function discardRow(): void
     {
         $row = new Row([]);
 
@@ -85,7 +85,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function array_access()
+    public function arrayAccess(): void
     {
         $row = new Row(['name' => 'Jane Doe']);
 
@@ -103,7 +103,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function object_access()
+    public function objectAccess(): void
     {
         $row = new Row(['name' => 'Jane Doe']);
 
@@ -115,7 +115,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function set_attributes_without_merge()
+    public function setAttributesWithoutMerge(): void
     {
         $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
         $newAttributes = ['name' => 'Pocahontas', 'Sex' => 'Female'];
@@ -124,7 +124,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function set_attributes_with_merge()
+    public function setAttributesWithMerge(): void
     {
         $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
         $newAttributes = ['name' => 'Marie Curie', 'Job' => 'Scientist'];
@@ -137,7 +137,7 @@ class RowTest extends TestCase
     }
 
     /** @test */
-    public function clear_attributes()
+    public function clearAttributes(): void
     {
         $row = new Row(['name' => 'Jane Doe', 'Sex' => 'Female']);
         $row->clearAttributes();

@@ -17,19 +17,21 @@ use Wizaplace\Etl\Row;
 
 class CsvLoaderTest extends TestCase
 {
-    /**
-     * @var string
-     */
+    /** @var string|false|mixed */
     protected $outputPath;
 
-    /**
-     * @var CsvLoader
-     */
+    /** @var CsvLoader */
     private $csvLoader;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->outputPath = tempnam('/tmp', 'phpunit_');
+        parent::setUp();
+
+        $path = tempnam('/tmp', 'phpunit_');
+        if (false === $path) {
+            static::fail('Could not create temp file');
+        }
+        $this->outputPath = $path;
 
         $this->csvLoader = new CsvLoader();
         $this->csvLoader->output($this->outputPath);

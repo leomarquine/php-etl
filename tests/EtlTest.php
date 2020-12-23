@@ -17,14 +17,14 @@ use Wizaplace\Etl\Row;
 class EtlTest extends TestCase
 {
     /** @test */
-    public function extract_step()
+    public function extractStep(): void
     {
         $extractor = $this->createMock('Wizaplace\Etl\Extractors\Extractor');
-        $extractor->expects($this->once())->method('input')->with('input')->willReturnSelf();
-        $extractor->expects($this->once())->method('options')->with(['options']);
+        $extractor->expects(static::once())->method('input')->with('input')->willReturnSelf();
+        $extractor->expects(static::once())->method('options')->with(['options']);
 
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->once())->method('extractor')->with($extractor);
+        $pipeline->expects(static::once())->method('extractor')->with($extractor);
 
         $etl = new Etl($pipeline);
 
@@ -32,13 +32,13 @@ class EtlTest extends TestCase
     }
 
     /** @test */
-    public function transform_step()
+    public function transformStep(): void
     {
         $transformer = $this->createMock('Wizaplace\Etl\Transformers\Transformer');
-        $transformer->expects($this->once())->method('options')->with(['options']);
+        $transformer->expects(static::once())->method('options')->with(['options']);
 
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->once())->method('pipe')->with($transformer);
+        $pipeline->expects(static::once())->method('pipe')->with($transformer);
 
         $etl = new Etl($pipeline);
 
@@ -46,14 +46,14 @@ class EtlTest extends TestCase
     }
 
     /** @test */
-    public function load_step()
+    public function loadStep(): void
     {
         $loader = $this->createMock('Wizaplace\Etl\Loaders\Loader');
-        $loader->expects($this->once())->method('output')->with('output')->willReturnSelf();
-        $loader->expects($this->once())->method('options')->with(['options']);
+        $loader->expects(static::once())->method('output')->with('output')->willReturnSelf();
+        $loader->expects(static::once())->method('options')->with(['options']);
 
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->once())->method('pipe')->with($loader);
+        $pipeline->expects(static::once())->method('pipe')->with($loader);
 
         $etl = new Etl($pipeline);
 
@@ -61,12 +61,12 @@ class EtlTest extends TestCase
     }
 
     /** @test */
-    public function run_the_etl()
+    public function runTheEtl(): void
     {
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->exactly(1))->method('rewind');
-        $pipeline->expects($this->exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);
-        $pipeline->expects($this->exactly(2))->method('next');
+        $pipeline->expects(static::exactly(1))->method('rewind');
+        $pipeline->expects(static::exactly(3))->method('valid')->willReturnOnConsecutiveCalls(true, true, false);
+        $pipeline->expects(static::exactly(2))->method('next');
 
         $etl = new Etl($pipeline);
 
@@ -74,16 +74,16 @@ class EtlTest extends TestCase
     }
 
     /** @test */
-    public function get_an_array_of_the_etl_data()
+    public function getArrayOfEtlData(): void
     {
         $pipeline = $this->createMock('Wizaplace\Etl\Pipeline');
-        $pipeline->expects($this->exactly(4))->method('valid')->willReturnOnConsecutiveCalls(true, true, true, false);
-        $pipeline->expects($this->exactly(3))->method('current')->willReturnOnConsecutiveCalls(
+        $pipeline->expects(static::exactly(4))->method('valid')->willReturnOnConsecutiveCalls(true, true, true, false);
+        $pipeline->expects(static::exactly(3))->method('current')->willReturnOnConsecutiveCalls(
             new Row(['row1']),
             (new Row(['row2']))->discard(),
             new Row(['row3'])
         );
-        $pipeline->expects($this->exactly(3))->method('next');
+        $pipeline->expects(static::exactly(3))->method('next');
 
         $etl = new Etl($pipeline);
 

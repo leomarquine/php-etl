@@ -20,11 +20,12 @@ use Wizaplace\Etl\Row;
 class AggregatorTest extends TestCase
 {
     /**
-     * @test
+     * @throws IncompleteDataException
      *
+     * @test
      * @dataProvider invalidOptionsProvider
-     **/
-    public function invalid_index_options($invalidOptions, $exceptionCode)
+     */
+    public function invalidIndexOptions(array $invalidOptions, int $exceptionCode): void
     {
         $extractor = new Aggregator();
 
@@ -50,7 +51,7 @@ class AggregatorTest extends TestCase
      *
      * @dataProvider iteratorsProvider
      **/
-    public function strict_index_matching($iterators)
+    public function strictIndexMatching(array $iterators): void
     {
         $extractor = new Aggregator();
 
@@ -73,7 +74,7 @@ class AggregatorTest extends TestCase
      *
      * @dataProvider iteratorsProvider
      **/
-    public function unstrict_index_matching($iterators)
+    public function unstrictIndexMatching(array $iterators): void
     {
         $extractor = new Aggregator();
 
@@ -116,7 +117,7 @@ class AggregatorTest extends TestCase
     /**
      * @test
      */
-    public function big_shuffled_data_set()
+    public function bigShuffledDataSet(): void
     {
         $expected = 10 ** 4;
 
@@ -157,7 +158,7 @@ class AggregatorTest extends TestCase
         static::assertEquals($expected, $actual);
     }
 
-    public function invalidOptionsProvider()
+    public function invalidOptionsProvider(): array
     {
         return [
             'invalid index' => [

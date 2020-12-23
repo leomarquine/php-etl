@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3
+
+**New features**
+* Added PHP 8 support, but we keep the compatibility down to PHP 7.2.
+* Added a CallbackTransformer. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Added a CopycolumnsTransformer. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Added a transformer to format UnixTimestamps into human readable dates. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Added an extractor that call a generator callback. Contribution by [kdebisschop](https://github.com/kdebisschop).
+
+**Bufixes**
+* Fix inconsistency between Insert and InsertUpdate when selecting columns. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Fix on the Row object: the support for PHP 8 highlighted a bad return type on the magic setters. This fix could lead to a BC if the developer rely on it.
+
+**Miscellaneous**
+* Tests are now covered by quality profiles. Contribution by [kdebisschop](https://github.com/kdebisschop).
+* Fix various issues with precommit checks. Contribution by [kdebisschop](https://github.com/kdebisschop).
+
 ## 1.2.1
 
 **Miscellaneous**

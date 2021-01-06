@@ -34,7 +34,7 @@ class AggregatorTest extends TestCase
                 $this->iteratorsProvider()[0][0] // 👀️
             )
             ->options(
-                array_merge(
+                \array_merge(
                     $invalidOptions,
                     ['strict' => false]
                 )
@@ -43,6 +43,7 @@ class AggregatorTest extends TestCase
 
         $this->expectException(InvalidOptionException::class);
         $this->expectExceptionCode($exceptionCode);
+
         iterator_to_array($extractor->extract());
     }
 
@@ -66,7 +67,9 @@ class AggregatorTest extends TestCase
             );
 
         $this->expectException(IncompleteDataException::class);
-        iterator_to_array($extractor->extract());
+        $this->expectExceptionMessage('2 rows were rejected because incomplete');
+
+        \iterator_to_array($extractor->extract());
     }
 
     /**
@@ -85,10 +88,11 @@ class AggregatorTest extends TestCase
                     'index' => ['email'],
                     'columns' => ['name', 'twitter'],
                     'strict' => false,
+                    'discard' => false,
                 ]
             );
 
-        $actual = iterator_to_array($extractor->extract());
+        $actual = \iterator_to_array($extractor->extract(), false);
         $expected = [
             new Row([
                 'id' => 1,
@@ -105,12 +109,58 @@ class AggregatorTest extends TestCase
             (
                 new Row([
                     'id' => 3,
-                    'name' => 'Incomplete',
-                    'email' => 'incomplete@dirtydata',
+                    'name' => 'Incomplete1',
+                    'email' => 'incomplete1@dirtydata',
                 ])
-            )
-            ->setIncomplete(),
+            )->setIncomplete(),
+            (
+                new Row([
+                    'id' => 4,
+                    'name' => 'Incomplete2',
+                    'email' => 'incomplete2@dirtydata',
+                ])
+            )->setIncomplete(),
         ];
+
+        static::assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider iteratorsProvider
+     **/
+    public function discardIncompleteRowIndexMatching(array $iterators): void
+    {
+        $extractor = new Aggregator();
+
+        $extractor
+            ->input($iterators)
+            ->options(
+                [
+                    'index' => ['email'],
+                    'columns' => ['name', 'twitter'],
+                    'strict' => false,
+                    'discard' => true,
+                ]
+            );
+
+        $actual = \iterator_to_array($extractor->extract(), false);
+        $expected = [
+            new Row([
+                'id' => 1,
+                'name' => 'John Doe',
+                'email' => 'johndoe@email.com',
+                'twitter' => '@john',
+            ]),
+            new Row([
+                'id' => 2,
+                'name' => 'Jane Doe',
+                'email' => 'janedoe@email.com',
+                'twitter' => '@jane',
+            ]),
+        ];
+
         static::assertEquals($expected, $actual);
     }
 
@@ -122,8 +172,8 @@ class AggregatorTest extends TestCase
         $expected = 10 ** 4;
 
         $iterator = function (string $key, string $template) use ($expected): \Generator {
-            $ids = range(1, $expected);
-            shuffle($ids);
+            $ids = \range(1, $expected);
+            \shuffle($ids);
             foreach ($ids as $id) {
                 yield [
                     'id' => $id,
@@ -152,9 +202,10 @@ class AggregatorTest extends TestCase
             );
 
         $actual = 0;
-        foreach ($extractor->extract() as $row) {
+        foreach ($extractor->extract() as $_) {
             $actual++;
         }
+
         static::assertEquals($expected, $actual);
     }
 
@@ -186,7 +237,8 @@ class AggregatorTest extends TestCase
                         [], // should not happen
                         ['impossible error'], // should not happen as well
                         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
-                        ['id' => 3, 'name' => 'Incomplete', 'email' => 'incomplete@dirtydata'],
+                        ['id' => 3, 'name' => 'Incomplete1', 'email' => 'incomplete1@dirtydata'],
+                        ['id' => 4, 'name' => 'Incomplete2', 'email' => 'incomplete2@dirtydata'],
                     ]),
                     $this->arrayToIterator([
                         ['email' => 'janedoe@email.com', 'twitter' => '@jane'],
@@ -197,7 +249,9 @@ class AggregatorTest extends TestCase
             ]
         ;
 
-        return [$simpleDataSet];
+        return [
+            $simpleDataSet
+        ];
     }
 
     public function arrayToIterator(array $lines): \Iterator

@@ -40,8 +40,15 @@ class Aggregator extends Extractor
      */
     protected $strict = true;
 
+    /**
+     * Discard incomplete rows
+     *
+     * @var bool
+     */
+    protected $discard = false;
+
     /** @var array[] */
-    protected $data;
+    protected $data = [];
 
     /**
      * Properties that can be set via the options method.
@@ -52,6 +59,7 @@ class Aggregator extends Extractor
         'index',
         'columns',
         'strict',
+        'discard'
     ];
 
     /**
@@ -66,8 +74,6 @@ class Aggregator extends Extractor
 
     /**
      * @return \Generator<Row>
-     *
-     * @throws IncompleteDataException
      */
     public function extract(): \Generator
     {
@@ -76,9 +82,9 @@ class Aggregator extends Extractor
             foreach ($this->input as $iterator) {
                 $line = $iterator->current();
 
-                if (true === is_array($line)) {
+                if (true === \is_array($line)) {
                     $row = $this->build($line);
-                    if (true === is_array($row)) {
+                    if (true === \is_array($row)) {
                         yield new Row($row);
                     }
                 }
@@ -88,14 +94,39 @@ class Aggregator extends Extractor
             $this->hasValidInput()
         );
 
-        $incompletes = \count($this->data);
-        if ($this->strict && 0 !== $incompletes) {
-            throw new IncompleteDataException("$incompletes rows");
+        yield from $this->handleIncompleteRows();
+    }
+
+    /**
+     * @return \Generator<Row>
+     *
+     * @throws IncompleteDataException
+     */
+    protected function handleIncompleteRows(): \Generator
+    {
+        $total = \count($this->data);
+
+        if (0 === $total) {
+            return;
         }
 
-        // then yield the incomplete remaining rows
-        foreach ($this->data as $row) {
-            yield (new Row($row))->setIncomplete();
+        if (true === $this->strict) {
+            $plural = $total > 1;
+            throw new IncompleteDataException(
+                \sprintf(
+                    '%d row%s %s rejected because incomplete',
+                    $total,
+                    $plural ? 's' : '',
+                    $plural ? 'were' : 'was'
+                )
+            );
+        }
+
+         // then yield the incomplete remaining rows
+        if (false === $this->discard) {
+            foreach ($this->data as $row) {
+                yield (new Row($row))->setIncomplete();
+            }
         }
     }
 

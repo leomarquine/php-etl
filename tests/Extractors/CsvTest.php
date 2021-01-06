@@ -29,7 +29,7 @@ class CsvTest extends TestCase
 
         $extractor = new Csv();
 
-        $extractor->input(__DIR__ . '/../data/csv1.csv');
+        $extractor->input(__DIR__ . '/../data/simple.csv');
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -44,7 +44,7 @@ class CsvTest extends TestCase
 
         $extractor = new Csv();
 
-        $extractor->input(__DIR__ . '/../data/csv2.csv');
+        $extractor->input(__DIR__ . '/../data/quoted.csv');
         $extractor->options(['delimiter' => ';', 'enclosure' => '"']);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
@@ -60,7 +60,7 @@ class CsvTest extends TestCase
 
         $extractor = new Csv();
 
-        $extractor->input(__DIR__ . '/../data/csv1.csv');
+        $extractor->input(__DIR__ . '/../data/simple.csv');
         $extractor->options(['columns' => ['id', 'email']]);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
@@ -70,7 +70,7 @@ class CsvTest extends TestCase
     public function filteringColumnsWithMoreAskedColumnsThanReallyAvailable(): void
     {
         $extractor = new Csv();
-        $extractor->input(__DIR__ . '/../data/csv1.csv');
+        $extractor->input(__DIR__ . '/../data/simple.csv');
 
         // Without error handling (no BC). No message or error is expected.
         $extractor->options(['columns' => ['id', 'email', 'foo', 'bar']]);
@@ -192,7 +192,7 @@ class CsvTest extends TestCase
 
         $extractor = new Csv();
 
-        $extractor->input(__DIR__ . '/../data/csv1.csv');
+        $extractor->input(__DIR__ . '/../data/simple.csv');
         $extractor->options(['columns' => ['id' => 'id', 'email' => 'email_address']]);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
@@ -208,7 +208,7 @@ class CsvTest extends TestCase
 
         $extractor = new Csv();
 
-        $extractor->input(__DIR__ . '/../data/csv3.csv');
+        $extractor->input(__DIR__ . '/../data/headless.csv');
         $extractor->options(['columns' => ['id' => 1, 'name' => 2, 'email' => 3]]);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));

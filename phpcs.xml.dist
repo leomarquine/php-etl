@@ -7,7 +7,4 @@
     <rule ref="Generic.PHP.Syntax"/>
     <file>src</file>
     <file>tests</file>
-    <rule ref="Squiz.NamingConventions.ValidVariableName">
-        <exclude name="Squiz.NamingConventions.ValidVariableName.PrivateNoUnderscore"/>
-    </rule>
 </ruleset>

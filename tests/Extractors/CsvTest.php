@@ -251,7 +251,7 @@ janedoe@email.com',
                     'Column 2' => 'Value 2',
                     "Multi-Line\nColumn 3" => 'Value 3',
                 ]
-            )
+            ),
         ];
 
         $extractor = new Csv();

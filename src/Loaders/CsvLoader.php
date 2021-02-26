@@ -26,7 +26,7 @@ class CsvLoader extends Loader
     /**
      * Count how many files have been created
      */
-    protected int $fileCounter = 0;
+    protected int $fileCounter = 1;
 
     /**
      * CSV file handler
@@ -64,14 +64,7 @@ class CsvLoader extends Loader
 
     public function initialize(): void
     {
-        $fileUri = $this->output . '_' . $this->fileCounter . '.csv';
-        $this->checkOrCreateDir($fileUri);
-
-        $this->fileHandler = @fopen($fileUri, 'w+');
-
-        if (false === $this->fileHandler) {
-            throw new IoException("Impossible to open the file '{$fileUri}'");
-        }
+        $this->openFile();
     }
 
     /**
@@ -79,7 +72,7 @@ class CsvLoader extends Loader
      */
     public function finalize(): void
     {
-        fclose($this->fileHandler);
+        $this->closeFile();
     }
 
     /**
@@ -88,12 +81,15 @@ class CsvLoader extends Loader
     public function load(Row $row): void
     {
         // If we reach the max lines, we open a new file
-        if (-1 !== $this->linePerFile && $this->loaderCounter >= $this->linePerFile) {
+        if (
+            0 < $this->linePerFile
+            && $this->linePerFile <= $this->loaderCounter
+        ) {
             $this->loaderCounter = 0;
             $this->fileCounter++;
 
-            $this->finalize();
-            $this->initialize();
+            $this->closeFile();
+            $this->openFile();
         }
 
         $rowArray = $row->toArray();
@@ -115,13 +111,27 @@ class CsvLoader extends Loader
      */
     protected function getHeaders(array $rowArray): array
     {
-        $headers = [];
+        return \array_keys($rowArray);
+    }
 
-        foreach ($rowArray as $columnName => $rowColumn) {
-            $headers[] = $columnName;
+    protected function openFile(): void
+    {
+        $fileUri = $this->getFileUri(
+            $this->output,
+            $this->linePerFile,
+            $this->fileCounter
+        );
+        $this->checkOrCreateDir($fileUri);
+        $this->fileHandler = @\fopen($fileUri, 'w+');
+
+        if (false === $this->fileHandler) {
+            throw new IoException("Impossible to open the file '{$fileUri}'");
         }
+    }
 
-        return $headers;
+    protected function closeFile(): void
+    {
+        \fclose($this->fileHandler);
     }
 
     /**
@@ -131,7 +141,7 @@ class CsvLoader extends Loader
      */
     protected function putCsv(array $data): void
     {
-        fputcsv(
+        \fputcsv(
             $this->fileHandler,
             $data,
             $this->delimiter,

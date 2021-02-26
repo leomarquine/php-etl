@@ -46,9 +46,12 @@ $options = ['escapeChar' => '\\'];
 ### Line per file
 How many lines each file should contains at max (-1 = no limit).
 
-The loader will divide the data into multiple files, with their names
-suffixed by the file's number.
-<b>Example</b> : outputFile_0.csv / outputFile_1.csv / ...
+If **no limit**, the loader will output in one file
+> **Example**: outputFile.csv.
+
+Else the loader will split the data into multiple files, with their names suffixed by the file's number.
+>**Example**: outputFile_1.csv / outputFile_2.csv / ...
+
 
 | Type | Default value |
 |----- | ------------- |
@@ -57,4 +60,3 @@ suffixed by the file's number.
 ```php
 $options = ['linePerFile' => 1000];
 ```
-

@@ -35,4 +35,30 @@ trait FilePathTrait
 
         return $isCreated;
     }
+
+    public function getFileUri(
+        string $path,
+        int $linePerFile,
+        int $fileCounter
+    ): string {
+        if (0 >= $linePerFile) {
+            return $path;
+        }
+
+        $pathinfo = \pathinfo($path);
+
+        if (\array_key_exists('extension', $pathinfo)) {
+            $extension = ".{$pathinfo['extension']}";
+        } else {
+            $extension = '';
+        }
+
+        return
+            $pathinfo['dirname']
+            . DIRECTORY_SEPARATOR
+            . $pathinfo['filename']
+            . "_$fileCounter"
+            . $extension
+        ;
+    }
 }

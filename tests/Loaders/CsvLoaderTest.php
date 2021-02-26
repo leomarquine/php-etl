@@ -30,7 +30,7 @@ class CsvLoaderTest extends TestCase
         if (false === $path) {
             static::fail('Could not create temp file');
         }
-        $this->outputPath = $path;
+        $this->outputPath = "{$path}.csv";
 
         $this->csvLoader = new CsvLoader();
         $this->csvLoader->output($this->outputPath);
@@ -50,7 +50,7 @@ class CsvLoaderTest extends TestCase
         $this->csvLoader->finalize();
 
         // Opening generated file
-        $handle = fopen($this->outputPath . '_0.csv', 'r');
+        $handle = fopen($this->outputPath, 'r');
 
         $line = fgets($handle);
         static::assertEquals('"Product name";Price;Description', trim($line));
@@ -77,7 +77,7 @@ class CsvLoaderTest extends TestCase
         $this->csvLoader->finalize();
 
         // Opening generated file
-        $handle = fopen($this->outputPath . '_0.csv', 'r');
+        $handle = fopen($this->outputPath, 'r');
 
         $line = fgets($handle);
         static::assertEquals('|Product name|,Price,Description', trim($line));
@@ -94,29 +94,39 @@ class CsvLoaderTest extends TestCase
      */
     public function testLoadCsvMultipleFiles(): void
     {
-        $row1 = $this->productRowFactory('Table', 10.5, 'A simple table');
-        $row2 = $this->productRowFactory('Chair', 305.75, 'A "deluxe chair". You need it!');
-        $row3 = $this->productRowFactory('Desk', 12.2, 'Basic, really boring.');
-
         // 1 line per file
         $this->csvLoader->options(['linePerFile' => 1]);
-        $this->csvLoader->load($row1);
-        $this->csvLoader->load($row2);
-        $this->csvLoader->load($row3);
+        $this->csvLoader->initialize();
+
+        \array_map(
+            function (Row $row): void {
+                $this->csvLoader->load($row);
+            },
+            [
+                $this->productRowFactory('Table', 10.50, 'A simple table'),
+                $this->productRowFactory('Chair', 305.75, 'A "deluxe chair". You need it!'),
+                $this->productRowFactory('Desk', 12.2, 'Basic, really boring.'),
+            ]
+        );
+
         $this->csvLoader->finalize();
 
         $expectedResults = [
-            'Table;10.5;"A simple table"',
-            'Chair;305.75;"A ""deluxe chair"". You need it!"',
-            'Desk;12.2;"Basic, really boring."',
+            1 => 'Table;10.5;"A simple table"',
+            2 => 'Chair;305.75;"A ""deluxe chair"". You need it!"',
+            3 => 'Desk;12.2;"Basic, really boring."',
         ];
 
         // We should have 3 files
-        for ($i = 0; $i < 3; $i++) {
-            $handle = fopen($this->outputPath . '_' . $i . '.csv', 'r');
+        for ($i = 1; $i <= 3; $i++) {
+            $handle = fopen(
+                $this->csvLoader->getFileUri($this->outputPath, 1, $i),
+                'r'
+            );
 
             $line = fgets($handle);
             static::assertEquals('"Product name";Price;Description', trim($line));
+
             $line = fgets($handle);
             static::assertEquals($expectedResults[$i], trim($line));
         }

@@ -39,8 +39,8 @@ class FilePathTraitTest extends TestCase
     {
         $filePath = '/dev/random/illegal/path';
 
-        static::expectException(IoException::class);
-        static::expectExceptionMessage(
+        $this->expectException(IoException::class);
+        $this->expectExceptionMessage(
             sprintf(
                 'Cannot create path: %s',
                 dirname($filePath)
@@ -48,5 +48,52 @@ class FilePathTraitTest extends TestCase
         );
 
         $this->fakeLoader->input($filePath);
+    }
+
+    /** @dataProvider provideGetFileUriData */
+    public function testGetFileUri(
+        string $expected,
+        string $output,
+        int $linePerFile,
+        int $fileCounter
+    ): void {
+        static::assertEquals(
+            $expected,
+            $this->fakeLoader->getFileUri(
+                $output,
+                $linePerFile,
+                $fileCounter
+            )
+        );
+    }
+
+    public function provideGetFileUriData(): array
+    {
+        return [
+            'Unique file without extension' => [
+                'expected' => 'relative/path/to/a/file',
+                'output' => 'relative/path/to/a/file',
+                'linePerFile' => -1,
+                'fileCounter' => 1,
+            ],
+            'Unique file with extension' => [
+                'expected' => '/hello/world.tsv',
+                'output' => '/hello/world.tsv',
+                'linePerFile' => 0,
+                'fileCounter' => 1,
+            ],
+            'Multiple files with extension' => [
+                'expected' => '/bye/people_42',
+                'output' => '/bye/people',
+                'linePerFile' => 1,
+                'fileCounter' => 42,
+            ],
+            'Multiple relative path files without extension' => [
+                'expected' => './AFILE_42.CSV',
+                'output' => 'AFILE.CSV',
+                'linePerFile' => 2,
+                'fileCounter' => 42,
+            ],
+        ];
     }
 }

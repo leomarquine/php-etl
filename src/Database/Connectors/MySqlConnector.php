@@ -34,21 +34,21 @@ class MySqlConnector extends Connector
     {
         // All these if, empty, are here to clean the legacy code before the fork. See the git history.
         $host = array_key_exists('host', $config) ? $config['host'] : null;
-        $unix_socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
+        $socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
         $port = array_key_exists('port', $config) ? $config['port'] : null;
         $database = array_key_exists('database', $config) ? $config['database'] : null;
 
         $dsn = [];
 
-        if (null !== $unix_socket) {
-            $dsn['unix_socket'] = $unix_socket;
+        if (null !== $socket) {
+            $dsn['unix_socket'] = $socket;
         }
 
-        if (null !== $host && null == $unix_socket) {
+        if (null !== $host && null == $socket) {
             $dsn['host'] = $host;
         }
 
-        if (null !== $port && null === $unix_socket) {
+        if (null !== $port && null === $socket) {
             $dsn['port'] = $port;
         }
 

@@ -20,16 +20,14 @@ class RenameColumns extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns',
-    ];
+    protected array $availableOptions = ['columns'];
 
     /**
      * Transform the given row.

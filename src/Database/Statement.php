@@ -11,47 +11,46 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Database;
 
-use PDO;
-
 class Statement
 {
     /**
      * The database connection.
-     *
-     * @var \PDO
      */
-    protected $pdo;
+    protected \PDO $pdo;
 
     /**
      * The sql query components.
-     *
-     * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * The where constraints for the query.
-     *
-     * @var array
      */
-    protected $wheres = [];
+    protected array $wheres = [];
 
     /**
      * Create a new Statement instance.
-     *
-     * @return void
      */
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
     /**
      * Prepare the statement for execution.
+     *
+     * @throws \TypeError If SQL cannot be successfully prepared
      */
     public function prepare(): \PDOStatement
     {
-        return $this->pdo->prepare($this->toSql());
+        /** @var \PDOStatement|false $statement */
+        $statement = $this->pdo->prepare($this->toSql());
+        if (!$statement) {
+            $error = $this->pdo->errorInfo();
+            throw new \PDOException("SQLSTATE[$error[0]]: General error: $error[1] $error[2]");
+        }
+
+        return $statement;
     }
 
     /**
@@ -160,10 +159,8 @@ class Statement
 
     /**
      * Compile the basic where statement.
-     *
-     * @return string
      */
-    protected function compileWhere(array $where)
+    protected function compileWhere(array $where): string
     {
         // This code is here to remove the use of the extract() method in the original repo. See the git history.
         $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;

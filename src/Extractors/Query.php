@@ -18,38 +18,28 @@ class Query extends Extractor
 {
     /**
      * Query bindings.
-     *
-     * @var array
      */
-    protected $bindings = [];
+    protected array $bindings = [];
 
     /**
      * The connection name.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * The database manager.
-     *
-     * @var \Wizaplace\Etl\Database\Manager
      */
-    protected $db;
+    protected Manager $db;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'bindings', 'connection',
-    ];
+    protected array $availableOptions = ['bindings', 'connection'];
 
     /**
      * Create a new Query Extractor instance.
-     *
-     * @return void
      */
     public function __construct(Manager $manager)
     {

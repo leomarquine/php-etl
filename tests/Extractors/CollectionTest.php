@@ -18,7 +18,7 @@ use Wizaplace\Etl\Row;
 class CollectionTest extends TestCase
 {
     /** @var array[] */
-    protected $input = [
+    protected array $input = [
         ['id' => 1, 'name' => 'John Doe', 'email' => 'johndoe@email.com'],
         ['id' => 2, 'name' => 'Jane Doe', 'email' => 'janedoe@email.com'],
     ];

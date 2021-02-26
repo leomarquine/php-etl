@@ -14,25 +14,21 @@ use Wizaplace\Etl\Row;
 
 class MemoryLoader extends Loader
 {
-    /** @var string Which Row attribute (column) to use as collection index. */
-    protected $index;
+    /**
+     * Which Row attribute (column) to use as collection index.
+     */
+    protected string $index;
 
     /**
-     * Properties that can be set via the options method. Supports:
-     *   - index: which Row attribute (column) to use as collection index.
+     * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'index',
-    ];
+    protected array $availableOptions = ['index'];
 
     /** @var array<string, mixed> In memory loaded collection */
-    protected $collection;
+    protected array $collection;
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(Row $row): void
     {
         $this->collection[$row->get($this->index)] = $row;

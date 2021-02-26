@@ -22,7 +22,7 @@ class CallbackTest extends TestCase
      *
      * @var Row[]
      */
-    protected $data;
+    protected array $data;
 
     protected function setUp(): void
     {

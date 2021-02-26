@@ -1,6 +1,6 @@
 # Column Filter
 
-Filter out columns of `Row` object, by their name 
+Filter out columns of `Row` object, by their name
 or using a callback function.
 
 ```php
@@ -12,8 +12,8 @@ $etl->transform($transformer, $options);
 
 ### Columns
 
-Column names that will be kept in the `Row` object after transformation. 
-Without additional parameter, any column that doesn't match the name of this parameter will be filtered out. 
+Column names that will be kept in the `Row` object after transformation.
+Without additional parameter, any column that doesn't match the name of this parameter will be filtered out.
 
 | Type | Default value |
 |----- | ------------- |

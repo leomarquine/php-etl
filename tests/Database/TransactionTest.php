@@ -18,8 +18,7 @@ use Wizaplace\Etl\Database\Transaction;
 
 class TransactionTest extends TestCase
 {
-    /** @var Transaction */
-    private $transaction;
+    private Transaction $transaction;
 
     /** @var MockObject|\stdClass */
     private $callback;

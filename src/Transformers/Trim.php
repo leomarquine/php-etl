@@ -20,37 +20,27 @@ class Trim extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * The trim type.
-     *
-     * @var string
      */
-    protected $type = 'both';
+    protected string $type = 'both';
 
     /**
      * The trim mask.
-     *
-     * @var string
      */
-    protected $mask = " \t\n\r\0\x0B";
+    protected string $mask = " \t\n\r\0\x0B";
 
     /**
      * The trim function.
-     *
-     * @var string
      */
-    protected $function;
+    protected string $function = 'trim';
 
     /**
      * Properties that can be set via the options method.
-     *
-     * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'type', 'mask',
-    ];
+    protected array $availableOptions = ['columns', 'type', 'mask'];
 
     /**
      * Initialize the step.

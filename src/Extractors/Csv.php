@@ -17,60 +17,35 @@ use Wizaplace\Etl\Row;
 
 class Csv extends Extractor
 {
-    /**
-     * Extractor columns.
-     *
-     * @var array|null
-     */
-    protected $columns;
+    protected ?array $columns = null;
 
     /**
      * The delimiter string.
-     *
-     * @var string
      */
-    protected $delimiter = ',';
+    protected string $delimiter = ',';
 
     /**
      * The enclosure string.
-     *
-     * @var string
      */
-    protected $enclosure = '"';
+    protected string $enclosure = '"';
 
     /**
      * Throw error if invalid data. Set to false to keep backward compatibility with older versions.
-     *
-     * @var bool|mixed
      */
-    protected $throwError = false;
+    protected bool $throwError = false;
 
     /**
      * The 'currentRow' attribute is global because used in many places and we don't want to change the
-     * signature of the methods
-     *
-     * @var int |null
+     * signature of the methods.
      */
-    protected $currentRow;
+    protected int $currentRow = 0;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'delimiter', 'enclosure', 'throwError',
-    ];
-
-    /** Note that this method could be removed when dropping PHP < 7.4 support, using attribute types. */
-    public function initialize(): void
-    {
-        $this->currentRow = null;
-
-        if (false === is_bool($this->throwError)) {
-            $this->throwError = false;
-        }
-    }
+    protected array $availableOptions = ['columns', 'delimiter', 'enclosure', 'throwError'];
 
     /**
      * Extract data from the input.
@@ -101,6 +76,8 @@ class Csv extends Extractor
      *
      * @param string[] $row
      * @param int[]    $columns
+     *
+     * @throws InvalidInputException
      */
     protected function makeRow(array $row, array $columns): array
     {
@@ -117,7 +94,7 @@ class Csv extends Extractor
 
         foreach ($columns as $column => $index) {
             // The is bool is redundant, it is necessary because of PHP Stan, since we check the type in initialize()
-            if ((bool) $this->throwError && false === array_key_exists($index - 1, $row)) {
+            if ($this->throwError && false === array_key_exists($index - 1, $row)) {
                 $message = "Row with index #{$this->currentRow} does not have the '{$column}' field.";
                 throw new InvalidInputException($message);
             }

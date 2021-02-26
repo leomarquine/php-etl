@@ -29,24 +29,22 @@ class SqlServerConnector extends Connector
 
     /**
      * Get the DSN string.
-     *
-     * @return string
      */
-    protected function getDsn(array $config)
+    protected function getDsn(array $config): string
     {
         // All these if, empty, are here to clean the legacy code before the fork. See the git history.
         $host = array_key_exists('host', $config) ? $config['host'] : null;
         $port = array_key_exists('port', $config) ? $config['port'] : null;
         $database = array_key_exists('database', $config) ? $config['database'] : null;
-        $unix_socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
+        $socket = array_key_exists('unix_socket', $config) ? $config['unix_socket'] : null;
 
         $dsn = [];
 
-        if (null !== $host && null === $unix_socket) {
+        if (null !== $host && null === $socket) {
             $dsn['host'] = $host;
         }
 
-        if (null !== $port && null === $unix_socket) {
+        if (null !== $port && null === $socket) {
             $dsn['port'] = $port;
         }
 
@@ -59,10 +57,8 @@ class SqlServerConnector extends Connector
 
     /**
      * Handle tasks after connection.
-     *
-     * @return void
      */
-    protected function afterConnection(\PDO $connection, array $config)
+    protected function afterConnection(\PDO $connection, array $config): void
     {
         // This if, are here to clean the legacy code before the fork. See the git history.
         $database = array_key_exists('database', $config) ? $config['database'] : null;

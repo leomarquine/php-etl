@@ -16,7 +16,7 @@ use Wizaplace\Etl\Exception\IoException;
 
 class FilePathTraitTest extends TestCase
 {
-    /** @var object * */
+    /** @var object */
     protected $fakeLoader;
 
     protected function setUp(): void

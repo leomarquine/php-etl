@@ -3,9 +3,11 @@
 Formats a Unix time (seconds since 1970-01-01).
 
 ```php
-/** @var \Wizaplace\Etl\Etl $pipeline */
-/** @var \Wizaplace\Etl\Transformers\FormatUnixTime $transformer */
-/** @var array $options */
+/**
+ * @var \Wizaplace\Etl\Etl $pipeline
+ * @var \Wizaplace\Etl\Transformers\FormatUnixTime $transformer
+ * @var array $options
+ */
 $pipeline->transform($transformer, $options);
 ```
 

@@ -16,47 +16,32 @@ use Wizaplace\Etl\Row;
 
 class Table extends Extractor
 {
-    /**
-     * Extractor columns.
-     *
-     * @var array
-     */
-    protected $columns = ['*'];
+    protected array $columns = ['*'];
 
     /**
      * The connection name.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * The array of where clause.
-     *
-     * @var array
      */
-    protected $where = [];
+    protected array $where = [];
 
     /**
      * The database manager.
-     *
-     * @var \Wizaplace\Etl\Database\Manager
      */
-    protected $db;
+    protected Manager $db;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'connection', 'where',
-    ];
+    protected array $availableOptions = ['columns', 'connection', 'where'];
 
     /**
      * Create a new Table Extractor instance.
-     *
-     * @return void
      */
     public function __construct(Manager $manager)
     {

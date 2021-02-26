@@ -18,16 +18,17 @@ use Wizaplace\Etl\Row;
 class GeneratorCallbackTest extends TestCase
 {
     /** @var array|array[] */
-    protected $input = [
+    protected array $input = [
         ['id' => 1, 'json' => '["a", "b", "c"]'],
         ['id' => 2, 'json' => '["x", "y", "z"]'],
     ];
 
-    /** @var \Closure */
-    protected $callback;
+    protected \Closure $callback;
 
-    /** @var array|Row[] */
-    private $expected;
+    /**
+     * @var array|Row[]
+     */
+    private array $expected;
 
     protected function setUp(): void
     {

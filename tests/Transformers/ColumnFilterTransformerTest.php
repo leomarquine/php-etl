@@ -16,11 +16,12 @@ use Wizaplace\Etl\Transformers\ColumnFilterTransformer;
 
 class ColumnFilterTransformerTest extends TestCase
 {
-    /** @var ColumnFilterTransformer */
-    protected $transformer;
+    protected ColumnFilterTransformer $transformer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->transformer = new ColumnFilterTransformer();
     }
 

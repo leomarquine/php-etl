@@ -38,8 +38,7 @@ class PipelineTest extends TestCase
     /** @var MockObject|Loader */
     private $loader;
 
-    /** @var Pipeline */
-    private $pipeline;
+    private Pipeline $pipeline;
 
     protected function setUp(): void
     {

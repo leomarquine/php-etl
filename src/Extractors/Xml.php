@@ -15,59 +15,42 @@ use Wizaplace\Etl\Row;
 
 class Xml extends Extractor
 {
-    /**
-     * Extractor columns.
-     *
-     * @var array|null
-     */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * The loop path.
-     *
-     * @var string
      */
-    protected $loop = '/';
+    protected string $loop = '/';
 
     /**
      * XML Reader.
-     *
-     * @var \XMLReader
      */
-    protected $reader;
+    protected \XMLReader $reader;
 
     /**
      * The current xml path
-     *
-     * @var string
      */
-    protected $path;
+    protected string $path = '';
 
     /**
      * Current row.
-     *
-     * @var array
      */
-    protected $row = [];
+    protected array $row = [];
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'loop',
-    ];
+    protected array $availableOptions = ['columns', 'loop'];
 
     /**
      * Extract data from the input.
      */
     public function extract(): \Generator
     {
-        if (is_array($this->columns) && [] !== $this->columns) {
-            foreach ($this->columns as &$value) {
-                $value = $this->loop . $value;
-            }
+        foreach ($this->columns as &$value) {
+            $value = $this->loop . $value;
         }
 
         $this->reader = new \XMLReader();
@@ -220,11 +203,11 @@ class Xml extends Extractor
             return;
         }
 
-        if (false === is_array($this->columns) || [] === $this->columns) {
+        if ([] === $this->columns) {
             $column = ltrim(strrchr($this->path, '/'), '/@');
         }
 
-        if (in_array($this->path, (array) $this->columns, true)) {
+        if (in_array($this->path, $this->columns, true)) {
             $column = array_search($this->path, $this->columns, true);
         }
 

@@ -15,21 +15,14 @@ use Wizaplace\Etl\Row;
 
 class Collection extends Extractor
 {
-    /**
-     * Extractor columns.
-     *
-     * @var array|null
-     */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns',
-    ];
+    protected array $availableOptions = ['columns'];
 
     /**
      * Extract data from the input.
@@ -37,7 +30,7 @@ class Collection extends Extractor
     public function extract(): \Generator
     {
         foreach ($this->input as $row) {
-            if (is_array($this->columns)) {
+            if ([] !== $this->columns) {
                 $row = array_intersect_key($row, array_flip($this->columns));
             }
 

@@ -20,37 +20,33 @@ class UniqueRows extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Indicates if only consecutive duplicates will be removed.
-     *
-     * @var bool
      */
-    protected $consecutive = false;
+    protected bool $consecutive = false;
 
     /**
-     * The control row for unique consecutives.
+     * The control row for unique consecutive duplicates.
      *
      * @var string[]
      */
-    protected $control;
+    protected array $control = [];
 
     /**
      * The hash table of the rows.
      *
      * @var string[]
      */
-    protected $hashTable = [];
+    protected array $hashTable = [];
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'consecutive',
-    ];
+    protected array $availableOptions = ['columns', 'consecutive'];
 
     /**
      * Transform the given row.
@@ -75,7 +71,7 @@ class UniqueRows extends Transformer
     {
         $row = $row->toArray();
 
-        if (null !== $this->columns) {
+        if ([] !== $this->columns) {
             $row = array_intersect_key($row, array_flip($this->columns));
         }
 

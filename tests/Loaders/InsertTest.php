@@ -36,8 +36,7 @@ class InsertTest extends TestCase
     /** @var MockObject|Row */
     private $row;
 
-    /** @var Insert */
-    private $loader;
+    private Insert $loader;
 
     protected function setUp(): void
     {

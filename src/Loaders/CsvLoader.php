@@ -20,17 +20,13 @@ class CsvLoader extends Loader
 
     /**
      * Count how many lines have been loaded
-     *
-     * @var int
      */
-    protected $loaderCounter = 0;
+    protected int $loaderCounter = 0;
 
     /**
      * Count how many files have been created
-     *
-     * @var int
      */
-    protected $fileCounter = 0;
+    protected int $fileCounter = 0;
 
     /**
      * CSV file handler
@@ -40,41 +36,31 @@ class CsvLoader extends Loader
     protected $fileHandler;
 
     /**
-     * All available options for this loader
+     * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'delimiter', 'enclosure', 'escapeChar', 'linePerFile',
-    ];
+    protected array $availableOptions = ['delimiter', 'enclosure', 'escapeChar', 'linePerFile'];
 
     /**
      * The CSV delimiter string.
-     *
-     * @var string
      */
-    protected $delimiter = ';';
+    protected string $delimiter = ';';
 
     /**
      * The CSV enclosure string.
-     *
-     * @var string
      */
-    protected $enclosure = '"';
+    protected string $enclosure = '"';
 
     /**
      * The CSV escaping string.
-     *
-     * @var string
      */
-    protected $escapeChar = '\\';
+    protected string $escapeChar = '\\';
 
     /**
      * Max lines per file
-     *
-     * @var int
      */
-    protected $linePerFile = -1;
+    protected int $linePerFile = -1;
 
     public function initialize(): void
     {

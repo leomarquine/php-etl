@@ -15,14 +15,16 @@ use Wizaplace\Etl\Step;
 
 class FakeStep extends Step
 {
-    /** @var string */
-    protected $option1;
+    protected string $option1;
 
-    /** @var string */
-    protected $option2;
+    protected string $option2;
 
-    /** @var string[] */
-    protected $availableOptions = ['option1'];
+    /**
+     * Properties that can be set via the options method.
+     *
+     * @var string[]
+     */
+    protected array $availableOptions = ['option1'];
 
     public function getOption(string $name): ?string
     {

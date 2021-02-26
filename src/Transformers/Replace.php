@@ -20,56 +20,40 @@ class Replace extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
-     * The replace type.
-     *
-     * @var string
+     * The replace type ("str" or "preg").
      */
-    protected $type = 'str';
+    protected string $type = 'str';
 
     /**
      * The string or the pattern to search for.
-     *
-     * @var string
      */
-    protected $search = '';
+    protected string $search = '';
 
     /**
      * The value to replace.
-     *
-     * @var string
      */
-    protected $replace = '';
+    protected string $replace = '';
 
     /**
      * The replace function.
-     *
-     * @var string
      */
-    protected $function;
+    protected string $function = 'str_replace';
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'type', 'search', 'replace',
-    ];
+    protected array $availableOptions = ['columns', 'type', 'search', 'replace'];
 
-    /**
-     * Initialize the step.
-     */
     public function initialize(): void
     {
         $this->function = $this->getReplaceFunction();
     }
 
-    /**
-     * Transform the given row.
-     */
     public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {

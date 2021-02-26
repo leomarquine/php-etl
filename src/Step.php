@@ -18,7 +18,7 @@ abstract class Step
      *
      * @var string[]
      */
-    protected $availableOptions = [];
+    protected array $availableOptions = [];
 
     /**
      * Set the step options.

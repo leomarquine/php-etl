@@ -20,49 +20,35 @@ class ConvertCase extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * The mode of the conversion.
-     *
-     * @var string
      */
-    protected $mode = 'lower';
+    protected string $mode = 'lower';
 
     /**
      * The character encoding.
-     *
-     * @var string
      */
-    protected $encoding = 'utf-8';
+    protected string $encoding = 'utf-8';
 
     /**
      * The int representation of the mode.
-     *
-     * @var int
      */
-    protected $conversionMode;
+    protected int $conversionMode;
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'encoding', 'mode',
-    ];
+    protected array $availableOptions = ['columns', 'encoding', 'mode'];
 
-    /**
-     * Initialize the step.
-     */
     public function initialize(): void
     {
         $this->conversionMode = $this->getConversionMode();
     }
 
-    /**
-     * Transform the given row.
-     */
     public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column): string {

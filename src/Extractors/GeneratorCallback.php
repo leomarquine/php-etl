@@ -49,7 +49,7 @@ class GeneratorCallback extends Extractor
      *
      * @var string[]
      */
-    protected $availableOptions = ['callback'];
+    protected array $availableOptions = ['callback'];
 
     /**
      * A callback function that takes a row array as its input and returns an iterable object.
@@ -58,9 +58,6 @@ class GeneratorCallback extends Extractor
      */
     protected $callback;
 
-    /**
-     * {@inheritdoc}
-     */
     public function extract(): \Generator
     {
         /** @var Row $row */

@@ -15,31 +15,21 @@ class Manager
 {
     /**
      * The Connection Factory.
-     *
-     * @var \Wizaplace\Etl\Database\ConnectionFactory
      */
-    protected $factory;
+    protected ConnectionFactory $factory;
 
     /**
      * The connections configuration.
-     *
-     * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * The connections instances.
-     *
-     * @var array
      */
-    protected $connections = [];
+    protected array $connections = [];
 
     /**
      * Create a new database manager instance.
-     *
-     * @param \Wizaplace\Etl\Database\ConnectionFactory $factory
-     *
-     * @return void
      */
     public function __construct(ConnectionFactory $factory)
     {
@@ -87,8 +77,6 @@ class Manager
 
     /**
      * Get a new query builder instance.
-     *
-     * @return \Wizaplace\Etl\Database\Query
      */
     public function query(string $connection): Query
     {
@@ -97,8 +85,6 @@ class Manager
 
     /**
      * Get a new statement builder instance.
-     *
-     * @return \Wizaplace\Etl\Database\Statement
      */
     public function statement(string $connection): Statement
     {
@@ -107,8 +93,6 @@ class Manager
 
     /**
      * Get a new transaction instance.
-     *
-     * @return \Wizaplace\Etl\Database\Transaction
      */
     public function transaction(string $connection): Transaction
     {

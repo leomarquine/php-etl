@@ -22,7 +22,7 @@ class JsonDecodeTest extends TestCase
      *
      * @var Row[]
      */
-    private $data;
+    private array $data;
 
     protected function setUp(): void
     {

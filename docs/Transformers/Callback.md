@@ -3,9 +3,11 @@
 Transform Columns via Row Callback.
 
 ```php
-/** @var \Wizaplace\Etl\Etl $pipeline */
-/** @var \Wizaplace\Etl\Transformers\Callback $transformer */
-/** @var array $options */
+/**
+ * @var \Wizaplace\Etl\Etl $pipeline
+ * @var \Wizaplace\Etl\Transformers\Callback $transformer
+ * @var array $options
+ */
 $pipeline->transform($transformer, $options);
 ```
 

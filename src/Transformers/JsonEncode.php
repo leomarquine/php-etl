@@ -20,34 +20,22 @@ class JsonEncode extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Options.
-     *
-     * @var int
      */
-    protected $options = 0;
+    protected int $options = 0;
 
-    /**
-     * Maximum depth.
-     *
-     * @var int
-     */
-    protected $depth = 512;
+    protected int $depth = 512;
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'depth', 'options',
-    ];
+    protected array $availableOptions = ['columns', 'depth', 'options'];
 
-    /**
-     * Transform the given row.
-     */
     public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {

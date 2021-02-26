@@ -29,10 +29,8 @@ class PostgresConnector extends Connector
 
     /**
      * Get the DSN string.
-     *
-     * @return string
      */
-    protected function getDsn(array $config)
+    protected function getDsn(array $config): string
     {
         // All these if are here to clean the legacy code before the fork. See the git history.
         $host = array_key_exists('host', $config) ? $config['host'] : null;
@@ -58,16 +56,14 @@ class PostgresConnector extends Connector
 
     /**
      * Handle tasks after connection.
-     *
-     * @return void
      */
-    protected function afterConnection(\PDO $connection, array $config)
+    protected function afterConnection(\PDO $connection, array $config): void
     {
         // All these if are here to clean the legacy code before the fork. See the git history.
         $charset = array_key_exists('charset', $config) ? $config['charset'] : null;
         $timezone = array_key_exists('timezone', $config) ? $config['timezone'] : null;
         $schema = array_key_exists('schema', $config) ? $config['schema'] : null;
-        $application_name = array_key_exists('application_name', $config) ? $config['application_name'] : null;
+        $application = array_key_exists('application_name', $config) ? $config['application_name'] : null;
 
         if (null !== $charset) {
             $connection->prepare("set names '$charset'")->execute();
@@ -83,8 +79,8 @@ class PostgresConnector extends Connector
             $connection->prepare("set search_path to $schema")->execute();
         }
 
-        if (null !== $application_name) {
-            $connection->prepare("set application_name to '$application_name'")->execute();
+        if (null !== $application) {
+            $connection->prepare("set application_name to '$application'")->execute();
         }
     }
 
@@ -92,10 +88,8 @@ class PostgresConnector extends Connector
      * Format the schema.
      *
      * @param array|string $schema
-     *
-     * @return string
      */
-    protected function formatSchema($schema)
+    protected function formatSchema($schema): string
     {
         if (is_string($schema)) {
             $schema = [$schema];

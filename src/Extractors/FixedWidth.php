@@ -15,21 +15,14 @@ use Wizaplace\Etl\Row;
 
 class FixedWidth extends Extractor
 {
-    /**
-     * Extractor columns.
-     *
-     * @var array
-     */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns',
-    ];
+    protected array $availableOptions = ['columns'];
 
     /**
      * Extract data from the input.

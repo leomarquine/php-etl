@@ -12,95 +12,73 @@ declare(strict_types=1);
 namespace Wizaplace\Etl\Loaders;
 
 use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Database\Transaction;
 use Wizaplace\Etl\Row;
 
 class Insert extends Loader
 {
     /**
      * The connection name.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * The columns to insert.
      *
-     * @var array|null
+     * @var string[]
      */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * Indicates if the table has timestamps columns.
-     *
-     * @var bool
      */
-    protected $timestamps = false;
+    protected bool $timestamps = false;
 
     /**
      * Indicates if the loader will perform transactions.
-     *
-     * @var bool
      */
-    protected $transaction = true;
+    protected bool $transaction = true;
 
     /**
      * Transaction commit size.
-     *
-     * @var int
      */
-    protected $commitSize = 100;
+    protected int $commitSize = 100;
 
     /**
      * Time for timestamps columns.
-     *
-     * @var string
      */
-    protected $time;
+    protected string $time;
 
     /**
      * The insert statement.
-     *
-     * @var \PDOStatement
      */
-    protected $insert;
+    protected \PDOStatement $insert;
 
     /**
      * The database transaction manager.
-     *
-     * @var \Wizaplace\Etl\Database\Transaction
      */
-    protected $transactionManager;
+    protected Transaction $transactionManager;
 
     /**
      * The database manager.
-     *
-     * @var \Wizaplace\Etl\Database\Manager
      */
-    protected $db;
+    protected Manager $db;
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'connection', 'timestamps', 'transaction', 'commitSize',
-    ];
+    protected array $availableOptions = ['columns', 'connection', 'timestamps', 'transaction', 'commitSize'];
 
     /**
      * Create a new Insert Loader instance.
-     *
-     * @return void
      */
     public function __construct(Manager $manager)
     {
         $this->db = $manager;
     }
 
-    /**
-     * Initialize the step.
-     */
     public function initialize(): void
     {
         if ($this->timestamps) {
@@ -111,10 +89,7 @@ class Insert extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (
-            is_array($this->columns) && [] !== $this->columns
-            && array_keys($this->columns) === range(0, count($this->columns) - 1)
-        ) {
+        if ([] !== $this->columns && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
@@ -150,7 +125,7 @@ class Insert extends Loader
      */
     protected function prepareInsert(array $sample): void
     {
-        if (is_array($this->columns) && [] !== $this->columns) {
+        if ([] !== $this->columns) {
             $columns = array_values($this->columns);
         } else {
             $columns = array_keys($sample);
@@ -168,11 +143,11 @@ class Insert extends Loader
      */
     protected function insert(array $row): void
     {
-        if (null === $this->insert) {
+        if (!isset($this->insert)) {
             $this->prepareInsert($row);
         }
 
-        if (is_array($this->columns) && [] !== $this->columns) {
+        if ([] !== $this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {

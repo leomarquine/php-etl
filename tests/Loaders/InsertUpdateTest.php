@@ -51,8 +51,7 @@ class InsertUpdateTest extends TestCase
     /** @var MockObject|Row */
     private $row;
 
-    /** @var InsertUpdate */
-    private $loader;
+    private InsertUpdate $loader;
 
     protected function setUp(): void
     {

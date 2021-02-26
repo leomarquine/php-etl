@@ -3,9 +3,11 @@
 Copy columns.
 
 ```php
-/** @var \Wizaplace\Etl\Etl $pipeline */
-/** @var \Wizaplace\Etl\Transformers\RenameColumns $transformer */
-/** @var array $options */
+/**
+ * @var \Wizaplace\Etl\Etl $pipeline
+ * @var \Wizaplace\Etl\Transformers\RenameColumns $transformer
+ * @var array $options
+ */
 $pipeline->transform($transformer, $options);
 ```
 

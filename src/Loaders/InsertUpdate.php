@@ -12,16 +12,15 @@ declare(strict_types=1);
 namespace Wizaplace\Etl\Loaders;
 
 use Wizaplace\Etl\Database\Manager;
+use Wizaplace\Etl\Database\Transaction;
 use Wizaplace\Etl\Row;
 
 class InsertUpdate extends Loader
 {
     /**
      * The connection name.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * The primary key.
@@ -33,102 +32,83 @@ class InsertUpdate extends Loader
     /**
      * The columns to insert/update.
      *
-     * @var string[]|null
+     * @var string[]
      */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * Indicates if existing destination rows in table should be updated.
-     *
-     * @var bool
      */
-    protected $doUpdates = true;
+    protected bool $doUpdates = true;
 
     /**
      * Indicates if the table has timestamps columns.
-     *
-     * @var bool
      */
-    protected $timestamps = false;
+    protected bool $timestamps = false;
 
     /**
      * Indicates if the loader will perform transactions.
-     *
-     * @var bool
      */
-    protected $transaction = true;
+    protected bool $transaction = true;
 
     /**
      * Transaction commit size.
-     *
-     * @var int
      */
-    protected $commitSize = 100;
+    protected int $commitSize = 100;
 
     /**
      * Time for timestamps columns.
-     *
-     * @var string
      */
-    protected $time;
+    protected string $time;
 
     /**
      * The select statement.
      *
-     * @var \PDOStatement
+     * @var \PDOStatement|false|null
      */
-    protected $select;
+    protected $select = null;
 
     /**
      * The insert statement.
      *
-     * @var \PDOStatement
+     * @var \PDOStatement|false|null
      */
-    protected $insert;
+    protected $insert = null;
 
     /**
      * The update statement.
      *
-     * @var \PDOStatement
+     * @var \PDOStatement|false|null
      */
-    protected $update;
+    protected $update = null;
 
     /**
      * The database transaction manager.
-     *
-     * @var \Wizaplace\Etl\Database\Transaction
      */
-    protected $transactionManager;
+    protected Transaction $transactionManager;
 
     /**
      * The database manager.
-     *
-     * @var \Wizaplace\Etl\Database\Manager
      */
-    protected $db;
+    protected Manager $db;
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
+    protected array $availableOptions = [
         'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize', 'doUpdates',
     ];
 
     /**
      * Create a new InsertUpdate Loader instance.
-     *
-     * @return void
      */
     public function __construct(Manager $manager)
     {
         $this->db = $manager;
     }
 
-    /**
-     * Initialize the step.
-     */
     public function initialize(): void
     {
         if ($this->timestamps) {
@@ -139,10 +119,7 @@ class InsertUpdate extends Loader
             $this->transactionManager = $this->db->transaction($this->connection)->size($this->commitSize);
         }
 
-        if (
-            is_array($this->columns) && [] !== $this->columns
-            && array_keys($this->columns) === range(0, count($this->columns) - 1)
-        ) {
+        if ([] !== $this->columns && array_keys($this->columns) === range(0, count($this->columns) - 1)) {
             $this->columns = array_combine($this->columns, $this->columns);
         }
     }
@@ -188,7 +165,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareInsert(array $sample): void
     {
-        if (is_array($this->columns) && [] !== $this->columns) {
+        if ([] !== $this->columns) {
             $columns = array_values($this->columns);
         } else {
             $columns = array_keys($sample);
@@ -208,7 +185,7 @@ class InsertUpdate extends Loader
      */
     protected function prepareUpdate(array $sample): void
     {
-        if (is_array($this->columns) && [] !== $this->columns) {
+        if ([] !== $this->columns) {
             $columns = array_values(array_diff($this->columns, $this->key));
         } else {
             $columns = array_keys(array_diff_key($sample, array_flip($this->key)));
@@ -233,19 +210,19 @@ class InsertUpdate extends Loader
             $this->prepareSelect();
         }
 
-        if (is_array($this->columns) && [] !== $this->columns) {
-            $mapped_columns_arr = [];
-            $key_columns = array_intersect($this->columns, $this->key);
+        if ([] !== $this->columns) {
+            $mappedColumnsArr = [];
+            $keyColumns = array_intersect($this->columns, $this->key);
 
-            foreach ($key_columns as $key => $column) {
-                $mapped_columns_arr[$column] = array_intersect_key($row, $key_columns)[$key];
+            foreach ($keyColumns as $key => $column) {
+                $mappedColumnsArr[$column] = array_intersect_key($row, $keyColumns)[$key];
             }
-            $this->select->execute($mapped_columns_arr);
+            $this->select->execute($mappedColumnsArr);
         } else {
             $this->select->execute(array_intersect_key($row, array_flip($this->key)));
         }
 
-        if (is_array($this->columns) && [] !== $this->columns) {
+        if ([] !== $this->columns) {
             $result = [];
 
             foreach ($this->columns as $key => $column) {

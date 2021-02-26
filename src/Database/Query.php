@@ -15,36 +15,26 @@ class Query
 {
     /**
      * The database connection.
-     *
-     * @var \PDO
      */
-    protected $pdo;
+    protected \PDO $pdo;
 
     /**
      * The bindings for the query.
-     *
-     * @var array
      */
-    protected $bindings = [];
+    protected array $bindings = [];
 
     /**
      * The sql query components.
-     *
-     * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * The where constraints for the query.
-     *
-     * @var array
      */
-    protected $wheres = [];
+    protected array $wheres = [];
 
     /**
      * Create a new Query instance.
-     *
-     * @return void
      */
     public function __construct(\PDO $pdo)
     {
@@ -229,10 +219,8 @@ class Query
 
     /**
      * Compile the basic where statement.
-     *
-     * @return string
      */
-    protected function compileWhere(array $where)
+    protected function compileWhere(array $where): string
     {
         // All these if, empty, are here to clean the legacy code before the fork. See the git history.
         $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
@@ -247,10 +235,8 @@ class Query
 
     /**
      * Compile the where in statement.
-     *
-     * @return string
      */
-    protected function compileWhereIn(array $where)
+    protected function compileWhereIn(array $where): string
     {
         // All these if, empty, are here to clean the legacy code before the fork. See the git history.
         $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;
@@ -267,10 +253,8 @@ class Query
 
     /**
      * Compile the composite where in statement.
-     *
-     * @return string
      */
-    protected function compileCompositeWhereIn(array $where)
+    protected function compileCompositeWhereIn(array $where): string
     {
         // All these if, empty, are here to clean the legacy code before the fork. See the git history.
         $boolean = array_key_exists('boolean', $where) ? $where['boolean'] : null;

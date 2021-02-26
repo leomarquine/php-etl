@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $finder = PhpCsFixer\Finder::create()
     ->exclude('vendor')
     ->in(__DIR__)
@@ -32,7 +34,8 @@ $psr12Rules = [
   'single_trait_insert_per_statement' => true,
 ];
 
-return PhpCsFixer\Config::create()
-  ->setRules($customRules + $psr12Rules)
-  ->setFinder($finder)
-;
+$config = new PhpCsFixer\Config();
+$config->setRules($customRules + $psr12Rules)
+  ->setFinder($finder);
+
+return $config;

@@ -15,11 +15,7 @@ use Wizaplace\Etl\Step;
 
 abstract class Extractor extends Step
 {
-    /**
-     * The extractor input.
-     *
-     * @var mixed
-     */
+    /** @var mixed */
     protected $input;
 
     /**
@@ -29,7 +25,7 @@ abstract class Extractor extends Step
      *
      * @return $this
      */
-    public function input($input)
+    public function input($input): Extractor
     {
         $this->input = $input;
 

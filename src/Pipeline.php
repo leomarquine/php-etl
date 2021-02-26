@@ -19,52 +19,40 @@ class Pipeline implements \Iterator
 {
     /**
      * The pipeline data flow.
-     *
-     * @var \Generator<Row>
      */
-    protected $flow;
+    protected \Generator $flow;
 
     /**
      * The maximum number of rows.
-     *
-     * @var int|null
      */
-    protected $limit;
+    protected ?int $limit = null;
 
     /**
      * The number of rows to skip.
-     *
-     * @var int
      */
-    protected $skip;
+    protected int $skip = 0;
 
     /**
      * The iteration key.
-     *
-     * @var int
      */
-    protected $key;
+    protected int $key;
 
     /**
      * The current iteration row.
-     *
-     * @var \Wizaplace\Etl\Row
      */
-    protected $current;
+    protected Row $current;
 
     /**
      * The etl extractor.
-     *
-     * @var \Wizaplace\Etl\Extractors\Extractor
      */
-    protected $extractor;
+    protected Extractor $extractor;
 
     /**
      * The array of steps for the pipeline.
      *
      * @var Step[]
      */
-    protected $steps = [];
+    protected array $steps = [];
 
     /**
      * Set the pipeline extractor.
@@ -76,8 +64,6 @@ class Pipeline implements \Iterator
 
     /**
      * Add a step to the pipeline.
-     *
-     * @param \Wizaplace\Etl\Step $step
      */
     public function pipe(Step $step): void
     {

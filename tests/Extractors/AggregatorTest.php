@@ -164,9 +164,7 @@ class AggregatorTest extends TestCase
         static::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function bigShuffledDataSet(): void
     {
         $expected = 10 ** 4;
@@ -202,7 +200,9 @@ class AggregatorTest extends TestCase
             );
 
         $actual = 0;
-        foreach ($extractor->extract() as $_) {
+        $generator = $extractor->extract();
+        while ($generator->valid()) {
+            $generator->next();
             $actual++;
         }
 
@@ -250,7 +250,7 @@ class AggregatorTest extends TestCase
         ;
 
         return [
-            $simpleDataSet
+            $simpleDataSet,
         ];
     }
 

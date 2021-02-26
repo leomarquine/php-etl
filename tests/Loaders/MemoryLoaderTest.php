@@ -16,8 +16,7 @@ use Wizaplace\Etl\Row;
 
 class MemoryLoaderTest extends TestCase
 {
-    /** @var MemoryLoader */
-    protected $loader;
+    protected MemoryLoader $loader;
 
     protected function setUp(): void
     {

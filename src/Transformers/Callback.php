@@ -20,7 +20,7 @@ class Callback extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * The callback function.
@@ -34,7 +34,7 @@ class Callback extends Transformer
      *
      * @var string[]
      */
-    protected $availableOptions = ['columns', 'callback'];
+    protected array $availableOptions = ['columns', 'callback'];
 
     /**
      * Transform the given row.

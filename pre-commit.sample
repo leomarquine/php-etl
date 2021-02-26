@@ -59,7 +59,7 @@ then
     fi
     echo "Running PHPStan level 6."
     git diff --cached --name-only --diff-filter=ACMR $against | grep '[.]php' | \
-        xargs ./vendor/bin/phpstan analyze
+        xargs ./vendor/bin/phpstan --memory-limit=256M analyze
     if [ $? != 0 ]
     then
         echo "Fix the error before commit!"

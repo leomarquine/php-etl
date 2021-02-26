@@ -20,20 +20,15 @@ class CopyColumns extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns',
-    ];
+    protected array $availableOptions = ['columns'];
 
-    /**
-     * Transform the given row.
-     */
     public function transform(Row $row): void
     {
         foreach ($this->columns as $old => $new) {

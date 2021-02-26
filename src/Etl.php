@@ -19,19 +19,13 @@ class Etl
 {
     /**
      * The etl pipeline.
-     *
-     * @var \Wizaplace\Etl\Pipeline
      */
-    protected $pipeline;
+    protected Pipeline $pipeline;
 
     /**
      * Create a new Etl instance.
-     *
-     * @param Pipeline $pipeline
-     *
-     * @return void
      */
-    public function __construct(Pipeline $pipeline = null)
+    public function __construct(?Pipeline $pipeline = null)
     {
         $this->pipeline = $pipeline ?? new Pipeline();
     }
@@ -119,7 +113,6 @@ class Etl
      */
     public function toIterator(): \Generator
     {
-        /** @var Row $row */
         foreach ($this->pipeline as $row) {
             if (!$row->discarded()) {
                 yield $row->toArray();

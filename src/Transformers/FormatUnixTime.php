@@ -23,28 +23,24 @@ class FormatUnixTime extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * Format for rendered date, as per DateTime::format() [default: 'Ymd'].
-     *
-     * @var string
      */
-    protected $format = 'Ymd';
+    protected string $format = 'Ymd';
 
     /**
      * Timezone of rendered date [default: current PHP default value].
-     *
-     * @var string
      */
-    protected $timezone;
+    protected string $timezone;
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = ['columns', 'format', 'timezone'];
+    protected array $availableOptions = ['columns', 'format', 'timezone'];
 
     /**
      * Sets default timezone.

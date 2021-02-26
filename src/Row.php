@@ -15,24 +15,18 @@ class Row implements \ArrayAccess
 {
     /**
      * Row attributes.
-     *
-     * @var array
      */
-    protected $attributes;
+    protected array $attributes;
 
     /**
      * Determine if the row will be discarded.
-     *
-     * @var bool
      */
-    protected $discarded = false;
+    protected bool $discarded = false;
 
     /**
-     * Flag the row as incomplete
-     *
-     * @var bool
+     * Flag the row as incomplete.
      */
-    protected $incomplete = false;
+    protected bool $incomplete = false;
 
     /**
      * Create a new Row instance.
@@ -43,7 +37,7 @@ class Row implements \ArrayAccess
     }
 
     /**
-     * Set a row attribute
+     * Set a row attribute.
      *
      * @param mixed $value
      */
@@ -90,8 +84,6 @@ class Row implements \ArrayAccess
 
     /**
      * Get the array representation of the row.
-     *
-     * @return string[]
      */
     public function toArray(): array
     {
@@ -117,7 +109,7 @@ class Row implements \ArrayAccess
     }
 
     /**
-     * Set the row dirty
+     * Set the row dirty.
      */
     public function setIncomplete(): self
     {
@@ -127,7 +119,7 @@ class Row implements \ArrayAccess
     }
 
     /**
-     * Check if the is dirty
+     * Check if the row is dirty.
      */
     public function isIncomplete(): bool
     {
@@ -213,7 +205,7 @@ class Row implements \ArrayAccess
     }
 
     /**
-     * Clear all the attributes of the row
+     * Clear all the attributes of the row.
      */
     public function clearAttributes(): void
     {

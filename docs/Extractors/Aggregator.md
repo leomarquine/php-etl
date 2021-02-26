@@ -32,8 +32,9 @@ $extendedInfoIterator = (new Etl())
     ->toIterator()
 ;
 
-# merge this two data sources
-$mergedData = (new Etl())
+# merge these two data sources, capture result in "completeUserData.csv".
+$pipeline = new Etl();
+$pipeline
     ->extract(
         new Aggregator(),
         [
@@ -49,8 +50,7 @@ $mergedData = (new Etl())
         new CsvLoader(),
         'completeUserData.csv'
     )
-    ->run()
-;
+    ->run();
 ```
 
 ## Options

@@ -11,44 +11,32 @@ declare(strict_types=1);
 
 namespace Wizaplace\Etl\Database;
 
-use PDO;
-
 class Transaction
 {
     /**
      * The database connection.
-     *
-     * @var \PDO
      */
-    protected $pdo;
+    protected \PDO $pdo;
 
     /**
      * Current transaction count.
-     *
-     * @var int
      */
-    protected $count = 0;
+    protected int $count = 0;
 
     /**
      * Indicates if a transaction is open.
-     *
-     * @var bool
      */
-    protected $open = false;
+    protected bool $open = false;
 
     /**
      * Commit size.
-     *
-     * @var int|null
      */
-    protected $size;
+    protected int $size = 0;
 
     /**
      * Create a new Transaction instance.
-     *
-     * @return void
      */
-    public function __construct(PDO $pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -94,7 +82,7 @@ class Transaction
      */
     protected function shouldBeginTransaction(): bool
     {
-        return !$this->open && (false === is_int($this->size) || 0 === $this->size || 1 === $this->count);
+        return !$this->open && (0 === $this->size || 1 === $this->count);
     }
 
     /**

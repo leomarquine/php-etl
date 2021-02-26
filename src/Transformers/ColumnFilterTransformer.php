@@ -19,7 +19,7 @@ class ColumnFilterTransformer extends Transformer
      *
      * @var string[]
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * @var callable|null Callback function to apply on every Row attribute (column):
@@ -30,19 +30,12 @@ class ColumnFilterTransformer extends Transformer
     protected $callback;
 
     /**
-     * Properties that can be set via the options method. Supports:
-     *   - columns (optional): list of column names to keep
-     *   - callback:
+     * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = [
-        'columns', 'callback',
-    ];
+    protected array $availableOptions = ['columns', 'callback'];
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform(Row $row): void
     {
         $rowArray = $row->toArray();

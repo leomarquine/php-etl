@@ -20,31 +20,22 @@ class DateDimension extends Extractor
 {
     /**
      * A string representing the start date of the requested dimension table.
-     *
-     * @var string
      */
-    protected $startDate;
+    protected string $startDate;
 
     /**
      * A string representing the end date of the requested dimension table.
-     *
-     * @var string
      */
-    protected $endDate;
+    protected string $endDate;
 
-    /**
-     * Extractor columns.
-     *
-     * @var array|null
-     */
-    protected $columns;
+    protected array $columns = [];
 
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected $availableOptions = ['columns', 'startDate', 'endDate'];
+    protected array $availableOptions = ['columns', 'startDate', 'endDate'];
 
     public function __construct()
     {
@@ -98,7 +89,7 @@ class DateDimension extends Extractor
                 'IsWorkDayKey' => (0 === $dayOfWeek || 6 === $dayOfWeek) ? 0 : 1,
             ];
 
-            if (null !== $this->columns && count($this->columns) > 0) {
+            if ([] !== $this->columns) {
                 $flipped = array_flip($this->columns);
                 $row = array_intersect_key($row, $flipped);
             }

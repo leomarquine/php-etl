@@ -17,7 +17,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": "~7.2|~8.0",
+        "php": "~7.4|~8.0",
         "softcreatr/jsonpath": "^0.7.2"
     },
     "autoload": {

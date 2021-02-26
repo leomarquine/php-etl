@@ -18,62 +18,50 @@ use Wizaplace\Etl\Row;
 class Aggregator extends Extractor
 {
     /**
-     * The matching key tuplet between iterators.
-     *
-     * @var string[]|null
+     * The matching key tuple between iterators.
      */
-    protected $index;
+    protected array $index = [];
 
-    /**
-     * Columns.
-     *
-     * @var string[]|null
-     */
-    protected $columns;
+    protected ?array $columns = null;
 
     /**
      * If set to true,
      * will throw a MissingDataException if there is any incomplete rows remaining
      * when all input iterators are fully consumed and closed.
-     *
-     * @var bool
      */
-    protected $strict = true;
+    protected bool $strict = true;
 
     /**
      * Discard incomplete rows
-     *
-     * @var bool
      */
-    protected $discard = false;
+    protected bool $discard = false;
 
     /** @var array[] */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Properties that can be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $availableOptions = [
+    protected array $availableOptions = [
         'index',
         'columns',
         'strict',
-        'discard'
+        'discard',
     ];
 
     /**
      * Properties that MUST be set via the options method.
      *
-     * @var array
+     * @var string[]
      */
-    protected $requiredOptions = [
-        'index',
-        'columns',
-    ];
+    protected array $requiredOptions = ['index', 'columns'];
 
     /**
      * @return \Generator<Row>
+     *
+     * @throws IncompleteDataException|InvalidOptionException
      */
     public function extract(): \Generator
     {
@@ -112,17 +100,11 @@ class Aggregator extends Extractor
 
         if (true === $this->strict) {
             $plural = $total > 1;
-            throw new IncompleteDataException(
-                \sprintf(
-                    '%d row%s %s rejected because incomplete',
-                    $total,
-                    $plural ? 's' : '',
-                    $plural ? 'were' : 'was'
-                )
-            );
+            $message = '%d row%s %s rejected because incomplete';
+            throw new IncompleteDataException(\sprintf($message, $total, $plural ? 's' : '', $plural ? 'were' : 'was'));
         }
 
-         // then yield the incomplete remaining rows
+        // then yield the incomplete remaining rows
         if (false === $this->discard) {
             foreach ($this->data as $row) {
                 yield (new Row($row))->setIncomplete();
@@ -136,6 +118,8 @@ class Aggregator extends Extractor
      * @param mixed[] $line
      *
      * @return mixed[]
+     *
+     * @throws InvalidOptionException
      */
     protected function build(array $line): ?array
     {
@@ -162,6 +146,8 @@ class Aggregator extends Extractor
 
     /**
      * Check if row is completed.
+     *
+     * @throws InvalidOptionException
      */
     protected function isCompleted(string $hash): bool
     {
@@ -179,7 +165,7 @@ class Aggregator extends Extractor
     }
 
     /**
-     * Check if there is any opened iterators left.
+     * Check if there are any opened iterators left.
      */
     protected function hasValidInput(): bool
     {
@@ -193,12 +179,14 @@ class Aggregator extends Extractor
     }
 
     /**
-     * calculate row hash key from specified index array.
+     * Calculate row hash key from specified index array.
+     *
+     * @throws InvalidOptionException|UndefinedIndexException
      */
     protected function lineHash(array $line): string
     {
-        if (!\is_array($this->index)) {
-            throw new InvalidOptionException('Invalid index', 1);
+        if (0 === count($this->index)) {
+            throw new InvalidOptionException('Index array is empty', 1);
         }
 
         return \json_encode(

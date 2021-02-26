@@ -115,7 +115,9 @@ class Csv extends Extractor
             return $this->columns;
         }
 
-        $columns = array_flip(str_getcsv(fgets($handle), $this->delimiter, $this->enclosure));
+        $columns = array_flip(
+            fgetcsv($handle, 0, $this->delimiter, $this->enclosure)
+        );
 
         foreach ($columns as $key => $index) {
             $columns[$key] = $index + 1;

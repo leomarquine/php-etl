@@ -242,6 +242,24 @@ janedoe@email.com',
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
 
+    public function testMultiLineHeadCsv(): void
+    {
+        $expected = [
+            new Row(
+                [
+                    'Column 1' => 'Value 1',
+                    'Column 2' => 'Value 2',
+                    "Multi-Line\nColumn 3" => 'Value 3',
+                ]
+            )
+        ];
+
+        $extractor = new Csv();
+        $extractor->input(__DIR__ . '/../data/multiline_head.csv');
+
+        static::assertEquals($expected, iterator_to_array($extractor->extract()));
+    }
+
     /** @test */
     public function missingFile(): void
     {

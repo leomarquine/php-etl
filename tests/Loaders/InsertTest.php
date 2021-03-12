@@ -73,7 +73,7 @@ class InsertTest extends TestCase
         $this->manager->expects(static::once())->method('statement')->with('default');
         $this->manager->expects(static::once())->method('transaction')->with('default');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
         $this->transaction->expects(static::once())->method('close');
 

@@ -55,6 +55,10 @@ $options = ['timestamps' => true];
 ### Transaction
 Indicates if the loader will perform database transactions.
 
+If run in a single transaction, treat the ETL process as a single atomic transaction and roll back on errors. If
+run in multiple transactions, the best we can do is provide durability by trying to commit any inserts that are
+accepted by the destination database.
+
 | Type | Default value |
 |----- | ------------- |
 | boolean | `true` |
@@ -65,6 +69,18 @@ $options = ['transaction' => false];
 
 ### Commit Size
 Transaction commit size. The transaction option must be enabled.
+
+The work in done in a single transaction if commit size is zero, and we want to roll back that transaction if an
+insert fails. In that manner, the ETL process becomes ACID in that either all the inserts are committed or none
+are. If the ETL process fails, we can replay the entire source after fixing the error.
+
+If the work is done in multiple transactions, however, some transactions may have already been committed. The
+inserts from later pending transactions therefore are not atomic or durable in the sense that the pipeline
+can fail and inserts that are accepted still need to be committed. This would leave the database in a state
+where it is difficult to determine which inserts have been accepted and which have not. Therefore, we try to
+commit the pending transaction so any rows that have been reported as inserted will be durable in the database.
+In terms of ACID properties of the destination database, since committing multiple transactions implies the
+ETL process is not atomic, at least we can be durable.
 
 | Type | Default value |
 |----- | ------------- |

@@ -120,7 +120,7 @@ class InsertUpdateTest extends TestCase
 
         $this->update->expects(static::never())->method('execute');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
         $this->transaction->expects(static::once())->method('close');
 
@@ -144,7 +144,7 @@ class InsertUpdateTest extends TestCase
 
         $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
         $this->transaction->expects(static::once())->method('close');
 
@@ -168,7 +168,7 @@ class InsertUpdateTest extends TestCase
 
         $this->update->expects(static::never())->method('execute');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
         $this->transaction->expects(static::once())->method('close');
 
@@ -194,7 +194,7 @@ class InsertUpdateTest extends TestCase
 
         $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
         $this->transaction->expects(static::once())->method('close');
 
@@ -223,7 +223,7 @@ class InsertUpdateTest extends TestCase
 
         $this->insert->expects(static::never())->method('execute');
 
-        $this->transaction->expects(static::once())->method('size')->with(100);
+        $this->transaction->expects(static::once())->method('size')->with(0);
         $this->transaction->expects(static::once())->method('run');
 
         $this->execute($this->loader, [$this->row]);

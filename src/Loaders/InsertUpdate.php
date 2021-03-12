@@ -54,7 +54,7 @@ class InsertUpdate extends Loader
     /**
      * Transaction commit size.
      */
-    protected int $commitSize = 100;
+    protected int $commitSize = 0;
 
     /**
      * Time for timestamps columns.

@@ -45,7 +45,12 @@ class CsvTest extends TestCase
         $extractor = new Csv();
 
         $extractor->input(__DIR__ . '/../data/quoted.csv');
-        $extractor->options(['delimiter' => ';', 'enclosure' => '"']);
+        $extractor->options(
+            [
+                $extractor::DELIMITER => '|',
+                $extractor::ENCLOSURE => '#',
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -61,7 +66,11 @@ class CsvTest extends TestCase
         $extractor = new Csv();
 
         $extractor->input(__DIR__ . '/../data/simple.csv');
-        $extractor->options(['columns' => ['id', 'email']]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'email'],
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -73,15 +82,23 @@ class CsvTest extends TestCase
         $extractor->input(__DIR__ . '/../data/simple.csv');
 
         // Without error handling (no BC). No message or error is expected.
-        $extractor->options(['columns' => ['id', 'email', 'foo', 'bar']]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'email', 'foo', 'bar'],
+            ]
+        );
         $data = [];
         foreach ($extractor->extract() as $row) {
             $data[] = $row;
         }
 
         // With error handling
-        $extractor->options(['columns' => ['id', 'email', 'foo', 'bar'], 'throwError' => true]);
-
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'email', 'foo', 'bar'],
+                $extractor::THROW_ERROR => true,
+            ]
+        );
         try {
             foreach ($extractor->extract() as $row) {
                 static::fail('Since we asked more columns than available, an exception was expected');
@@ -101,7 +118,11 @@ class CsvTest extends TestCase
         $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
 
         // Without error handling (no BC).
-        $extractor->options(['columns' => ['id', 'name', 'email']]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'name', 'email'],
+            ]
+        );
         try {
             $count = 1;
             foreach ($extractor->extract() as $row) {
@@ -121,7 +142,12 @@ class CsvTest extends TestCase
         }
 
         // With error handling
-        $extractor->options(['columns' => ['id', 'name', 'email'], 'throwError' => true]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'name', 'email'],
+                $extractor::THROW_ERROR => true,
+            ]
+        );
         try {
             $count = 1;
             foreach ($extractor->extract() as $row) {
@@ -145,7 +171,11 @@ class CsvTest extends TestCase
         $extractor->input(__DIR__ . '/../data/incomplete_line.csv');
 
         // Without error handling (no BC).
-        $extractor->options(['columns' => ['id', 'email']]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'email'],
+            ]
+        );
         try {
             $count = 1;
             foreach ($extractor->extract() as $row) {
@@ -165,7 +195,12 @@ class CsvTest extends TestCase
         }
 
         // With error handling
-        $extractor->options(['columns' => ['id', 'email'], 'throwError' => true]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id', 'email'],
+                $extractor::THROW_ERROR => true,
+            ]
+        );
         try {
             $count = 1;
             foreach ($extractor->extract() as $row) {
@@ -193,7 +228,11 @@ class CsvTest extends TestCase
         $extractor = new Csv();
 
         $extractor->input(__DIR__ . '/../data/simple.csv');
-        $extractor->options(['columns' => ['id' => 'id', 'email' => 'email_address']]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id' => 'id', 'email' => 'email_address'],
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -209,7 +248,11 @@ class CsvTest extends TestCase
         $extractor = new Csv();
 
         $extractor->input(__DIR__ . '/../data/headless.csv');
-        $extractor->options(['columns' => ['id' => 1, 'name' => 2, 'email' => 3]]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => ['id' => 1, 'name' => 2, 'email' => 3],
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }

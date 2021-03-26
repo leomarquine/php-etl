@@ -7,13 +7,12 @@ Manipulates data, in sequence, from the data source previously defined in the ex
 $etl->transform($transformer, $options);
 ```
 
-
 ## Available transformers types
 
-* [Column Filter](ColumnFilterTransformer.md)
-* [Convert Case](ConvertCase.md)
-* [JSON Decode](JsonDecode.md)
-* [JSON Encode](JsonEncode.md)
-* [Rename Columns](RenameColumns.md)
-* [Trim](Trim.md)
-* [Unique Rows](UniqueRows.md)
+- [Column Filter](ColumnFilterTransformer.md)
+- [Convert Case](ConvertCase.md)
+- [JSON Decode](JsonDecode.md)
+- [JSON Encode](JsonEncode.md)
+- [Rename Columns](RenameColumns.md)
+- [Trim](Trim.md)
+- [Unique Rows](UniqueRows.md)

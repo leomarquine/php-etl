@@ -7,67 +7,73 @@ Inserts data into a database table.
 $etl->load($insert, 'table_name', $options);
 ```
 
-
 ## Options
 
 ### Columns
+
 Columns that will be loaded. If `null`, all columns in the process will be inserted.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `null` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `null`        |
 
 To select which columns will be loaded, use an array with the columns list:
+
 ```php
-$options = ['columns' => ['id', 'name', 'email']];
+$options = [Insert::COLUMNS => ['id', 'name', 'email']];
 ```
 
 To map columns from the etl process to the database table, use an associative array where the `key` is the name of the process column and the `value` is the table column:
+
 ```php
-$options = ['columns' => [
+$options = [Insert::COLUMNS => [
     'id' => 'user_id',
     'name' => 'full_name',
 ]];
 ```
 
 ### Connection
+
 Name of the database connection to use.
 
-| Type | Default value |
-|----- | ------------- |
-| string | default |
+| Type   | Default value |
+| ------ | ------------- |
+| string | default       |
 
 ```php
-$options = ['connection' => 'app'];
+$options = [Insert::CONNECTION => 'app'];
 ```
 
 ### Timestamps
+
 Populates the `created_at` column with the current timestamp when inserting a row.
 
-| Type | Default value |
-|----- | ------------- |
-| boolean | `false` |
+| Type    | Default value |
+| ------- | ------------- |
+| boolean | `false`       |
 
 ```php
-$options = ['timestamps' => true];
+$options = [Insert::TIMESTAMPS => true];
 ```
 
 ### Transaction
+
 Indicates if the loader will perform database transactions.
 
 If run in a single transaction, treat the ETL process as a single atomic transaction and roll back on errors. If
 run in multiple transactions, the best we can do is provide durability by trying to commit any inserts that are
 accepted by the destination database.
 
-| Type | Default value |
-|----- | ------------- |
-| boolean | `true` |
+| Type    | Default value |
+| ------- | ------------- |
+| boolean | `true`        |
 
 ```php
-$options = ['transaction' => false];
+$options = [Insert::TRANSACTION => false];
 ```
 
 ### Commit Size
+
 Transaction commit size. The transaction option must be enabled.
 
 The work in done in a single transaction if commit size is zero, and we want to roll back that transaction if an
@@ -83,9 +89,9 @@ In terms of ACID properties of the destination database, since committing multip
 ETL process is not atomic, at least we can be durable.
 
 | Type | Default value |
-|----- | ------------- |
-| int | 100 |
+| ---- | ------------- |
+| int  | 100           |
 
 ```php
-$options = ['commit_size' => 500];
+$options = [Insert::COMMIT_SIZE => 500];
 ```

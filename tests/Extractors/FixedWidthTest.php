@@ -28,7 +28,15 @@ class FixedWidthTest extends TestCase
         $extractor = new FixedWidth();
 
         $extractor->input(__DIR__ . '/../data/fixed-width.txt');
-        $extractor->options(['columns' => ['id' => [0, 1], 'name' => [1, 8], 'email' => [9, 17]]]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => [
+                    'id' => [0, 1],
+                    'name' => [1, 8],
+                    'email' => [9, 17],
+                ],
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }

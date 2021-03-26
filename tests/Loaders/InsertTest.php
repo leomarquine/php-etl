@@ -96,7 +96,7 @@ class InsertTest extends TestCase
         $this->statement->expects(static::once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
 
         $this->loader->output('table');
-        $this->loader->options(['columns' => ['id', 'name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id', 'name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -110,7 +110,7 @@ class InsertTest extends TestCase
             ->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
         $this->loader->output('table');
-        $this->loader->options(['columns' => ['id' => 'user_id', 'name' => 'full_name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id' => 'user_id', 'name' => 'full_name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -129,7 +129,7 @@ class InsertTest extends TestCase
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
         $this->loader->output('table');
-        $this->loader->options(['transaction' => false]);
+        $this->loader->options([$this->loader::TRANSACTION => false]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -149,7 +149,7 @@ class InsertTest extends TestCase
         ]);
 
         $this->loader->output('table');
-        $this->loader->options(['timestamps' => true]);
+        $this->loader->options([$this->loader::TIMESTAMPS => true]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -160,7 +160,7 @@ class InsertTest extends TestCase
         $this->transaction->expects(static::once())->method('size')->with(50)->willReturnSelf();
 
         $this->loader->output('table');
-        $this->loader->options(['commit_size' => 50]);
+        $this->loader->options([$this->loader::COMMIT_SIZE => 50]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -172,7 +172,7 @@ class InsertTest extends TestCase
         $this->manager->expects(static::once())->method('transaction')->with('custom');
 
         $this->loader->output('table');
-        $this->loader->options(['connection' => 'custom']);
+        $this->loader->options([$this->loader::CONNECTION => 'custom']);
 
         $this->execute($this->loader, [$this->row]);
     }

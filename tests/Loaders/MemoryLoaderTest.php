@@ -29,7 +29,7 @@ class MemoryLoaderTest extends TestCase
         $row1 = new Row(['a' => 'b', 'c' => $index1 = 'd']);
         $row2 = new Row(['a' => 'b2', 'c' => $index2 = 'd2']);
 
-        $this->loader->options(['index' => 'c']);
+        $this->loader->options([$this->loader::INDEX => 'c']);
         $this->loader->load($row1);
         $this->loader->load($row2);
 
@@ -41,7 +41,7 @@ class MemoryLoaderTest extends TestCase
     {
         $row = new Row(['a' => 'b', 'c' => $index = 'd']);
 
-        $this->loader->options(['index' => 'k']);
+        $this->loader->options([$this->loader::INDEX => 'k']);
         $this->loader->load($row);
 
         static::assertNull($this->loader->get($index));
@@ -51,7 +51,7 @@ class MemoryLoaderTest extends TestCase
     {
         $row = new Row(['a' => 'b', 'c' => $index = 'd']);
 
-        $this->loader->options(['index' => 'c']);
+        $this->loader->options([$this->loader::INDEX => 'c']);
         $this->loader->load($row);
 
         static::assertNull($this->loader->get('not found'));

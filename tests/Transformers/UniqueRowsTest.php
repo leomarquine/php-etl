@@ -54,7 +54,7 @@ class UniqueRowsTest extends TestCase
 
         $transformer = new UniqueRows();
 
-        $transformer->options(['columns' => ['id', 'name']]);
+        $transformer->options([$transformer::COLUMNS => ['id', 'name']]);
 
         $this->execute($transformer, $data);
 
@@ -80,7 +80,7 @@ class UniqueRowsTest extends TestCase
 
         $transformer = new UniqueRows();
 
-        $transformer->options(['consecutive' => true]);
+        $transformer->options([$transformer::CONSECUTIVE => true]);
 
         $this->execute($transformer, $data);
 
@@ -106,7 +106,12 @@ class UniqueRowsTest extends TestCase
 
         $transformer = new UniqueRows();
 
-        $transformer->options(['consecutive' => true, 'columns' => ['id', 'name']]);
+        $transformer->options(
+            [
+                $transformer::CONSECUTIVE => true,
+                $transformer::COLUMNS => ['id', 'name'],
+            ]
+        );
 
         $this->execute($transformer, $data);
 

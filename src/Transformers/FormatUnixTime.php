@@ -18,6 +18,9 @@ use Wizaplace\Etl\Row;
  */
 class FormatUnixTime extends Transformer
 {
+    public const FORMAT = 'format';
+    public const TIMEZONE = 'timezone';
+
     /**
      * Transformer columns.
      *
@@ -40,7 +43,11 @@ class FormatUnixTime extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'format', 'timezone'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::FORMAT,
+        self::TIMEZONE,
+    ];
 
     /**
      * Sets default timezone.

@@ -14,6 +14,8 @@ use Wizaplace\Etl\Row;
 
 class ColumnFilterTransformer extends Transformer
 {
+    public const CALLBACK = 'callback';
+
     /**
      * Transformer columns.
      *
@@ -34,7 +36,10 @@ class ColumnFilterTransformer extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'callback'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::CALLBACK,
+    ];
 
     public function transform(Row $row): void
     {

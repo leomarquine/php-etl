@@ -44,7 +44,12 @@ class FormatUnixTimeTest extends TestCase
             new Row(['id' => '3', 'timestamp' => '20201129', 'unixtime' => '1606613796']),
         ];
         $transformer = new FormatUnixTime();
-        $transformer->options(['columns' => ['timestamp'], 'timezone' => 'UTC']);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['timestamp'],
+                $transformer::TIMEZONE => 'UTC',
+            ]
+        );
         $this->execute($transformer, $this->data);
         static::assertEquals($expected, $this->data);
     }
@@ -58,7 +63,12 @@ class FormatUnixTimeTest extends TestCase
             new Row(['id' => '3', 'timestamp' => '20201128', 'unixtime' => '1606613796']),
         ];
         $transformer = new FormatUnixTime();
-        $transformer->options(['columns' => ['timestamp'], 'timezone' => 'America/New_York']);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['timestamp'],
+                $transformer::TIMEZONE => 'America/New_York',
+            ]
+        );
         $this->execute($transformer, $this->data);
         static::assertEquals($expected, $this->data);
     }
@@ -72,7 +82,13 @@ class FormatUnixTimeTest extends TestCase
             new Row(['id' => '3', 'timestamp' => '2020-11-29 01:36:36', 'unixtime' => '1606613796']),
         ];
         $transformer = new FormatUnixTime();
-        $transformer->options(['columns' => ['timestamp'], 'timezone' => 'UTC', 'format' => 'Y-m-d H:i:s']);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['timestamp'],
+                $transformer::TIMEZONE => 'UTC',
+                $transformer::FORMAT => 'Y-m-d H:i:s',
+            ]
+        );
         $this->execute($transformer, $this->data);
         static::assertEquals($expected, $this->data);
     }
@@ -86,7 +102,12 @@ class FormatUnixTimeTest extends TestCase
             new Row(['id' => '3', 'timestamp' => '20201129', 'unixtime' => '20201129']),
         ];
         $transformer = new FormatUnixTime();
-        $transformer->options(['columns' => ['timestamp', 'unixtime'], 'timezone' => 'UTC']);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['timestamp', 'unixtime'],
+                $transformer::TIMEZONE => 'UTC',
+            ]
+        );
         $this->execute($transformer, $this->data);
         static::assertEquals($expected, $this->data);
     }
@@ -104,7 +125,7 @@ class FormatUnixTimeTest extends TestCase
             ]),
         ];
         $transformer = new FormatUnixTime();
-        $transformer->options(['columns' => ['timestamp']]);
+        $transformer->options([$transformer::COLUMNS => ['timestamp']]);
         $this->execute($transformer, $this->data);
         static::assertEquals($expected, $this->data);
     }

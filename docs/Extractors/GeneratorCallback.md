@@ -13,7 +13,7 @@ $iterable = [
     ['id' => 2, 'json' => '["x", "y", "z"]'],
 ];
 
-$options['callback'] = function ($row) {
+$options[GeneratorCallback::CALLBACK] = function ($row) {
     foreach (json_decode($row['json']) as $value) {
         yield ['id' => $row['id'], 'value' => $value];
     }
@@ -26,7 +26,7 @@ $pipeline->extract($extractor, $iterable, $options);
 // Alternatively...
 /** @var \Wizaplace\Etl\Etl $source */
 /** @var \Wizaplace\Etl\Extractors\Table $tableExtractor */
-$iterable = $source->extract($tableExtractor, 'tableName', ['connection' => 'default'])->toArray();
+$iterable = $source->extract($tableExtractor, 'tableName', [Table::CONNECTION => 'default'])->toArray();
 $pipeline->extract($extractor, $iterable, $options);
 ```
 
@@ -39,7 +39,7 @@ $pipeline->extract($extractor, $iterable, $options);
 A callback function that takes a row array as its input and returns an iterable object.
 
 | Type     | Default value |
-|----------|---------------|
+| -------- | ------------- |
 | callable | `null`        |
 
 ```php
@@ -48,7 +48,7 @@ $callback = function ($row) {
         yield ['id' => $row['id'], 'value' => $value];
     }
 };
-$options = ['callback' => $callback];
+$options = [GeneratorCallback::CALLBACK => $callback];
 ```
 
-The value of 'callback' can also be an array of `['\Fully\Qualified\ClassName', 'aStaticFunction']`.
+The value of Option::CALLBACK can also be an array of `['\Fully\Qualified\ClassName', 'aStaticFunction']`.

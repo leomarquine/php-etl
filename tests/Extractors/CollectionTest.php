@@ -48,7 +48,7 @@ class CollectionTest extends TestCase
 
         $extractor = new Collection();
 
-        $extractor->input($this->input)->options(['columns' => ['id', 'name']]);
+        $extractor->input($this->input)->options([$extractor::COLUMNS => ['id', 'name']]);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }

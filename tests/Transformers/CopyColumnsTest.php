@@ -32,7 +32,7 @@ class CopyColumnsTest extends TestCase
 
         $transformer = new CopyColumns();
 
-        $transformer->options(['columns' => ['name' => 'surname']]);
+        $transformer->options([$transformer::COLUMNS => ['name' => 'surname']]);
 
         $this->execute($transformer, $data);
 

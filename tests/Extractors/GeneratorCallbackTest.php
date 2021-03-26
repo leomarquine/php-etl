@@ -53,7 +53,7 @@ class GeneratorCallbackTest extends TestCase
     {
         $extractor = new GeneratorCallback();
         $extractor->input($this->input);
-        $extractor->options(['callback' => $this->callback]);
+        $extractor->options([$extractor::CALLBACK => $this->callback]);
         static::assertEquals($this->expected, iterator_to_array($extractor->extract()));
     }
 
@@ -62,7 +62,7 @@ class GeneratorCallbackTest extends TestCase
     {
         $extractor = new GeneratorCallback();
         $extractor->input($this->input);
-        $extractor->options(['callback' => ['\Tests\Extractors\GeneratorCallbackTest', 'explodeJson']]);
+        $extractor->options([$extractor::CALLBACK => ['\Tests\Extractors\GeneratorCallbackTest', 'explodeJson']]);
         static::assertEquals($this->expected, iterator_to_array($extractor->extract()));
     }
 

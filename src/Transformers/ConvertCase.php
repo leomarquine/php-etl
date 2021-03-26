@@ -15,6 +15,9 @@ use Wizaplace\Etl\Row;
 
 class ConvertCase extends Transformer
 {
+    public const ENCODING = 'encoding';
+    public const MODE = 'mode';
+
     /**
      * Transformer columns.
      *
@@ -42,7 +45,11 @@ class ConvertCase extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'encoding', 'mode'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::ENCODING,
+        self::MODE,
+    ];
 
     public function initialize(): void
     {

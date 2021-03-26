@@ -49,7 +49,12 @@ class CallbackTest extends TestCase
 
         $transformer = new Callback();
 
-        $transformer->options(['columns' => ['name'], 'callback' => $callback]);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['name'],
+                $transformer::CALLBACK => $callback,
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -71,7 +76,12 @@ class CallbackTest extends TestCase
 
         $transformer = new Callback();
 
-        $transformer->options(['columns' => ['name'], 'callback' => $callback]);
+        $transformer->options(
+            [
+                $transformer::COLUMNS => ['name'],
+                $transformer::CALLBACK => $callback,
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 

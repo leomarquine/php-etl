@@ -36,7 +36,7 @@ class AggregatorTest extends TestCase
             ->options(
                 \array_merge(
                     $invalidOptions,
-                    ['strict' => false]
+                    [$extractor::STRICT => false]
                 )
             )
         ;
@@ -60,9 +60,9 @@ class AggregatorTest extends TestCase
             ->input($iterators)
             ->options(
                 [
-                    'index' => ['email'],
-                    'columns' => ['name', 'twitter'],
-                    'strict' => true,
+                    $extractor::INDEX => ['email'],
+                    $extractor::COLUMNS => ['name', 'twitter'],
+                    $extractor::STRICT => true,
                 ]
             );
 
@@ -85,10 +85,10 @@ class AggregatorTest extends TestCase
             ->input($iterators)
             ->options(
                 [
-                    'index' => ['email'],
-                    'columns' => ['name', 'twitter'],
-                    'strict' => false,
-                    'discard' => false,
+                    $extractor::INDEX => ['email'],
+                    $extractor::COLUMNS => ['name', 'twitter'],
+                    $extractor::STRICT => false,
+                    $extractor::DISCARD => false,
                 ]
             );
 
@@ -138,10 +138,10 @@ class AggregatorTest extends TestCase
             ->input($iterators)
             ->options(
                 [
-                    'index' => ['email'],
-                    'columns' => ['name', 'twitter'],
-                    'strict' => false,
-                    'discard' => true,
+                    $extractor::INDEX => ['email'],
+                    $extractor::COLUMNS => ['name', 'twitter'],
+                    $extractor::STRICT => false,
+                    $extractor::DISCARD => true,
                 ]
             );
 
@@ -194,8 +194,8 @@ class AggregatorTest extends TestCase
             )
             ->options(
                 [
-                    'index' => ['id'],
-                    'columns' => ['email', 'name', 'info', 'stuff'],
+                    $extractor::INDEX => ['id'],
+                    $extractor::COLUMNS => ['email', 'name', 'info', 'stuff'],
                 ]
             );
 
@@ -214,13 +214,13 @@ class AggregatorTest extends TestCase
         return [
             'invalid index' => [
                 [
-                    'columns' => ['name', 'id'],
+                    Aggregator::COLUMNS => ['name', 'id'],
                 ],
                 'error_code' => 1,
             ],
             'invalid columns' => [
                 [
-                    'index' => ['email'],
+                    Aggregator::INDEX => ['email'],
                 ],
                 'error_code' => 2,
             ],

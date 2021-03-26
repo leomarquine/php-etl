@@ -16,6 +16,9 @@ use Wizaplace\Etl\Row;
 
 class Query extends Extractor
 {
+    public const BINDINGS = 'bindings';
+    public const CONNECTION = 'connection';
+
     /**
      * Query bindings.
      */
@@ -36,7 +39,10 @@ class Query extends Extractor
      *
      * @var string[]
      */
-    protected array $availableOptions = ['bindings', 'connection'];
+    protected array $availableOptions = [
+        self::BINDINGS,
+        self::CONNECTION,
+    ];
 
     /**
      * Create a new Query Extractor instance.

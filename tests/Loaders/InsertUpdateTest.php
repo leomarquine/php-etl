@@ -154,7 +154,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function insertRowEvenIfUpdatesAreSuppressed(): void
     {
-        $this->loader->options(['doUpdates' => false]);
+        $this->loader->options([$this->loader::DO_UPDATES => false]);
         $this->statement->expects(static::once())->method('select')->with('table');
         $this->selectStatement->expects(static::once())->method('where')->with(['id']);
         $this->selectStatement->expects(static::once())->method('prepare');
@@ -178,7 +178,7 @@ class InsertUpdateTest extends TestCase
     /** @test */
     public function doNotUpdateOrInsertRowIfUpdatesAreSuppressed(): void
     {
-        $this->loader->options(['doUpdates' => false]);
+        $this->loader->options([$this->loader::DO_UPDATES => false]);
         $this->statement->expects(static::once())->method('select')->with('table');
         $this->selectStatement->expects(static::once())->method('where')->with(['id']);
         $this->selectStatement->expects(static::once())->method('prepare');
@@ -237,7 +237,7 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects(static::once())->method('insert')->with('table', ['id', 'name']);
         $this->insert->expects(static::once())->method('execute')->with(['id' => '1', 'name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => ['id', 'name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id', 'name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -252,7 +252,7 @@ class InsertUpdateTest extends TestCase
         $this->insert->expects(static::once())->method('execute')
             ->with(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@example.com']);
 
-        $this->loader->options(['columns' => []]);
+        $this->loader->options([$this->loader::COLUMNS => []]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -265,7 +265,7 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects(static::once())->method('update')->with('table', ['name']);
         $this->update->expects(static::once())->method('execute')->with(['id' => '1',  'name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => ['id', 'name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id', 'name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -278,7 +278,7 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects(static::once())->method('insert')->with('table', ['user_id', 'full_name']);
         $this->insert->expects(static::once())->method('execute')->with(['user_id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => ['id' => 'user_id', 'name' => 'full_name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id' => 'user_id', 'name' => 'full_name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -291,7 +291,7 @@ class InsertUpdateTest extends TestCase
         $this->statement->expects(static::once())->method('update')->with('table', ['full_name']);
         $this->update->expects(static::once())->method('execute')->with(['id' => '1', 'full_name' => 'Jane Doe']);
 
-        $this->loader->options(['columns' => ['id' => 'id', 'name' => 'full_name']]);
+        $this->loader->options([$this->loader::COLUMNS => ['id' => 'id', 'name' => 'full_name']]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -311,7 +311,7 @@ class InsertUpdateTest extends TestCase
             'updated_at' => date('Y-m-d G:i:s'),
         ]);
 
-        $this->loader->options(['timestamps' => true]);
+        $this->loader->options([$this->loader::TIMESTAMPS => true]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -329,7 +329,7 @@ class InsertUpdateTest extends TestCase
             'updated_at' => date('Y-m-d G:i:s'),
         ]);
 
-        $this->loader->options(['timestamps' => true]);
+        $this->loader->options([$this->loader::TIMESTAMPS => true]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -344,7 +344,7 @@ class InsertUpdateTest extends TestCase
         $this->select->expects(static::once())->method('fetch')->willReturn(false);
         $this->insert->expects(static::once())->method('execute');
 
-        $this->loader->options(['transaction' => false]);
+        $this->loader->options([$this->loader::TRANSACTION => false]);
 
         $this->execute($this->loader, [$this->row]);
     }
@@ -359,7 +359,7 @@ class InsertUpdateTest extends TestCase
         $this->select->expects(static::once())->method('fetch')->willReturn(['name' => 'Jane']);
         $this->update->expects(static::once())->method('execute');
 
-        $this->loader->options(['transaction' => false]);
+        $this->loader->options([$this->loader::TRANSACTION => false]);
 
         $this->execute($this->loader, [$this->row]);
     }

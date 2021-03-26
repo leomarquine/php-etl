@@ -46,7 +46,12 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options(['search' => 'Doe', 'replace' => 'Die']);
+        $transformer->options(
+            [
+                $transformer::SEARCH => 'Doe',
+                $transformer::REPLACE => 'Die',
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -64,11 +69,13 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options([
-            'search' => 'Doe',
-            'replace' => 'Die',
-            'columns' => ['name'],
-        ]);
+        $transformer->options(
+            [
+                $transformer::SEARCH => 'Doe',
+                $transformer::REPLACE => 'Die',
+                $transformer::COLUMNS => ['name'],
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -86,11 +93,13 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options([
-            'type' => 'str',
-            'search' => 'Doe',
-            'replace' => 'Die',
-        ]);
+        $transformer->options(
+            [
+                $transformer::TYPE => 'str',
+                $transformer::SEARCH => 'Doe',
+                $transformer::REPLACE => 'Die',
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -108,12 +117,14 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options([
-            'type' => 'str',
-            'search' => 'Doe',
-            'replace' => 'Die',
-            'columns' => ['name'],
-        ]);
+        $transformer->options(
+            [
+                $transformer::TYPE => 'str',
+                $transformer::SEARCH => 'Doe',
+                $transformer::REPLACE => 'Die',
+                $transformer::COLUMNS => ['name'],
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -131,11 +142,13 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options([
-            'type' => 'preg',
-            'search' => '/Doe/m',
-            'replace' => 'Die',
-        ]);
+        $transformer->options(
+            [
+                $transformer::TYPE => 'preg',
+                $transformer::SEARCH => '/Doe/m',
+                $transformer::REPLACE => 'Die',
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -153,12 +166,14 @@ class ReplaceTest extends TestCase
 
         $transformer = new Replace();
 
-        $transformer->options([
-            'type' => 'preg',
-            'search' => '/Doe/m',
-            'replace' => 'Die',
-            'columns' => ['name'],
-        ]);
+        $transformer->options(
+            [
+                $transformer::TYPE => 'preg',
+                $transformer::SEARCH => '/Doe/m',
+                $transformer::REPLACE => 'Die',
+                $transformer::COLUMNS => ['name'],
+            ]
+        );
 
         $this->execute($transformer, $this->data);
 
@@ -170,7 +185,7 @@ class ReplaceTest extends TestCase
     {
         $transformer = new Replace();
 
-        $transformer->options(['type' => 'invalid']);
+        $transformer->options([$transformer::TYPE => 'invalid']);
 
         $this->expectException('InvalidArgumentException');
 

@@ -17,6 +17,10 @@ use Wizaplace\Etl\Row;
 
 class Csv extends Extractor
 {
+    public const DELIMITER = 'delimiter';
+    public const ENCLOSURE = 'enclosure';
+    public const THROW_ERROR = 'throwError';
+
     protected ?array $columns = null;
 
     /**
@@ -45,7 +49,12 @@ class Csv extends Extractor
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'delimiter', 'enclosure', 'throwError'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::DELIMITER,
+        self::ENCLOSURE,
+        self::THROW_ERROR,
+    ];
 
     /**
      * Extract data from the input.

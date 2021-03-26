@@ -13,6 +13,9 @@ namespace Wizaplace\Etl;
 
 abstract class Step
 {
+    public const COLUMNS = 'columns';
+    public const INDEX = 'index';
+
     /**
      * Properties that can be set via the options method.
      *

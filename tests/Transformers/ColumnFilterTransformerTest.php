@@ -29,7 +29,11 @@ class ColumnFilterTransformerTest extends TestCase
     {
         $row = new Row(['a' => 'b', 'c' => 'd', 'e' => 'f', 'g' => 'h']);
 
-        $this->transformer->options(['columns' => ['c', 'g']]);
+        $this->transformer->options(
+            [
+                $this->transformer::COLUMNS => ['c', 'g'],
+            ]
+        );
         $this->transformer->transform($row);
 
         static::assertSame(['c' => 'd', 'g' => 'h'], $row->toArray());
@@ -39,11 +43,13 @@ class ColumnFilterTransformerTest extends TestCase
     {
         $row = new Row(['a' => 'keep', 'c' => 'drop', 'e' => 'keep', 'g' => 'special']);
 
-        $this->transformer->options([
-            'callback' => function (string $column, string $value): bool {
-                return 'g' === $column || 'keep' === $value;
-            },
-        ]);
+        $this->transformer->options(
+            [
+                $this->transformer::CALLBACK => function (string $column, string $value): bool {
+                    return 'g' === $column || 'keep' === $value;
+                },
+            ]
+        );
         $this->transformer->transform($row);
 
         static::assertSame(['a' => 'keep', 'e' => 'keep', 'g' => 'special'], $row->toArray());
@@ -54,8 +60,8 @@ class ColumnFilterTransformerTest extends TestCase
         $row = new Row(['a' => 'keep', 'c' => 'drop', 'e' => 'keep', 'g' => 'special']);
 
         $this->transformer->options([
-            'columns' => ['c', 'e'],
-            'callback' => function (string $column, string $value): bool {
+            $this->transformer::COLUMNS => ['c', 'e'],
+            $this->transformer::CALLBACK => function (string $column, string $value): bool {
                 return 'keep' === $value;
             },
         ]);

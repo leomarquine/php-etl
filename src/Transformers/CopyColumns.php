@@ -27,7 +27,7 @@ class CopyColumns extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns'];
+    protected array $availableOptions = [self::COLUMNS];
 
     public function transform(Row $row): void
     {

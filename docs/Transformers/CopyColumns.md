@@ -11,18 +11,20 @@ Copy columns.
 $pipeline->transform($transformer, $options);
 ```
 
-
 ## Options
 
 ### Columns (required)
+
 Columns that will be transformed. The `key` is the old name and the `value` is the new column name.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `[]` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `[]`          |
 
 ```php
-$options = ['columns' => [
-    'email_address' => 'email',
-]];
+$options = [
+    CopyColumns::COLUMNS => [
+        'email_address' => 'email',
+    ],
+];
 ```

@@ -17,6 +17,11 @@ use Wizaplace\Etl\Row;
 
 class Insert extends Loader
 {
+    public const CONNECTION = 'connection';
+    public const TIMESTAMPS = 'timestamps';
+    public const TRANSACTION = 'transaction';
+    public const COMMIT_SIZE = 'commitSize';
+
     /**
      * The connection name.
      */
@@ -69,7 +74,13 @@ class Insert extends Loader
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'connection', 'timestamps', 'transaction', 'commitSize'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::CONNECTION,
+        self::TIMESTAMPS,
+        self::TRANSACTION,
+        self::COMMIT_SIZE,
+    ];
 
     /**
      * Create a new Insert Loader instance.

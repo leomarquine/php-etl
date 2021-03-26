@@ -9,12 +9,12 @@ $etl->extract($type, $source, $options);
 
 ## Available extractors types
 
-* [Aggregator](Aggregator.md)
-* [Collection](Collection.md)
-* [CSV](Csv.md)
-* [Date Dimension](DateDimension.md)
-* [Fixed Width](FixedWidth.md)
-* [JSON](Json.md)
-* [Query](Query.md)
-* [Table](Table.md)
-* [XML](Xml.md)
+- [Aggregator](Aggregator.md)
+- [Collection](Collection.md)
+- [CSV](Csv.md)
+- [Date Dimension](DateDimension.md)
+- [Fixed Width](FixedWidth.md)
+- [JSON](Json.md)
+- [Query](Query.md)
+- [Table](Table.md)
+- [XML](Xml.md)

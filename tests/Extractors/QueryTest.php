@@ -56,8 +56,8 @@ class QueryTest extends TestCase
 
         $extractor->input('select query');
         $extractor->options([
-            'connection' => 'connection',
-            'bindings' => ['binding'],
+            $extractor::CONNECTION => 'connection',
+            $extractor::BINDINGS => ['binding'],
         ]);
 
         static::assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));

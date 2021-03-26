@@ -18,6 +18,11 @@ class CsvLoader extends Loader
 {
     use FilePathTrait;
 
+    public const DELIMITER = 'delimiter';
+    public const ENCLOSURE = 'enclosure';
+    public const ESCAPE_CHAR = 'escapeChar';
+    public const LINE_PER_FILE = 'linePerFile';
+
     /**
      * Count how many lines have been loaded
      */
@@ -40,7 +45,12 @@ class CsvLoader extends Loader
      *
      * @var string[]
      */
-    protected array $availableOptions = ['delimiter', 'enclosure', 'escapeChar', 'linePerFile'];
+    protected array $availableOptions = [
+        self::DELIMITER,
+        self::ENCLOSURE,
+        self::ESCAPE_CHAR,
+        self::LINE_PER_FILE,
+    ];
 
     /**
      * The CSV delimiter string.

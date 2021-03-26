@@ -17,6 +17,9 @@ use Wizaplace\Etl\Row;
 
 class Aggregator extends Extractor
 {
+    public const DISCARD = 'discard';
+    public const STRICT = 'strict';
+
     /**
      * The matching key tuple between iterators.
      */
@@ -45,10 +48,10 @@ class Aggregator extends Extractor
      * @var string[]
      */
     protected array $availableOptions = [
-        'index',
-        'columns',
-        'strict',
-        'discard',
+        self::INDEX,
+        self::COLUMNS,
+        self::STRICT,
+        self::DISCARD,
     ];
 
     /**
@@ -56,7 +59,10 @@ class Aggregator extends Extractor
      *
      * @var string[]
      */
-    protected array $requiredOptions = ['index', 'columns'];
+    protected array $requiredOptions = [
+        self::INDEX,
+        self::COLUMNS,
+    ];
 
     /**
      * @return \Generator<Row>

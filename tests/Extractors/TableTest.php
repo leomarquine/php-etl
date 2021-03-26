@@ -61,9 +61,9 @@ class TableTest extends TestCase
 
         $extractor->input('table');
         $extractor->options([
-            'connection' => 'connection',
-            'columns' => ['columns'],
-            'where' => ['where'],
+            $extractor::CONNECTION => 'connection',
+            $extractor::COLUMNS => ['columns'],
+            $extractor::WHERE => ['where'],
         ]);
 
         static::assertEquals([new Row(['row1']), new Row(['row2'])], iterator_to_array($extractor->extract()));
@@ -98,9 +98,9 @@ class TableTest extends TestCase
         // Perform the test using data provider arrays for where condition and expected result.
         $pipeline = new Etl\Etl();
         $options = [
-            'connection' => 'default',
-            'columns' => [$column],
-            'where' => [$column => $where],
+            Table::CONNECTION => 'default',
+            Table::COLUMNS => [$column],
+            Table::WHERE => [$column => $where],
         ];
         $actual = $pipeline->extract(new Table($manager), $table, $options)->toArray();
         self::assertEquals($expected, $actual);

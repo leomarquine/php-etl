@@ -22,7 +22,7 @@ class FixedWidth extends Extractor
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns'];
+    protected array $availableOptions = [self::COLUMNS];
 
     /**
      * Extract data from the input.

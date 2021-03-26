@@ -15,6 +15,10 @@ use Wizaplace\Etl\Row;
 
 class Replace extends Transformer
 {
+    public const REPLACE = 'replace';
+    public const SEARCH = 'search';
+    public const TYPE = 'type';
+
     /**
      * Transformer columns.
      *
@@ -47,7 +51,12 @@ class Replace extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'type', 'search', 'replace'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::TYPE,
+        self::SEARCH,
+        self::REPLACE,
+    ];
 
     public function initialize(): void
     {

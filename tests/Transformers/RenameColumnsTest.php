@@ -32,7 +32,7 @@ class RenameColumnsTest extends TestCase
 
         $transformer = new RenameColumns();
 
-        $transformer->options(['columns' => ['email_address' => 'email']]);
+        $transformer->options([$transformer::COLUMNS => ['email_address' => 'email']]);
 
         $this->execute($transformer, $data);
 

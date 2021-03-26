@@ -44,7 +44,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer = new ConvertCase();
 
-        $transformer->options(['mode' => 'lower']);
+        $transformer->options([$transformer::MODE => 'lower']);
 
         $this->execute($transformer, $this->data);
 
@@ -61,7 +61,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer = new ConvertCase();
 
-        $transformer->options(['mode' => 'upper']);
+        $transformer->options([$transformer::MODE => 'upper']);
 
         $this->execute($transformer, $this->data);
 
@@ -86,7 +86,7 @@ class ConvertCaseTest extends TestCase
 
         $transformer = new ConvertCase();
 
-        $transformer->options(['mode' => 'title']);
+        $transformer->options([$transformer::MODE => 'title']);
 
         $this->execute($transformer, $this->data);
 
@@ -102,8 +102,7 @@ class ConvertCaseTest extends TestCase
         ];
 
         $transformer = new ConvertCase();
-
-        $transformer->options(['columns' => ['name']]);
+        $transformer->options([$transformer::COLUMNS => ['name']]);
 
         $this->execute($transformer, $this->data);
 

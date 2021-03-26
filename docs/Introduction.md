@@ -22,7 +22,7 @@ $transformer = new Trim();
 $loader = new Insert($manager);
 
 $etl->extract($extractor, '/path/to/users.csv')
-    ->transform($transformer, ['columns' => ['name', 'email']])
+    ->transform($transformer, [$transformer::COLUMNS => ['name', 'email']])
     ->load($loader, 'users')
     ->run();
 ```

@@ -7,94 +7,102 @@ Inserts data into a database table.
 $etl->load($insertUpdate, 'table_name', $options);
 ```
 
-
 ## Options
 
 ### Columns
+
 Columns that will be loaded. If `null`, all columns in the process will be inserted/updated.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `null` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `null`        |
 
 To select which columns will be loaded, use an array with the columns list:
+
 ```php
-$options = ['columns' => ['id', 'name', 'email']];
+$options = [InsertUpdate::COLUMNS => ['id', 'name', 'email']];
 ```
 
 To map columns from the etl process to the database table, use an associative array where the `key` is the name of the process column and the `value` is the table column:
+
 ```php
-$options = ['columns' => [
+$options = [InsertUpdate::COLUMNS => [
     'id' => 'user_id',
     'name' => 'full_name',
 ]];
 ```
 
 ### Connection
+
 Name of the database connection to use.
 
-| Type | Default value |
-|----- | ------------- |
-| string | default |
+| Type   | Default value |
+| ------ | ------------- |
+| string | default       |
 
 ```php
-$options = ['connection' => 'app'];
+$options = [InsertUpdate::CONNECTION => 'app'];
 ```
 
 ### Key
+
 List of primary keys or identifiers of the table.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `['id']` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `['id']`      |
 
 ```php
-$options = ['key' => ['id', 'type']];
+$options = [InsertUpdate::KEY => ['id', InsertUpdate::TYPE]];
 ```
 
 ### DoUpdates
+
 When this option is enabled, new rows (based on key) will be inserted, but existing rows will be left unchanged.
 
-The boolean option 'doUpdates' defaults to true, preserving the previous behavior. When set to false, rows that have
+The boolean option Option::DO_UPDATES defaults to true, preserving the previous behavior. When set to false, rows that have
 keys already present in the destination are skipped rather than updated. This allows new rows to be brought into the
 ETL without overwriting any manual edits to the destination table. A future enhancement could be to make it so the
 list of columns to update is a subset of the list of columns that are inserted.
 
-| Type | Default value |
-|----- | ------------- |
-| boolean | `true` |
+| Type    | Default value |
+| ------- | ------------- |
+| boolean | `true`        |
 
 ```php
-$options = ['doUpdates' => false];
+$options = [InsertUpdate::DO_UPDATES => false];
 ```
 
 ### Timestamps
+
 Populates the `created_at` and/or `updated_at` columns with the current timestamp when inserting or updating a row.
 
-| Type | Default value |
-|----- | ------------- |
-| boolean | `false` |
+| Type    | Default value |
+| ------- | ------------- |
+| boolean | `false`       |
 
 ```php
-$options = ['timestamps' => true];
+$options = [InsertUpdate::TIMESTAMPS => true];
 ```
 
 ### Transaction
+
 Indicates if the loader will perform database transactions.
 
 If run in a single transaction, treat the ETL process as a single atomic transaction and roll back on errors. If
 run in multiple transactions, the best we can do is provide durability by trying to commit any inserts that are
 accepted by the destination database.
 
-| Type | Default value |
-|----- | ------------- |
-| boolean | `true` |
+| Type    | Default value |
+| ------- | ------------- |
+| boolean | `true`        |
 
 ```php
-$options = ['transaction' => false];
+$options = [InsertUpdate::TRANSACTION => false];
 ```
 
 ### Commit Size
+
 Transaction commit size. The transaction option must be enabled.
 
 The work in done in a single transaction if commit size is zero, and we want to roll back that transaction if an
@@ -110,9 +118,9 @@ In terms of ACID properties of the destination database, since committing multip
 ETL process is not atomic, at least we can be durable.
 
 | Type | Default value |
-|----- | ------------- |
-| int | 100 |
+| ---- | ------------- |
+| int  | 100           |
 
 ```php
-$options = ['commit_size' => 500];
+$options = [InsertUpdate::COMMIT_SIZE => 500];
 ```

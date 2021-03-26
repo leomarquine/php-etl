@@ -7,27 +7,28 @@ Remove duplicate rows from the input stream.
 $etl->transform($transformer, $options);
 ```
 
-
 ## Options
 
 ### Columns
+
 Columns used in the row comparison. If `empty`, all columns will be used.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `[]` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `[]`          |
 
 ```php
-$options = ['columns' => ['name', 'email']];
+$options = [UniqueRows::COLUMNS => ['name', 'email']];
 ```
 
 ### Consecutive
+
 Indicates if only consecutive duplicates will be removed.
 
 | Type | Default value |
-|----- | ------------- |
-| bool | `false` |
+| ---- | ------------- |
+| bool | `false`       |
 
 ```php
-$options = ['consecutive' => true];
+$options = [UniqueRows::CONSECUTIVE => true];
 ```

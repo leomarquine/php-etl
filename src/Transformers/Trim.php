@@ -15,6 +15,9 @@ use Wizaplace\Etl\Row;
 
 class Trim extends Transformer
 {
+    public const MASK = 'mask';
+    public const TYPE = 'type';
+
     /**
      * Transformer columns.
      *
@@ -40,7 +43,11 @@ class Trim extends Transformer
     /**
      * Properties that can be set via the options method.
      */
-    protected array $availableOptions = ['columns', 'type', 'mask'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::MASK,
+        self::TYPE,
+    ];
 
     /**
      * Initialize the step.

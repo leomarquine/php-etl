@@ -27,7 +27,7 @@ use Wizaplace\Etl\Row;
  *      ['id' => 2, 'json' => '["x", "y", "z"]'],
  *  ];
  *
- *  $options['callback'] = function ($row) {
+ *  $options[GeneratorCallback::CALLBACK] = function ($row) {
  *      foreach (json_decode($row['json']) as $value) {
  *          yield ['id' => $row['id'], 'value' => $value];
  *      }
@@ -38,18 +38,20 @@ use Wizaplace\Etl\Row;
  *
  *  // Alternatively...
  *  // @var Table $tableExtractor
- *  $iterable = $source->extract($tableExtractor, 'tableName', ['connection' => 'default'])->toArray();
+ *  $iterable = $source->extract($tableExtractor, 'tableName', [Table::CONNECTION => 'default'])->toArray();
  *  $pipeline->extract($extractor, $iterable, $options);
  *  ```
  */
 class GeneratorCallback extends Extractor
 {
+    public const CALLBACK = 'callback';
+
     /**
      * Properties that can be set via the options method.
      *
      * @var string[]
      */
-    protected array $availableOptions = ['callback'];
+    protected array $availableOptions = [self::CALLBACK];
 
     /**
      * A callback function that takes a row array as its input and returns an iterable object.

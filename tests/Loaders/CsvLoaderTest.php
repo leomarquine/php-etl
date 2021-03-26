@@ -71,7 +71,13 @@ class CsvLoaderTest extends TestCase
         $row2 = $this->productRowFactory('Chair', 305.75, 'A #|deluxe chair#|. You need it!');
 
         // Custom options
-        $this->csvLoader->options(['delimiter' => ',', 'enclosure' => '|', 'escapeChar' => '#']);
+        $this->csvLoader->options(
+            [
+                $this->csvLoader::DELIMITER => ',',
+                $this->csvLoader::ENCLOSURE => '|',
+                $this->csvLoader::ESCAPE_CHAR => '#',
+            ]
+        );
         $this->csvLoader->load($row1);
         $this->csvLoader->load($row2);
         $this->csvLoader->finalize();
@@ -95,7 +101,7 @@ class CsvLoaderTest extends TestCase
     public function testLoadCsvMultipleFiles(): void
     {
         // 1 line per file
-        $this->csvLoader->options(['linePerFile' => 1]);
+        $this->csvLoader->options([$this->csvLoader::LINE_PER_FILE => 1]);
         $this->csvLoader->initialize();
 
         \array_map(

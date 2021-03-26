@@ -16,6 +16,9 @@ use Wizaplace\Etl\Row;
 
 class Table extends Extractor
 {
+    public const CONNECTION = 'connection';
+    public const WHERE = 'where';
+
     protected array $columns = ['*'];
 
     /**
@@ -38,7 +41,11 @@ class Table extends Extractor
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'connection', 'where'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::CONNECTION,
+        self::WHERE,
+    ];
 
     /**
      * Create a new Table Extractor instance.

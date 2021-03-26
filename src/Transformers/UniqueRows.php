@@ -15,6 +15,8 @@ use Wizaplace\Etl\Row;
 
 class UniqueRows extends Transformer
 {
+    public const CONSECUTIVE = 'consecutive';
+
     /**
      * Transformer columns.
      *
@@ -46,7 +48,10 @@ class UniqueRows extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'consecutive'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::CONSECUTIVE,
+    ];
 
     /**
      * Transform the given row.

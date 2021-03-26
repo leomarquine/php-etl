@@ -14,13 +14,13 @@ $etl->extract($table, 'table_name', $options);
 Columns that will be extracted. If `null`, all columns of the table will be extracted.
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `null`        |
 
 To select which columns will be extracted, use an array with the columns list:
 
 ```php
-$options = ['columns' => ['id', 'name', 'email']];
+$options = [Table::COLUMNS => ['id', 'name', 'email']];
 ```
 
 ### Connection
@@ -28,29 +28,31 @@ $options = ['columns' => ['id', 'name', 'email']];
 Name of the database connection to use.
 
 | Type   | Default value |
-|--------|---------------|
+| ------ | ------------- |
 | string | default       |
 
 ```php
-$options = ['connection' => 'app'];
+$options = [Table::CONNECTION => 'app'];
 ```
 
 ### Where
 
 Array of conditions, each condition is either:
 
- * `key` equals `value` , or
- * `key` _comparesTo_ `value` (comparesTo can be: =, <, <=, =>, >, or <>).
+- `key` equals `value` , or
+- `key` _comparesTo_ `value` (comparesTo can be: =, <, <=, =>, >, or <>).
 
 If you need more flexibility in the query creation, you may use the [Query extractor](Query.md).
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `[]`          |
 
 ```php
-$options = ['where' => [
-    'status' => 'active', // 'key' equals 'value'
-    'colName' => ['<', 'comparisonValue'], // 'key' comparesTo 'value'
-]];
+$options = [
+    Table::WHERE => [
+        'status' => 'active', // 'key' equals 'value'
+        'colName' => ['<', 'comparisonValue'], // 'key' comparesTo 'value'
+    ],
+];
 ```

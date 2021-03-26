@@ -28,7 +28,7 @@ class XmlTest extends TestCase
         $extractor = new Xml();
 
         $extractor->input(__DIR__ . '/../data/xml1.xml');
-        $extractor->options(['loop' => '/users/user']);
+        $extractor->options([$extractor::LOOP => '/users/user']);
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }
@@ -45,8 +45,8 @@ class XmlTest extends TestCase
 
         $extractor->input(__DIR__ . '/../data/xml2.xml');
         $extractor->options([
-            'loop' => '/users/user',
-            'columns' => [
+            $extractor::LOOP => '/users/user',
+            $extractor::COLUMNS => [
                 'id' => '/@id',
                 'name' => '/profile/name',
                 'email' => '/profile/email/@value',

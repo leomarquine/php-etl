@@ -15,6 +15,8 @@ use Wizaplace\Etl\Row;
 
 class Xml extends Extractor
 {
+    public const LOOP = 'loop';
+
     protected array $columns = [];
 
     /**
@@ -42,7 +44,10 @@ class Xml extends Extractor
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns', 'loop'];
+    protected array $availableOptions = [
+        self::COLUMNS,
+        self::LOOP,
+    ];
 
     /**
      * Extract data from the input.

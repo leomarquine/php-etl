@@ -18,15 +18,17 @@ $etl->extract(
 Columns that will be extracted. If `null`, all columns will be extracted and the first line will be used as the columns names.
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `null`        |
 
 To select which columns will be extracted, use an array with the columns list:
 
 ```php
 $options = [
-    'columns' => [
-        'id', 'name', 'email'
+    Csv::COLUMNS => [
+        'id',
+        'name',
+        'email',
     ]
 ];
 ```
@@ -35,7 +37,7 @@ To rename the columns, use an associative array where the `key` is the name of t
 
 ```php
 $options = [
-    'columns' => [
+    Csv::COLUMNS => [
         'id' => 'id',
         'full_name' => 'name',
         'email_address' => 'email',
@@ -47,7 +49,7 @@ If your file does not contains the columns names, you may set the name and the i
 
 ```php
 $options = [
-    'columns' => [
+    Csv::COLUMNS' => [
         'id' => 1,
         'name' => 2,
         'email' => 3,
@@ -60,11 +62,11 @@ $options = [
 Field delimiter (one character only).
 
 | Type   | Default value |
-|--------|---------------|
+| ------ | ------------- |
 | string | ,             |
 
 ```php
-$options = ['delimiter' => ';'];
+$options = [Csv::DELIMITER => ';'];
 ```
 
 ### Enclosure
@@ -72,11 +74,11 @@ $options = ['delimiter' => ';'];
 Field enclosure character (one character only).
 
 | Type   | Default value |
-|--------|---------------|
+| ------ | ------------- |
 | string |               |
 
 ```php
-$options = ['enclosure' => '"'];
+$options = [Csv::ENCLOSURE => '"'];
 ```
 
 ### Throw error
@@ -86,9 +88,9 @@ encounters any input issue during the data processing. Default value
 is set to false to keep backward compatibility.
 
 | Type    | Default value |
-|---------|---------------|
+| ------- | ------------- |
 | boolean | false         |
 
 ```php
-$options = ['throwError' => '"'];
+$options = [Csv::THROW_ERROR => true];
 ```

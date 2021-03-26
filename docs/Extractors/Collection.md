@@ -16,9 +16,9 @@ $etl->extract($collection, $iterable, $options);
 Columns from the iterable item that will be extracted.
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `null`        |
 
 ```php
-$options = ['columns' => ['id', 'name', 'email']];
+$options = [Collection::COLUMNS => ['id', 'name', 'email']];
 ```

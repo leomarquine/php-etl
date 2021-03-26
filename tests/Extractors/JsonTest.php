@@ -43,11 +43,15 @@ class JsonTest extends TestCase
         $extractor = new Json();
 
         $extractor->input(__DIR__ . '/../data/json2.json');
-        $extractor->options(['columns' => [
-            'id' => '$..bindings[*].id.value',
-            'name' => '$..bindings[*].name.value',
-            'email' => '$..bindings[*].email.value',
-        ]]);
+        $extractor->options(
+            [
+                $extractor::COLUMNS => [
+                    'id' => '$..bindings[*].id.value',
+                    'name' => '$..bindings[*].name.value',
+                    'email' => '$..bindings[*].email.value',
+                ],
+            ]
+        );
 
         static::assertEquals($expected, iterator_to_array($extractor->extract()));
     }

@@ -27,7 +27,7 @@ class RenameColumns extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['columns'];
+    protected array $availableOptions = [self::COLUMNS];
 
     /**
      * Transform the given row.

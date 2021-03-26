@@ -59,7 +59,7 @@ class JsonDecodeTest extends TestCase
 
         $transformer = new JsonDecode();
 
-        $transformer->options(['assoc' => true]);
+        $transformer->options([$transformer::ASSOC => true]);
 
         $this->execute($transformer, $this->data);
 
@@ -76,7 +76,7 @@ class JsonDecodeTest extends TestCase
 
         $transformer = new JsonDecode();
 
-        $transformer->options(['columns' => ['data']]);
+        $transformer->options([$transformer::COLUMNS => ['data']]);
 
         $this->execute($transformer, $this->data);
 

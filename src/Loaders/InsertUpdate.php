@@ -17,6 +17,12 @@ use Wizaplace\Etl\Row;
 
 class InsertUpdate extends Loader
 {
+    public const CONNECTION = 'connection';
+    public const KEY = 'key';
+    public const TIMESTAMPS = 'timestamps';
+    public const TRANSACTION = 'transaction';
+    public const DO_UPDATES = 'doUpdates';
+
     /**
      * The connection name.
      */
@@ -98,7 +104,12 @@ class InsertUpdate extends Loader
      * @var string[]
      */
     protected array $availableOptions = [
-        'columns', 'connection', 'key', 'timestamps', 'transaction', 'commitSize', 'doUpdates',
+        self::COLUMNS,
+        self::CONNECTION,
+        self::KEY,
+        self::TIMESTAMPS,
+        self::TRANSACTION,
+        self::DO_UPDATES,
     ];
 
     /**

@@ -10,7 +10,7 @@ $userDataIterator = (new Etl())
     ->extract(
         new Csv(),
         'user_data.csv',
-        ['columns' => ['id','email', 'name']]
+        [Csv::COLUMNS => ['id','email', 'name']]
     )
     ->toIterator()
 ;
@@ -20,13 +20,13 @@ $extendedInfoIterator = (new Etl())
     ->extract(
         new Table(),
         'extended_info',
-        ['columns' => 'courriel', 'twitter']
+        [Table::COLUMNS => 'courriel', 'twitter']
     )
     # let's rename 'courriel' to 'email'
     ->transform(
         new RenameColumns(),
         [
-            'columns' => ['courriel' => 'email']
+            RenameColumns::COLUMNS => ['courriel' => 'email']
         ]
     )
     ->toIterator()
@@ -42,8 +42,8 @@ $pipeline
             $extendedInfoIterator,
         ],
         [
-            'index' => ['email'], # common matching index
-            'columns' => ['id','email','name','twitter']
+            Aggregator::INDEX => ['email'], # common matching index
+            Aggregator::COLUMNS => ['id','email','name','twitter']
         ]
     )
     ->load(
@@ -60,11 +60,11 @@ $pipeline
 An array of column names common in all data sources. Note: be careful when using numerical values, they must be of the same type.
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `null`        |
 
 ```php
-$options = ['index' => ['email']];
+$options = [Aggregator::INDEX => ['email']];
 ```
 
 ### Columns (required)
@@ -72,12 +72,12 @@ $options = ['index' => ['email']];
 A `Row` is yield when all specified columns have been found for the matching index.
 
 | Type  | Default value |
-|-------|---------------|
+| ----- | ------------- |
 | array | `null`        |
 
 ```php
 $options = [
-    'columns' => [
+    Aggregator::COLUMNS => [
         'id',
         'name',
         'email'
@@ -89,13 +89,12 @@ $options = [
 
 When all Iterators input are fully consumed, if we have any remaining incomplete rows, an `IncompleteDataException` is thrown if `strict` is `true`
 
-
 | Type    | Default value |
-|---------|---------------|
+| ------- | ------------- |
 | boolean | `true`        |
 
 ```php
-$options = ['strict' => false];
+$options = [Aggregator::STRICT => false];
 ```
 
 ### Discard
@@ -103,9 +102,9 @@ $options = ['strict' => false];
 If `strict` is `false` and `discard` is `true` we yield the incomplete remaining `Rows` flagged as `incomplete`
 
 | Type    | Default value |
-|---------|---------------|
-| boolean | `false`        |
+| ------- | ------------- |
+| boolean | `false`       |
 
 ```php
-$options = ['discard' => false];
+$options = [Aggregator::DISCARD' => false];
 ```

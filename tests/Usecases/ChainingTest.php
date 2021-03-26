@@ -33,7 +33,7 @@ class ChainingTest extends TestCase
             ->extract(
                 new Csv(),
                 __DIR__ . '/data/users.csv',
-                ['delimiter' => ';']
+                [Csv::DELIMITER => ';']
             )
             ->toIterator();
 
@@ -42,12 +42,12 @@ class ChainingTest extends TestCase
             ->extract(
                 new Csv(),
                 __DIR__ . '/data/infos.csv',
-                ['delimiter' => ';']
+                [Csv::DELIMITER => ';']
             )
             ->transform(
                 new RenameColumns(),
                 [
-                    'columns' => [
+                    RenameColumns::COLUMNS => [
                         'courriel' => 'email',
                     ],
                 ]
@@ -55,8 +55,8 @@ class ChainingTest extends TestCase
             ->transform(
                 new ConvertCase(),
                 [
-                    'columns' => ['email'],
-                    'mode' => 'lower',
+                    ConvertCase::COLUMNS => ['email'],
+                    ConvertCase::MODE => 'lower',
                 ]
             )
             ->toIterator();
@@ -70,14 +70,14 @@ class ChainingTest extends TestCase
                     $infosIterator,
                 ],
                 [
-                    'index' => ['email'],
-                    'columns' => [
+                    Aggregator::INDEX => ['email'],
+                    Aggregator::COLUMNS => [
                         'id',
                         'email',
                         'name',
                         'age',
                     ],
-                    'strict' => false,
+                    Aggregator::STRICT => false,
                 ]
             )
             ->toIterator();

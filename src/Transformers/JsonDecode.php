@@ -15,6 +15,10 @@ use Wizaplace\Etl\Row;
 
 class JsonDecode extends Transformer
 {
+    public const ASSOC = 'assoc';
+    public const DEPTH = 'depth';
+    public const OPTIONS = 'options';
+
     /**
      * Transformer columns.
      *
@@ -42,7 +46,12 @@ class JsonDecode extends Transformer
      *
      * @var string[]
      */
-    protected array $availableOptions = ['assoc', 'columns', 'depth', 'options'];
+    protected array $availableOptions = [
+        self::ASSOC,
+        self::COLUMNS,
+        self::DEPTH,
+        self::OPTIONS,
+    ];
 
     public function transform(Row $row): void
     {

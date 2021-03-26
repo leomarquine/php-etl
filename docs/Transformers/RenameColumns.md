@@ -7,18 +7,18 @@ Rename columns.
 $etl->transform($transformer, $options);
 ```
 
-
 ## Options
 
 ### Columns (required)
+
 Columns that will be transformed. The `key` is the old name and the `value` is the new column name.
 
-| Type | Default value |
-|----- | ------------- |
-| array | `[]` |
+| Type  | Default value |
+| ----- | ------------- |
+| array | `[]`          |
 
 ```php
-$options = ['columns' => [
+$options = [RenameColumns::COLUMNS => [
     'email_address' => 'email',
 ]];
 ```

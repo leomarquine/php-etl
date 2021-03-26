@@ -59,7 +59,7 @@ class JsonEncodeTest extends TestCase
 
         $transformer = new JsonEncode();
 
-        $transformer->options(['columns' => ['data']]);
+        $transformer->options([$transformer::COLUMNS => ['data']]);
 
         $this->execute($transformer, $this->data);
 

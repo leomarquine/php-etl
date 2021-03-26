@@ -59,7 +59,7 @@ class TrimTest extends TestCase
 
         $transformer = new Trim();
 
-        $transformer->options(['columns' => ['id', 'name']]);
+        $transformer->options([$transformer::COLUMNS => ['id', 'name']]);
 
         $this->execute($transformer, $this->data);
 
@@ -76,7 +76,7 @@ class TrimTest extends TestCase
 
         $transformer = new Trim();
 
-        $transformer->options(['type' => 'right']);
+        $transformer->options([$transformer::TYPE => 'right']);
 
         $this->execute($transformer, $this->data);
 
@@ -93,7 +93,7 @@ class TrimTest extends TestCase
 
         $transformer = new Trim();
 
-        $transformer->options(['type' => 'left']);
+        $transformer->options([$transformer::TYPE => 'left']);
 
         $this->execute($transformer, $this->data);
 
@@ -110,7 +110,7 @@ class TrimTest extends TestCase
 
         $transformer = new Trim();
 
-        $transformer->options(['mask' => ' cmo.']);
+        $transformer->options([$transformer::MASK => ' cmo.']);
 
         $this->execute($transformer, $this->data);
 
@@ -122,7 +122,7 @@ class TrimTest extends TestCase
     {
         $transformer = new Trim();
 
-        $transformer->options(['type' => 'invalid']);
+        $transformer->options([$transformer::TYPE => 'invalid']);
 
         $this->expectException('InvalidArgumentException');
 

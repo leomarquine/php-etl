@@ -16,11 +16,12 @@ $loader->get('index_for_row_23');
 
 The name of `Row` column to uses as in-memory map index.
 
-| Type | Default value |
-|----- | ------------- |
-| string | `null` |
+| Type   | Default value |
+| ------ | ------------- |
+| string | `null`        |
 
 For example, a row extracted from a CSV with a column named `Identifier` would be loaded with this option set:
+
 ```php
-$options = ['index' => 'Identifier'];
+$options = [MemoryLoader::INDEX => 'Identifier'];
 ```

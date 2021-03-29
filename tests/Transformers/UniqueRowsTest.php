@@ -27,9 +27,12 @@ class UniqueRowsTest extends TestCase
             new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $expected = $data;
-        $expected[1]->discard();
-        $expected[3]->discard();
+        $expected = [
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']))->discard(),
+            new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']))->discard(),
+        ];
 
         $transformer = new UniqueRows();
 
@@ -48,9 +51,12 @@ class UniqueRowsTest extends TestCase
             new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.net']),
         ];
 
-        $expected = $data;
-        $expected[1]->discard();
-        $expected[3]->discard();
+        $expected = [
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.org']))->discard(),
+            new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.net']))->discard(),
+        ];
 
         $transformer = new UniqueRows();
 
@@ -73,10 +79,14 @@ class UniqueRowsTest extends TestCase
             new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $expected = $data;
-        $expected[1]->discard();
-        $expected[2]->discard();
-        $expected[4]->discard();
+        $expected = [
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']))->discard(),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']))->discard(),
+            new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
+            (new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.com']))->discard(),
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+        ];
 
         $transformer = new UniqueRows();
 
@@ -99,10 +109,14 @@ class UniqueRowsTest extends TestCase
             new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
         ];
 
-        $expected = $data;
-        $expected[1]->discard();
-        $expected[2]->discard();
-        $expected[4]->discard();
+        $expected = [
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.net']))->discard(),
+            (new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.org']))->discard(),
+            new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.com']),
+            (new Row(['id' => '2', 'name' => 'John Doe', 'email' => 'johndoe@email.net']))->discard(),
+            new Row(['id' => '1', 'name' => 'Jane Doe', 'email' => 'janedoe@email.com']),
+        ];
 
         $transformer = new UniqueRows();
 

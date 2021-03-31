@@ -64,7 +64,7 @@ class GeneratorCallback extends Extractor
     {
         /** @var Row $row */
         foreach ($this->input as $row) {
-            foreach (call_user_func($this->callback, $row) as $newRow) {
+            foreach (($this->callback)($row) as $newRow) {
                 yield new Row($newRow);
             }
         }

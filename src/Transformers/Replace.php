@@ -66,7 +66,7 @@ class Replace extends Transformer
     public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {
-            return call_user_func($this->function, $this->search, $this->replace, $column);
+            return ($this->function)($this->search, $this->replace, $column);
         });
     }
 

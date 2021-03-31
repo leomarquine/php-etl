@@ -13,16 +13,9 @@ namespace Wizaplace\Etl\Transformers;
 
 use Wizaplace\Etl\Row;
 
-class Callback extends Transformer
+class RowCallback extends Transformer
 {
     public const CALLBACK = 'callback';
-
-    /**
-     * Transformer columns.
-     *
-     * @var string[]
-     */
-    protected array $columns = [];
 
     /**
      * The callback function.
@@ -37,7 +30,6 @@ class Callback extends Transformer
      * @var string[]
      */
     protected array $availableOptions = [
-        self::COLUMNS,
         self::CALLBACK,
     ];
 
@@ -46,14 +38,6 @@ class Callback extends Transformer
      */
     public function transform(Row $row): void
     {
-        foreach ($this->columns as $column) {
-            $row->set(
-                $column,
-                ($this->callback)(
-                    $row,
-                    $column
-                )
-            );
-        }
+        ($this->callback)($row);
     }
 }

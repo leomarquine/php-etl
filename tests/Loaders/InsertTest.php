@@ -48,7 +48,7 @@ class InsertTest extends TestCase
         $this->transaction = $this->createMock('Wizaplace\Etl\Database\Transaction');
         $this->transaction->expects(static::any())->method('size')->willReturnSelf();
         $this->transaction->expects(static::any())->method('run')->willReturnCallback(function ($callback): void {
-            call_user_func($callback);
+            $callback();
         });
         $this->transaction->expects(static::any())->method('close');
 

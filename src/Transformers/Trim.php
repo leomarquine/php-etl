@@ -63,7 +63,7 @@ class Trim extends Transformer
     public function transform(Row $row): void
     {
         $row->transform($this->columns, function ($column) {
-            return call_user_func($this->function, $column, $this->mask);
+            return ($this->function)($column, $this->mask);
         });
     }
 

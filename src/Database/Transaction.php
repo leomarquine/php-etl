@@ -95,7 +95,7 @@ class Transaction
         }
 
         try {
-            call_user_func($callback);
+            $callback();
         } catch (\Exception $exception) {
             if ($this->pdo->inTransaction()) {
                 if (0 === $this->size) {

@@ -14,6 +14,7 @@ namespace Tests\Usecases;
 use PHPUnit\Framework\TestCase;
 use Wizaplace\Etl\Etl;
 use Wizaplace\Etl\Extractors\Csv;
+use Wizaplace\Etl\Loaders\CsvLoader;
 use Wizaplace\Etl\Row;
 use Wizaplace\Etl\Transformers\RowCallback;
 use Wizaplace\Etl\Transformers\Transformer;
@@ -96,5 +97,50 @@ class ValidatorTest extends TestCase
             ],
             $actual
         );
+    }
+
+    /** @test */
+    public function rowCallbackAsDataSetValidator(): void
+    {
+        $datasetTrasher = function (Row $row): void {
+            // let's consider this 1 value for id as a reason to trash the whole data set
+            if ('1' === $row->get('id')) {
+                throw new \Exception("1 is forbidden, this whole data set is poisoned don't load it");
+            }
+        };
+
+        try {
+            // ET as a dataset validator
+            (new Etl())
+                ->extract(
+                    new Csv(),
+                    __DIR__ . '/data/users.csv',
+                    [Csv::DELIMITER => ';']
+                )
+                ->transform(
+                    new RowCallback(),
+                    [RowCallback::CALLBACK => $datasetTrasher]
+                )
+                ->run();
+
+            // EL if everything is fine
+            (new Etl())
+                ->extract(
+                    new Csv(),
+                    __DIR__ . '/data/users.csv',
+                    [Csv::DELIMITER => ';']
+                )
+                ->load(
+                    new CsvLoader(),
+                    'whatever'
+                )
+                ->run();
+        } catch (\Exception $e) {
+            // well not everything was fine
+            static::assertEquals(
+                "1 is forbidden, this whole data set is poisoned don't load it",
+                $e->getMessage()
+            );
+        }
     }
 }

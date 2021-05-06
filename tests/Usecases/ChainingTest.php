@@ -73,8 +73,8 @@ class ChainingTest extends TestCase
                     Aggregator::INDEX => ['email'],
                     Aggregator::COLUMNS => [
                         'id',
-                        'email',
                         'name',
+                        'email',
                         'age',
                     ],
                     Aggregator::STRICT => false,
@@ -99,10 +99,13 @@ class ChainingTest extends TestCase
                 'id' => '3',
                 'name' => 'Hello World',
                 'email' => 'hello@world.com',
+                'age' => null,
             ],
             [
-                'age' => '1000',
+                'id' => null,
+                'name' => null,
                 'email' => 'glinglin@email.com',
+                'age' => '1000',
             ],
         ];
 

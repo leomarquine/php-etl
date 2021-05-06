@@ -38,8 +38,7 @@ class AggregatorTest extends TestCase
                     $invalidOptions,
                     [$extractor::STRICT => false]
                 )
-            )
-        ;
+            );
 
         $this->expectException(InvalidOptionException::class);
         $this->expectExceptionCode($exceptionCode);
@@ -106,20 +105,18 @@ class AggregatorTest extends TestCase
                 'email' => 'janedoe@email.com',
                 'twitter' => '@jane',
             ]),
-            (
-                new Row([
-                    'id' => 3,
-                    'name' => 'Incomplete1',
-                    'email' => 'incomplete1@dirtydata',
-                ])
-            )->setIncomplete(),
-            (
-                new Row([
-                    'id' => 4,
-                    'name' => 'Incomplete2',
-                    'email' => 'incomplete2@dirtydata',
-                ])
-            )->setIncomplete(),
+            (new Row([
+                'id' => 3,
+                'name' => 'Incomplete1',
+                'email' => 'incomplete1@dirtydata',
+                'twitter' => null,
+            ]))->setIncomplete(),
+            (new Row([
+                'id' => 4,
+                'name' => 'Incomplete2',
+                'email' => 'incomplete2@dirtydata',
+                'twitter' => null,
+            ]))->setIncomplete(),
         ];
 
         static::assertEquals($expected, $actual);
@@ -246,8 +243,7 @@ class AggregatorTest extends TestCase
                         ['impossible error'], // should not happen as well
                     ]),
                 ],
-            ]
-        ;
+            ];
 
         return [
             $simpleDataSet,

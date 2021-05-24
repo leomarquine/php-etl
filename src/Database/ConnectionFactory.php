@@ -38,6 +38,8 @@ class ConnectionFactory
                 return new Connectors\PostgresConnector;
             case 'sqlsrv':
                 return new Connectors\SqlServerConnector;
+            case 'firebird':
+                return new Connectors\FirebirdConnector;
         }
 
         throw new InvalidArgumentException("Unsupported driver: $driver");

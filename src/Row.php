@@ -67,6 +67,20 @@ class Row implements \ArrayAccess
     }
 
     /**
+     * Get a row attribute, and remove it.
+     *
+     * @return mixed
+     */
+    public function pull(string $key)
+    {
+        $value = $this->attributes[$key] ?? null;
+
+        unset($this->attributes[$key]);
+
+        return $value;
+    }
+
+    /**
      * Transform the given columns using a callback.
      *
      * @param string[] $columns

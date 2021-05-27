@@ -45,6 +45,17 @@ class RowTest extends TestCase
     }
 
     /** @test */
+    public function pullAttribute(): void
+    {
+        $row = new Row(['name' => 'Jane Doe']);
+
+        $value = $row->pull('name');
+
+        static::assertEquals('Jane Doe', $value);
+        static::assertNull($row->get('name'));
+    }
+
+    /** @test */
     public function transformValuesUsingCallback(): void
     {
         $row = new Row(['name' => 'Jane Doe', 'email' => 'janedoe@example.com']);

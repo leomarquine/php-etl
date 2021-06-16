@@ -68,7 +68,7 @@ class Csv extends Extractor
         $data = [];
 
         foreach ($columns as $column => $index) {
-            $data[$column] = $row[$index - 1];
+            $data[$column] = $row[$index - 1] != "" ? $row[$index - 1] : NULL ;
         }
 
         return $data;

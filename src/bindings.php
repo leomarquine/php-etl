@@ -28,6 +28,8 @@ $container->bind('rename_columns_transformer', Marquine\Etl\Transformers\RenameC
 $container->bind('replace_transformer', Marquine\Etl\Transformers\Replace::class);
 $container->bind('trim_transformer', Marquine\Etl\Transformers\Trim::class);
 $container->bind('unique_rows_transformer', Marquine\Etl\Transformers\UniqueRows::class);
+$container->bind('base64_encode_transformer', Marquine\Etl\Transformers\Base64Encode::class);
+$container->bind('base64_decode_transformer', Marquine\Etl\Transformers\Base64Decode::class);
 
 // Loaders
 $container->bind('insert_loader', Marquine\Etl\Loaders\Insert::class);

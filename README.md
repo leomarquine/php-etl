@@ -14,6 +14,10 @@ You can also easily add your custom classes (Extractors, Transformers and Loader
 
 ![ETL](docs/img/etl.svg)
 
+## Versions and compatibility
+* To benefit from the last features, you need PHP >= 7.4 and use the 2.x version of the library.
+* If you use older versions of PHP: 7.2 <= PHP <= 7.4, use the legacy 1.3.x version (still maintained for bugfixes).
+
 ## Changelog
 
 See the changelog [here](changelog.MD)

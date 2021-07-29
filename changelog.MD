@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.0
+
+**New features**
+* Improvement of the aggregator. Now an exception can be thrown if at the end of the iteration there are some remaining rows (optional). If this option is not enabled, the remaining rows are flagged as 'incomplete' and yield as before.
+* Improvement of the CsvLoader: you can now ask to output the result in one single file.
+* Improvement of the CsvExtractor: it uses the header of the CSV file to create the array, so the key is the corresponding column name.
+* Improvement of the Transaction object along with the Insert and InsertUpdate loaders:
+  * If using transactions, any row should open a PDO transaction if one is not already open.
+  * If a Transaction class is destroyed, any open transactions should be closed.
+  * Commit transactions in progress on error.
+* Added a RowCallback transformer.
+* Added a new method _pull()_ to get an attribute from the row and immediately remove it.
+
+
+**Bugfixes**
+*  Fix bug in calculating quarters in the DateDimension generator. Default date range starts on January 1 so it should end on December 31 to be non-overlapping.
+
+
+**Miscellaneous**
+* Dropped support for PHP < 7.4.
+* Strong typing everywhere when possible.
+
+Thanks to the contribution of :
+* [kdebisschop](https://github.com/kdebisschop).
+* [devfrey](https://github.com/devfrey).
+
 ## 1.3
 
 **New features**
